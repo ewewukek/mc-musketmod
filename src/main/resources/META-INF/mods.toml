@@ -1,0 +1,14 @@
+modLoader="javafml"
+loaderVersion="[25,)"
+issueTrackerURL="https://github.com/ewewukek/mc-musketmod/issues"
+[[mods]]
+modId="musketmod"
+version="0.1"
+displayName="Musket Mod"
+#updateJSONURL=""
+displayURL="https://github.com/ewewukek/mc-musketmod"
+#logoFile="musket.png"
+authors="ewewukek"
+description='''
+Simple mod that adds a craftable musket.
+'''

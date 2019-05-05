@@ -7,8 +7,10 @@ import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 
-@Mod("musketmod")
+@Mod(MusketMod.MODID)
 public class MusketMod {
+    public static final String MODID = "musketmod";
+
     public MusketMod() {
         MinecraftForge.EVENT_BUS.register(this);
     }
@@ -18,7 +20,7 @@ public class MusketMod {
         @SubscribeEvent
         public static void onItemsRegistry(final RegistryEvent.Register<Item> event) {
             Item cartridge = new Item(new Item.Properties().group(ItemGroup.COMBAT));
-            cartridge.setRegistryName("musketmod", "cartridge");
+            cartridge.setRegistryName(MODID, "cartridge");
             event.getRegistry().registerAll(cartridge);
         }
     }

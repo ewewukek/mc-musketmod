@@ -1,3 +1,6 @@
 {
-  "item.musketmod.cartridge": "Cartridge"
+  "item.musketmod.barrel": "Gun barrel",
+  "item.musketmod.cartridge": "Cartridge",
+  "item.musketmod.musket": "Musket",
+  "item.musketmod.stock": "Gunstock"
 }

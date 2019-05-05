@@ -20,7 +20,10 @@ public class MusketMod {
         @SubscribeEvent
         public static void onItemsRegistry(final RegistryEvent.Register<Item> event) {
             event.getRegistry().registerAll(
-                new Item(new Item.Properties().group(ItemGroup.COMBAT)).setRegistryName(MODID, "cartridge")
+                new Item(new Item.Properties().group(ItemGroup.COMBAT)).setRegistryName(MODID, "cartridge"),
+                new Item(new Item.Properties().group(ItemGroup.COMBAT)).setRegistryName(MODID, "musket"),
+                new Item(new Item.Properties().group(ItemGroup.MISC)).setRegistryName(MODID, "barrel"),
+                new Item(new Item.Properties().group(ItemGroup.MISC)).setRegistryName(MODID, "stock")
             );
         }
     }

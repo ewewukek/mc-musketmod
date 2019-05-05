@@ -19,9 +19,9 @@ public class MusketMod {
     public static class RegistryEvents {
         @SubscribeEvent
         public static void onItemsRegistry(final RegistryEvent.Register<Item> event) {
-            Item cartridge = new Item(new Item.Properties().group(ItemGroup.COMBAT));
-            cartridge.setRegistryName(MODID, "cartridge");
-            event.getRegistry().registerAll(cartridge);
+            event.getRegistry().registerAll(
+                new Item(new Item.Properties().group(ItemGroup.COMBAT)).setRegistryName(MODID, "cartridge")
+            );
         }
     }
 }

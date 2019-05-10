@@ -47,6 +47,11 @@ public class Musket extends Item {
         return isLoaded(stack) ? EnumAction.BOW : EnumAction.BLOCK;
     }
 
+    @Override
+    public boolean shouldCauseReequipAnimation(ItemStack oldStack, ItemStack newStack, boolean slotChanged) {
+        return slotChanged;
+    }
+
     private void setLoaded(ItemStack stack, boolean loaded) {
         stack.getOrCreateTag().setByte("loaded", (byte)(loaded ? 1 : 0));
     }

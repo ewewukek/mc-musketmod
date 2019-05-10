@@ -35,7 +35,6 @@ public class EntityBullet extends Entity {
 
     @Override
     public void tick() {
-        System.out.println("tick " + posX + "\t" + posY + "\t" + posZ);
         super.tick();
     }
 

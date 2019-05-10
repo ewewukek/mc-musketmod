@@ -40,6 +40,7 @@ public class MusketMod {
         public static void onEntityRegistry(final RegistryEvent.Register<EntityType<?>> event) {
             event.getRegistry().register(
                 EntityType.Builder.create(EntityBullet.class, EntityBullet::new)
+                    .tracker(64, 5, false)
                     .build(MODID + ":bullet").setRegistryName(MODID, "bullet")
             );
         }

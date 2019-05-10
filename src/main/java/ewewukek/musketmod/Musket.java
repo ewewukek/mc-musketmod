@@ -31,6 +31,7 @@ public class Musket extends Item {
         EntityPlayer player = (EntityPlayer)entityLiving;
         if (isLoaded(stack)) {
             System.out.println("PEW!");
+            if (!worldIn.isRemote) fireBullet(worldIn, player);
             stack.damageItem(1, player);
             setLoaded(stack, false);
         } else {
@@ -50,6 +51,12 @@ public class Musket extends Item {
     @Override
     public boolean shouldCauseReequipAnimation(ItemStack oldStack, ItemStack newStack, boolean slotChanged) {
         return slotChanged;
+    }
+
+    private void fireBullet(World worldIn, EntityPlayer player) {
+        EntityBullet bullet = new EntityBullet(worldIn);
+        bullet.setPosition(player.posX, player.posY, player.posZ);
+        worldIn.spawnEntity(bullet);
     }
 
     private void setLoaded(ItemStack stack, boolean loaded) {

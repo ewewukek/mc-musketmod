@@ -19,17 +19,14 @@ public class EntityBullet extends Entity {
 
     @OnlyIn(Dist.CLIENT)
     public boolean isInRangeToRenderDist(double distance) {
-        double d0 = this.getBoundingBox().getAverageEdgeLength() * 4.0D;
-        if (Double.isNaN(d0)) {
-            d0 = 4.0D;
-        }
-
-        d0 = d0 * 64.0D;
+        double d0 = getBoundingBox().getAverageEdgeLength() * 4;
+        if (Double.isNaN(d0)) d0 = 4;
+        d0 = d0 * 64;
         return distance < d0 * d0;
     }
 
     protected float getGravityVelocity() {
-        return 0.0F;
+        return 0;
     }
 
     @Override

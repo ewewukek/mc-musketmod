@@ -27,7 +27,7 @@ public class RenderBullet extends Render<EntityBullet> {
 
     @Override
     public void doRender(EntityBullet bullet, double x, double y, double z, float yaw, float partialTicks) {
-        this.bindEntityTexture(bullet);
+        bindEntityTexture(bullet);
         GlStateManager.pushMatrix();
         GlStateManager.disableLighting();
         GlStateManager.enableRescaleNormal();
@@ -37,7 +37,7 @@ public class RenderBullet extends Render<EntityBullet> {
         GlStateManager.rotatef(-renderManager.playerViewY, 0, 1, 0);
         float sign = renderManager.options.thirdPersonView == 2 ? -1 : 1;
         GlStateManager.rotatef(sign * renderManager.playerViewX, 1, 0, 0);
-        GlStateManager.rotatef(180.0F, 0.0F, 1.0F, 0.0F);
+        GlStateManager.rotatef(180, 0, 1, 0);
 
         Tessellator tessellator = Tessellator.getInstance();
         BufferBuilder bufferbuilder = tessellator.getBuffer();

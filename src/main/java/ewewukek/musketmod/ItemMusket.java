@@ -10,6 +10,7 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.EnumActionResult;
 import net.minecraft.util.EnumHand;
+import net.minecraft.util.math.MathHelper;
 import net.minecraft.world.World;
 
 public class ItemMusket extends Item {
@@ -55,7 +56,27 @@ public class ItemMusket extends Item {
 
     private void fireBullet(World worldIn, EntityPlayer player) {
         EntityBullet bullet = new EntityBullet(worldIn);
-        bullet.setPosition(player.posX, player.posY, player.posZ);
+
+        bullet.setPosition(player.posX, player.posY + player.getEyeHeight(), player.posZ);
+
+        final float DEG2RAD = (float)Math.PI / 180;
+
+        float xv = -MathHelper.sin(player.rotationYaw * DEG2RAD) * MathHelper.cos(player.rotationPitch * DEG2RAD);
+        float yv = -MathHelper.sin(player.rotationPitch * DEG2RAD);
+        float zv = MathHelper.cos(player.rotationYaw * DEG2RAD) * MathHelper.cos(player.rotationPitch * DEG2RAD);
+
+        float velocity = 0.05f;
+
+        bullet.motionX = xv * velocity;
+        bullet.motionY = yv * velocity;
+        bullet.motionZ = zv * velocity;
+
+        bullet.motionX += player.motionX;
+        bullet.motionZ += player.motionZ;
+        if (!player.onGround) {
+            bullet.motionY += player.motionY;
+        }
+
         worldIn.spawnEntity(bullet);
     }
 

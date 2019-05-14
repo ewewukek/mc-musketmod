@@ -33,7 +33,7 @@ public class RenderBullet extends Render<EntityBullet> {
         GlStateManager.enableRescaleNormal();
 
         GlStateManager.translatef((float)x, (float)y, (float)z);
-        GlStateManager.scalef(0.2f, 0.2f, 0.2f);
+        GlStateManager.scalef(0.1f, 0.1f, 0.1f);
         GlStateManager.rotatef(-renderManager.playerViewY, 0, 1, 0);
         float sign = renderManager.options.thirdPersonView == 2 ? -1 : 1;
         GlStateManager.rotatef(sign * renderManager.playerViewX, 1, 0, 0);

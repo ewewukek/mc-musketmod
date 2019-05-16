@@ -26,6 +26,7 @@ import net.minecraftforge.registries.ObjectHolder;
 public class EntityBullet extends Entity {
     static final double GRAVITY = 0.05;
     static final double FRICTION = 0.99;
+    static final float DAMAGE_FACTOR = 1;
 
     public UUID shooter;
     public short ticksLeft;
@@ -124,12 +125,11 @@ public class EntityBullet extends Entity {
     }
 
     private void hitEntity(Entity target) {
-        int damage = 10;
-
         Entity shooter = getShootingEntity();
         DamageSource damagesource = causeMusketDamage(this, shooter != null ? shooter : this);
 
-        target.attackEntityFrom(damagesource, damage);
+        float energy = (float)(motionX*motionX + motionY*motionY + motionZ*motionZ);
+        target.attackEntityFrom(damagesource, DAMAGE_FACTOR * energy);
     }
 
     private static final Predicate<Entity> TARGETS = EntitySelectors.NOT_SPECTATING.and(EntitySelectors.IS_ALIVE.and(Entity::canBeCollidedWith));

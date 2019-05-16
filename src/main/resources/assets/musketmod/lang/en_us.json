@@ -1,4 +1,5 @@
 {
+  "death.attack.musket": "%1$s was shot by %2$s",
   "item.musketmod.barrel": "Gun barrel",
   "item.musketmod.cartridge": "Cartridge",
   "item.musketmod.musket": "Musket",

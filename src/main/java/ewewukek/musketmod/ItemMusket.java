@@ -10,7 +10,6 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.EnumActionResult;
 import net.minecraft.util.EnumHand;
-import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 
@@ -70,11 +69,10 @@ public class ItemMusket extends Item {
         );
 
         Vec3d front = Vec3d.fromPitchYaw(player.rotationPitch, player.rotationYaw);
-        final float velocity = 9; // 180 m/s
 
-        bullet.motionX = front.x * velocity;
-        bullet.motionY = front.y * velocity;
-        bullet.motionZ = front.z * velocity;
+        bullet.motionX = front.x * EntityBullet.VELOCITY;
+        bullet.motionY = front.y * EntityBullet.VELOCITY;
+        bullet.motionZ = front.z * EntityBullet.VELOCITY;
 
         bullet.motionX += player.motionX;
         bullet.motionZ += player.motionZ;

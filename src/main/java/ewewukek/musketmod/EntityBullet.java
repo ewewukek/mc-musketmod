@@ -24,9 +24,10 @@ import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.registries.ObjectHolder;
 
 public class EntityBullet extends Entity {
+    static final double VELOCITY = 9; // 180 m/s
     static final double GRAVITY = 0.05;
     static final double FRICTION = 0.99;
-    static final float DAMAGE_FACTOR = 1;
+    static final float DAMAGE_FACTOR = 0.3f;
 
     public UUID shooter;
     public short ticksLeft;

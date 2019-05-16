@@ -25,12 +25,14 @@ import net.minecraftforge.registries.ObjectHolder;
 
 public class EntityBullet extends Entity {
     public UUID shooter;
+    public short ticksLeft;
 
     @ObjectHolder(MusketMod.MODID + ":bullet")
     public static EntityType<EntityBullet> TYPE;
 
     public EntityBullet(World world) {
         super(TYPE, world);
+        ticksLeft = 50;
     }
 
     @OnlyIn(Dist.CLIENT)
@@ -55,6 +57,11 @@ public class EntityBullet extends Entity {
         super.tick();
 
         if (!world.isRemote && processCollision()) {
+            remove();
+            return;
+        }
+
+        if (--ticksLeft <= 0) {
             remove();
             return;
         }
@@ -147,6 +154,7 @@ public class EntityBullet extends Entity {
     @Override
     protected void readAdditional(NBTTagCompound compound) {
         shooter = compound.getUniqueId("OwnerUUID");
+        ticksLeft = compound.getShort("life");
     }
 
     @Override
@@ -154,5 +162,6 @@ public class EntityBullet extends Entity {
         if (shooter != null) {
             compound.setUniqueId("OwnerUUID", shooter);
         }
+        compound.setShort("life", ticksLeft);
     }
 }

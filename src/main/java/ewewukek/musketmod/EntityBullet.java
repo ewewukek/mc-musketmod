@@ -24,6 +24,9 @@ import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.registries.ObjectHolder;
 
 public class EntityBullet extends Entity {
+    static final double GRAVITY = 0.05;
+    static final double FRICTION = 0.99;
+
     public UUID shooter;
     public short ticksLeft;
 
@@ -69,6 +72,12 @@ public class EntityBullet extends Entity {
         posX += motionX;
         posY += motionY;
         posZ += motionZ;
+
+        motionY -= GRAVITY;
+
+        motionX *= FRICTION;
+        motionY *= FRICTION;
+        motionZ *= FRICTION;
 
         // copied from EntityArrow
         setPosition(posX, posY, posZ);

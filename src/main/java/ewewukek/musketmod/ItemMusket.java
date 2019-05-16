@@ -11,6 +11,7 @@ import net.minecraft.util.ActionResult;
 import net.minecraft.util.EnumActionResult;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.MathHelper;
+import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 
 public class ItemMusket extends Item {
@@ -57,19 +58,23 @@ public class ItemMusket extends Item {
     private void fireBullet(World worldIn, EntityPlayer player) {
         EntityBullet bullet = new EntityBullet(worldIn);
 
-        bullet.setPosition(player.posX, player.posY + player.getEyeHeight(), player.posZ);
+        Vec3d side = Vec3d.fromPitchYaw(0, player.rotationYaw + 90);
+        if (player.getActiveHand() == EnumHand.OFF_HAND) side = side.scale(-1);
+        Vec3d down = Vec3d.fromPitchYaw(player.rotationPitch + 90, player.rotationYaw);
+        Vec3d spawnPoint = side.add(down).scale(0.1);
 
-        final float DEG2RAD = (float)Math.PI / 180;
+        bullet.setPosition(
+            player.posX + spawnPoint.x,
+            player.posY + spawnPoint.y + player.getEyeHeight(),
+            player.posZ + spawnPoint.z
+        );
 
-        float xv = -MathHelper.sin(player.rotationYaw * DEG2RAD) * MathHelper.cos(player.rotationPitch * DEG2RAD);
-        float yv = -MathHelper.sin(player.rotationPitch * DEG2RAD);
-        float zv = MathHelper.cos(player.rotationYaw * DEG2RAD) * MathHelper.cos(player.rotationPitch * DEG2RAD);
+        Vec3d front = Vec3d.fromPitchYaw(player.rotationPitch, player.rotationYaw);
+        final float velocity = 9; // 180 m/s
 
-        float velocity = 0.05f;
-
-        bullet.motionX = xv * velocity;
-        bullet.motionY = yv * velocity;
-        bullet.motionZ = zv * velocity;
+        bullet.motionX = front.x * velocity;
+        bullet.motionY = front.y * velocity;
+        bullet.motionZ = front.z * velocity;
 
         bullet.motionX += player.motionX;
         bullet.motionZ += player.motionZ;

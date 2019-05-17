@@ -1,6 +1,7 @@
 package ewewukek.musketmod;
 
 import java.util.List;
+import java.util.Random;
 import java.util.UUID;
 import java.util.function.Predicate;
 
@@ -24,10 +25,12 @@ import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.registries.ObjectHolder;
 
 public class EntityBullet extends Entity {
+    private static final Random random = new Random();
     static final double VELOCITY = 9; // 180 m/s
     static final double GRAVITY = 0.05;
     static final double FRICTION = 0.99;
-    static final float DAMAGE_FACTOR = 0.3f;
+    static final float DAMAGE_FACTOR_MIN = 0.255f;
+    static final float DAMAGE_FACTOR_MAX = 0.275f;
 
     public UUID shooter;
     public short ticksLeft;
@@ -130,7 +133,8 @@ public class EntityBullet extends Entity {
         DamageSource damagesource = causeMusketDamage(this, shooter != null ? shooter : this);
 
         float energy = (float)(motionX*motionX + motionY*motionY + motionZ*motionZ);
-        target.attackEntityFrom(damagesource, DAMAGE_FACTOR * energy);
+        float factor = DAMAGE_FACTOR_MIN + random.nextFloat() * (DAMAGE_FACTOR_MAX - DAMAGE_FACTOR_MIN);
+        target.attackEntityFrom(damagesource, energy * factor);
     }
 
     private static final Predicate<Entity> TARGETS = EntitySelectors.NOT_SPECTATING.and(EntitySelectors.IS_ALIVE.and(Entity::canBeCollidedWith));

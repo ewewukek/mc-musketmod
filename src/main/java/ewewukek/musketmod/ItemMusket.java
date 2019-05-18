@@ -10,10 +10,13 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.EnumActionResult;
 import net.minecraft.util.EnumHand;
+import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 
 public class ItemMusket extends Item {
+    public static final float DISPERSION_STD = 0.25f * (float)Math.PI / 180;
+
     public ItemMusket() {
         super(new Item.Properties()
             .defaultMaxDamage(250)
@@ -32,7 +35,7 @@ public class ItemMusket extends Item {
         EntityPlayer player = (EntityPlayer)entityLiving;
         if (isLoaded(stack)) {
             System.out.println("PEW!");
-            if (!worldIn.isRemote) fireBullet(worldIn, player);
+            if (!worldIn.isRemote) fireBullet(worldIn, player, DISPERSION_STD);
             stack.damageItem(1, player);
             setLoaded(stack, false);
         } else {
@@ -54,7 +57,7 @@ public class ItemMusket extends Item {
         return slotChanged;
     }
 
-    private void fireBullet(World worldIn, EntityPlayer player) {
+    private void fireBullet(World worldIn, EntityPlayer player, float dispersion_std) {
         EntityBullet bullet = new EntityBullet(worldIn);
 
         Vec3d side = Vec3d.fromPitchYaw(0, player.rotationYaw + 90);
@@ -69,6 +72,13 @@ public class ItemMusket extends Item {
         );
 
         Vec3d front = Vec3d.fromPitchYaw(player.rotationPitch, player.rotationYaw);
+
+        float angle = (float)Math.PI * 2 * random.nextFloat();
+        float gaussian = Math.abs((float)random.nextGaussian());
+        if (gaussian > 4) gaussian = 4;
+
+        front = front.rotatePitch(dispersion_std * gaussian * MathHelper.sin(angle))
+                       .rotateYaw(dispersion_std * gaussian * MathHelper.cos(angle));
 
         bullet.motionX = front.x * EntityBullet.VELOCITY;
         bullet.motionY = front.y * EntityBullet.VELOCITY;

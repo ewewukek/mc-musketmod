@@ -16,6 +16,7 @@ import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 
 public class ItemMusket extends Item {
+    public static final int RELOAD_DURATION = 30;
     public static final float DISPERSION_STD = 0.25f * (float)Math.PI / 180;
 
     public ItemMusket() {
@@ -34,17 +35,23 @@ public class ItemMusket extends Item {
     public void onPlayerStoppedUsing(ItemStack stack, World worldIn, EntityLivingBase entityLiving, int timeLeft) {
         if (!(entityLiving instanceof EntityPlayer)) return;
         EntityPlayer player = (EntityPlayer)entityLiving;
-        if (isLoaded(stack)) {
-            System.out.println("PEW!");
+        if (isReady(stack)) {
             if (!worldIn.isRemote) {
                 fireBullet(worldIn, player, DISPERSION_STD);
             } else {
                 fireParticles(worldIn, player);
             }
             stack.damageItem(1, player);
+            setReady(stack, false);
             setLoaded(stack, false);
-        } else {
-            System.out.println("lock and load");
+        } else if (isLoaded(stack)) {
+            setReady(stack, true);
+        }
+    }
+
+    @Override
+    public void onUsingTick(ItemStack stack, EntityLivingBase entityLiving, int timeLeft) {
+        if (getUseDuration(stack) - timeLeft >= RELOAD_DURATION && !isReady(stack) && !isLoaded(stack)) {
             setLoaded(stack, true);
         }
     }
@@ -54,7 +61,11 @@ public class ItemMusket extends Item {
     }
 
     public EnumAction getUseAction(ItemStack stack) {
-        return isLoaded(stack) ? EnumAction.BOW : EnumAction.BLOCK;
+        if (isReady(stack)) {
+            return EnumAction.BOW;
+        } else {
+            return isLoaded(stack) ? EnumAction.NONE : EnumAction.BLOCK;
+        }
     }
 
     @Override
@@ -134,5 +145,14 @@ public class ItemMusket extends Item {
     private boolean isLoaded(ItemStack stack) {
         NBTTagCompound tag = stack.getTag();
         return tag != null && tag.getByte("loaded") == 1;
+    }
+
+    private void setReady(ItemStack stack, boolean ready) {
+        stack.getOrCreateTag().setByte("ready", (byte)(ready ? 1 : 0));
+    }
+
+    private boolean isReady(ItemStack stack) {
+        NBTTagCompound tag = stack.getTag();
+        return tag != null && tag.getByte("ready") == 1;
     }
 }

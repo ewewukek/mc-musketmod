@@ -25,7 +25,6 @@ public class ItemMusket extends Item {
         super(new Item.Properties()
             .defaultMaxDamage(250)
             .group(ItemGroup.COMBAT));
-        setRegistryName(MusketMod.MODID, "musket");
     }
 
     @Override

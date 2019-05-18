@@ -6,6 +6,5 @@ import net.minecraft.item.ItemGroup;
 public class ItemCartridge extends Item {
     public ItemCartridge() {
         super(new Item.Properties().group(ItemGroup.COMBAT));
-        setRegistryName(MusketMod.MODID, "cartridge");
     }
 }

@@ -46,20 +46,27 @@ public class ItemMusket extends Item {
     public void onPlayerStoppedUsing(ItemStack stack, World worldIn, EntityLivingBase entityLiving, int timeLeft) {
         if (!(entityLiving instanceof EntityPlayer)) return;
         EntityPlayer player = (EntityPlayer)entityLiving;
+
         if (isReady(stack)) {
             if (!worldIn.isRemote) {
                 float dispersion = DISPERSION_STD;
+
                 float t = (float)(getUseDuration(stack) - timeLeft) / AIM_DURATION;
                 if (t < 1) {
                     dispersion *= t + (1 - t) * DISPERSION_MULTIPLIER;
                 }
+
                 fireBullet(worldIn, player, dispersion);
+
             } else {
                 fireParticles(worldIn, player);
             }
+
             stack.damageItem(1, player);
+
             setReady(stack, false);
             setLoaded(stack, false);
+
         } else if (isLoaded(stack)) {
             setReady(stack, true);
         }
@@ -125,20 +132,19 @@ public class ItemMusket extends Item {
     }
 
     private void fireBullet(World worldIn, EntityPlayer player, float dispersion_std) {
-        EntityBullet bullet = new EntityBullet(worldIn);
-
+        Vec3d front = Vec3d.fromPitchYaw(player.rotationPitch, player.rotationYaw);
         Vec3d side = Vec3d.fromPitchYaw(0, player.rotationYaw + 90);
         if (player.getActiveHand() == EnumHand.OFF_HAND) side = side.scale(-1);
         Vec3d down = Vec3d.fromPitchYaw(player.rotationPitch + 90, player.rotationYaw);
-        Vec3d spawnPoint = side.add(down).scale(0.1);
 
-        bullet.setPosition(
-            player.posX + spawnPoint.x,
-            player.posY + spawnPoint.y + player.getEyeHeight(),
-            player.posZ + spawnPoint.z
-        );
+        Vec3d spawnPoint = new Vec3d(
+            player.posX,
+            player.posY + player.getEyeHeight(),
+            player.posZ
+        ).add(side.add(down).scale(0.1));
 
-        Vec3d front = Vec3d.fromPitchYaw(player.rotationPitch, player.rotationYaw);
+        EntityBullet bullet = new EntityBullet(worldIn);
+        bullet.setPosition(spawnPoint.x, spawnPoint.y, spawnPoint.z);
 
         float angle = (float)Math.PI * 2 * random.nextFloat();
         float gaussian = Math.abs((float)random.nextGaussian());

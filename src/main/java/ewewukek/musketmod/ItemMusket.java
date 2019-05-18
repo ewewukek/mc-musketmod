@@ -11,6 +11,7 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.EnumActionResult;
 import net.minecraft.util.EnumHand;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
@@ -25,6 +26,10 @@ public class ItemMusket extends Item {
         super(new Item.Properties()
             .defaultMaxDamage(250)
             .group(ItemGroup.COMBAT));
+
+        addPropertyOverride(new ResourceLocation("loaded"), (stack, world, player) -> {
+            return isLoaded(stack) ? 1 : 0;
+        });
     }
 
     @Override

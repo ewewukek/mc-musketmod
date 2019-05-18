@@ -2,6 +2,7 @@ package ewewukek.musketmod;
 
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.init.Particles;
 import net.minecraft.item.EnumAction;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemGroup;
@@ -35,7 +36,11 @@ public class ItemMusket extends Item {
         EntityPlayer player = (EntityPlayer)entityLiving;
         if (isLoaded(stack)) {
             System.out.println("PEW!");
-            if (!worldIn.isRemote) fireBullet(worldIn, player, DISPERSION_STD);
+            if (!worldIn.isRemote) {
+                fireBullet(worldIn, player, DISPERSION_STD);
+            } else {
+                fireParticles(worldIn, player);
+            }
             stack.damageItem(1, player);
             setLoaded(stack, false);
         } else {
@@ -91,6 +96,35 @@ public class ItemMusket extends Item {
         }
 
         worldIn.spawnEntity(bullet);
+    }
+
+    private void fireParticles(World world, EntityPlayer player) {
+        Vec3d front = Vec3d.fromPitchYaw(player.rotationPitch, player.rotationYaw);
+        Vec3d side = Vec3d.fromPitchYaw(0, player.rotationYaw + 90);
+        if (player.getActiveHand() == EnumHand.OFF_HAND) side = side.scale(-1);
+        Vec3d down = Vec3d.fromPitchYaw(player.rotationPitch + 90, player.rotationYaw);
+
+        Vec3d spawnPoint = new Vec3d(
+            player.posX,
+            player.posY + player.getEyeHeight(),
+            player.posZ
+        ).add(side.add(down).scale(0.1));
+
+        for (int i = 0; i != 10; ++i) {
+            float t = random.nextFloat();
+
+            Vec3d p = spawnPoint.add(front.scale(0.5 + t));
+            Vec3d v = front.scale(0.1 + 0.05 * (1 - t));
+
+            world.spawnParticle(Particles.SMOKE,
+                p.x,
+                p.y,
+                p.z,
+                v.x + (random.nextFloat() - 0.5) * (1 - t) * 0.05,
+                v.y + (random.nextFloat() - 0.5) * (1 - t) * 0.05,
+                v.z + (random.nextFloat() - 0.5) * (1 - t) * 0.05
+            );
+        }
     }
 
     private void setLoaded(ItemStack stack, boolean loaded) {

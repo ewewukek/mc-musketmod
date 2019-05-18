@@ -29,10 +29,17 @@ public class ItemMusket extends Item {
     }
 
     @Override
-    public ActionResult<ItemStack> onItemRightClick(World worldIn, EntityPlayer playerIn, EnumHand handIn) {
-        ItemStack itemStack = playerIn.getHeldItem(handIn);
-        playerIn.setActiveHand(handIn);
-        return new ActionResult<>(EnumActionResult.SUCCESS, itemStack);
+    public ActionResult<ItemStack> onItemRightClick(World worldIn, EntityPlayer player, EnumHand hand) {
+        ItemStack stack = player.getHeldItem(hand);
+
+        boolean haveAmmo = !findAmmo(player).isEmpty() || player.abilities.isCreativeMode;
+        if (isLoaded(stack) || haveAmmo) {
+            player.setActiveHand(hand);
+            return new ActionResult<>(EnumActionResult.SUCCESS, stack);
+
+        } else {
+            return new ActionResult<>(EnumActionResult.FAIL, stack);
+        }
     }
 
     @Override
@@ -60,7 +67,19 @@ public class ItemMusket extends Item {
 
     @Override
     public void onUsingTick(ItemStack stack, EntityLivingBase entityLiving, int timeLeft) {
+        if (!(entityLiving instanceof EntityPlayer)) return;
+
         if (getUseDuration(stack) - timeLeft >= RELOAD_DURATION && !isReady(stack) && !isLoaded(stack)) {
+            EntityPlayer player = (EntityPlayer)entityLiving;
+
+            if (!player.abilities.isCreativeMode) {
+                ItemStack ammoStack = findAmmo(player);
+                if (ammoStack.isEmpty()) return;
+
+                ammoStack.shrink(1);
+                if (ammoStack.isEmpty()) player.inventory.deleteStack(ammoStack);
+            }
+
             setLoaded(stack, true);
         }
     }
@@ -82,6 +101,27 @@ public class ItemMusket extends Item {
     @Override
     public boolean shouldCauseReequipAnimation(ItemStack oldStack, ItemStack newStack, boolean slotChanged) {
         return slotChanged;
+    }
+
+    private boolean isAmmo(ItemStack stack) {
+        return stack.getItem() instanceof ItemCartridge;
+    }
+
+    private ItemStack findAmmo(EntityPlayer player) {
+        if (isAmmo(player.getHeldItem(EnumHand.OFF_HAND))) {
+            return player.getHeldItem(EnumHand.OFF_HAND);
+
+        } else if (isAmmo(player.getHeldItem(EnumHand.MAIN_HAND))) {
+            return player.getHeldItem(EnumHand.MAIN_HAND);
+
+        } else {
+            for (int i = 0; i != player.inventory.getSizeInventory(); ++i) {
+                ItemStack itemstack = player.inventory.getStackInSlot(i);
+                if (isAmmo(itemstack)) return itemstack;
+            }
+
+            return ItemStack.EMPTY;
+        }
     }
 
     private void fireBullet(World worldIn, EntityPlayer player, float dispersion_std) {

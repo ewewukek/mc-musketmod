@@ -17,7 +17,9 @@ import net.minecraft.world.World;
 
 public class ItemMusket extends Item {
     public static final int RELOAD_DURATION = 30;
-    public static final float DISPERSION_STD = 0.25f * (float)Math.PI / 180;
+    public static final int AIM_DURATION = 20;
+    public static final float DISPERSION_MULTIPLIER = 3;
+    public static final float DISPERSION_STD = 0.4f * (float)Math.PI / 180;
 
     public ItemMusket() {
         super(new Item.Properties()
@@ -37,7 +39,12 @@ public class ItemMusket extends Item {
         EntityPlayer player = (EntityPlayer)entityLiving;
         if (isReady(stack)) {
             if (!worldIn.isRemote) {
-                fireBullet(worldIn, player, DISPERSION_STD);
+                float dispersion = DISPERSION_STD;
+                float t = (float)(getUseDuration(stack) - timeLeft) / AIM_DURATION;
+                if (t < 1) {
+                    dispersion *= t + (1 - t) * DISPERSION_MULTIPLIER;
+                }
+                fireBullet(worldIn, player, dispersion);
             } else {
                 fireParticles(worldIn, player);
             }

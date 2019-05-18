@@ -28,12 +28,14 @@ public class ItemMusket extends Item {
         setRegistryName(MusketMod.MODID, "musket");
     }
 
+    @Override
     public ActionResult<ItemStack> onItemRightClick(World worldIn, EntityPlayer playerIn, EnumHand handIn) {
         ItemStack itemStack = playerIn.getHeldItem(handIn);
         playerIn.setActiveHand(handIn);
         return new ActionResult<>(EnumActionResult.SUCCESS, itemStack);
     }
 
+    @Override
     public void onPlayerStoppedUsing(ItemStack stack, World worldIn, EntityLivingBase entityLiving, int timeLeft) {
         if (!(entityLiving instanceof EntityPlayer)) return;
         EntityPlayer player = (EntityPlayer)entityLiving;
@@ -63,10 +65,12 @@ public class ItemMusket extends Item {
         }
     }
 
+    @Override
     public int getUseDuration(ItemStack stack) {
         return 72000;
     }
 
+    @Override
     public EnumAction getUseAction(ItemStack stack) {
         if (isReady(stack)) {
             return EnumAction.BOW;

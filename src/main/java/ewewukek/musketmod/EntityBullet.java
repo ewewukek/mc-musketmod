@@ -9,6 +9,7 @@ import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.init.Particles;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.DamageSource;
 import net.minecraft.util.EntityDamageSourceIndirect;
@@ -28,7 +29,8 @@ public class EntityBullet extends Entity {
     private static final Random random = new Random();
     static final double VELOCITY = 9; // 180 m/s
     static final double GRAVITY = 0.05;
-    static final double FRICTION = 0.99;
+    static final double AIR_FRICTION = 0.99;
+    static final double WATER_FRICTION = 0.6;
     static final float DAMAGE_FACTOR_MIN = 0.255f;
     static final float DAMAGE_FACTOR_MAX = 0.275f;
 
@@ -80,9 +82,27 @@ public class EntityBullet extends Entity {
 
         motionY -= GRAVITY;
 
-        motionX *= FRICTION;
-        motionY *= FRICTION;
-        motionZ *= FRICTION;
+        double friction = AIR_FRICTION;
+        if (isInWater()) {
+            final int count = 4;
+            for (int i = 0; i != count; ++i) {
+                double t = (i + 1.0) / count;
+                world.spawnParticle(
+                    Particles.BUBBLE,
+                    posX - motionX * t,
+                    posY - motionY * t,
+                    posZ - motionZ * t,
+                    motionX,
+                    motionY,
+                    motionZ
+                );
+            }
+            friction = WATER_FRICTION;
+        }
+
+        motionX *= friction;
+        motionY *= friction;
+        motionZ *= friction;
 
         // copied from EntityArrow
         setPosition(posX, posY, posZ);

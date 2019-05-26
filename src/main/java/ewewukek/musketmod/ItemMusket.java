@@ -148,6 +148,7 @@ public class ItemMusket extends Item {
         ).add(side.add(down).scale(0.1));
 
         EntityBullet bullet = new EntityBullet(worldIn);
+        bullet.shooter = player.getUniqueID();
         bullet.setPosition(spawnPoint.x, spawnPoint.y, spawnPoint.z);
 
         float angle = (float)Math.PI * 2 * random.nextFloat();

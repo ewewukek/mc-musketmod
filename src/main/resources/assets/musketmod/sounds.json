@@ -1,4 +1,9 @@
 {
+  "musket_ready": {
+    "sounds": [
+      "musketmod:musket_ready"
+    ]
+  },
   "musket_fire": {
     "sounds": [
       "musketmod:musket_fire"

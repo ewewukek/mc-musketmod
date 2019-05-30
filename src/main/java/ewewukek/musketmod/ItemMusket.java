@@ -24,6 +24,9 @@ public class ItemMusket extends Item {
     public static final float DISPERSION_MULTIPLIER = 3;
     public static final float DISPERSION_STD = 0.4f * (float)Math.PI / 180;
 
+    @ObjectHolder(MusketMod.MODID + ":musket_ready")
+    public static SoundEvent SOUND_MUSKET_READY;
+
     @ObjectHolder(MusketMod.MODID + ":musket_fire")
     public static SoundEvent SOUND_MUSKET_FIRE;
 
@@ -97,6 +100,7 @@ public class ItemMusket extends Item {
                 if (ammoStack.isEmpty()) player.inventory.deleteStack(ammoStack);
             }
 
+            player.playSound(SOUND_MUSKET_READY, 1, 1);
             setLoaded(stack, true);
         }
     }

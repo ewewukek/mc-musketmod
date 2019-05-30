@@ -49,7 +49,8 @@ public class MusketMod {
 
         @SubscribeEvent
         public static void onSoundRegistry(final RegistryEvent.Register<SoundEvent> event) {
-            event.getRegistry().register(
+            event.getRegistry().registerAll(
+                new SoundEvent(new ResourceLocation(MODID, "musket_ready")).setRegistryName(MODID, "musket_ready"),
                 new SoundEvent(new ResourceLocation(MODID, "musket_fire")).setRegistryName(MODID, "musket_fire")
             );
         }

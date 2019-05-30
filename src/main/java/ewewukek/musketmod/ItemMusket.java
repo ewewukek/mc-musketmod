@@ -12,15 +12,20 @@ import net.minecraft.util.ActionResult;
 import net.minecraft.util.EnumActionResult;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.SoundEvent;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
+import net.minecraftforge.registries.ObjectHolder;
 
 public class ItemMusket extends Item {
     public static final int RELOAD_DURATION = 30;
     public static final int AIM_DURATION = 20;
     public static final float DISPERSION_MULTIPLIER = 3;
     public static final float DISPERSION_STD = 0.4f * (float)Math.PI / 180;
+
+    @ObjectHolder(MusketMod.MODID + ":musket_fire")
+    public static SoundEvent SOUND_MUSKET_FIRE;
 
     public ItemMusket() {
         super(new Item.Properties()
@@ -65,6 +70,7 @@ public class ItemMusket extends Item {
             } else {
                 fireParticles(worldIn, player);
             }
+            player.playSound(SOUND_MUSKET_FIRE, 1, 1);
 
             stack.damageItem(1, player);
 

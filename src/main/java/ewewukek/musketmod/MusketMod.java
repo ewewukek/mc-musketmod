@@ -3,6 +3,8 @@ package ewewukek.musketmod;
 import net.minecraft.entity.EntityType;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemGroup;
+import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.SoundEvent;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
@@ -42,6 +44,13 @@ public class MusketMod {
                 EntityType.Builder.create(EntityBullet.class, EntityBullet::new)
                     .tracker(64, 5, false)
                     .build(MODID + ":bullet").setRegistryName(MODID, "bullet")
+            );
+        }
+
+        @SubscribeEvent
+        public static void onSoundRegistry(final RegistryEvent.Register<SoundEvent> event) {
+            event.getRegistry().register(
+                new SoundEvent(new ResourceLocation(MODID, "musket_fire")).setRegistryName(MODID, "musket_fire")
             );
         }
     }

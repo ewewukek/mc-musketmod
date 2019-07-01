@@ -1,0 +1,5 @@
+musket_fire.ogg
+    based on (CC0) https://freesound.org/people/straget/sounds/410552/
+    with crack bit from https://www.youtube.com/watch?v=yS1NDMN9Gnw
+musket_ready.ogg
+    uses (CC0) https://opengameart.org/content/equipment-clicks-iii

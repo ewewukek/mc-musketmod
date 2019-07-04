@@ -1,5 +1,6 @@
 package ewewukek.musketmod;
 
+import net.minecraft.entity.EntityClassification;
 import net.minecraft.entity.EntityType;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemGroup;
@@ -41,8 +42,9 @@ public class MusketMod {
         @SubscribeEvent
         public static void onEntityRegistry(final RegistryEvent.Register<EntityType<?>> event) {
             event.getRegistry().register(
-                EntityType.Builder.create(EntityBullet.class, EntityBullet::new)
-                    .tracker(64, 5, false)
+                EntityType.Builder.<EntityBullet>create(EntityClassification.MISC)
+                    .setCustomClientFactory(EntityBullet::new)
+                    .setTrackingRange(64).setUpdateInterval(5).setShouldReceiveVelocityUpdates(false)
                     .build(MODID + ":bullet").setRegistryName(MODID, "bullet")
             );
         }

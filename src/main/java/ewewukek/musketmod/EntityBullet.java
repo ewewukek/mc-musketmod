@@ -1,28 +1,30 @@
 package ewewukek.musketmod;
 
-import java.util.List;
+import java.util.Optional;
 import java.util.Random;
 import java.util.UUID;
 import java.util.function.Predicate;
 
-import net.minecraft.block.state.IBlockState;
+import net.minecraft.block.BlockState;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.init.Particles;
-import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.network.IPacket;
+import net.minecraft.particles.ParticleTypes;
 import net.minecraft.util.DamageSource;
-import net.minecraft.util.EntityDamageSourceIndirect;
-import net.minecraft.util.EntitySelectors;
+import net.minecraft.util.IndirectEntityDamageSource;
 import net.minecraft.util.math.AxisAlignedBB;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.RayTraceFluidMode;
+import net.minecraft.util.math.BlockRayTraceResult;
+import net.minecraft.util.math.RayTraceContext;
 import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.util.math.Vec3d;
+import net.minecraft.world.ServerWorld;
 import net.minecraft.world.World;
-import net.minecraft.world.WorldServer;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
+import net.minecraftforge.fml.network.FMLPlayMessages;
+import net.minecraftforge.fml.network.NetworkHooks;
 import net.minecraftforge.registries.ObjectHolder;
 
 public class EntityBullet extends Entity {
@@ -45,6 +47,14 @@ public class EntityBullet extends Entity {
         ticksLeft = 50;
     }
 
+    public EntityBullet(FMLPlayMessages.SpawnEntity packet, World world) {
+        this(world);
+    }
+
+    public EntityBullet(EntityType<EntityBullet> type, World world) {
+        super(type, world);
+    }
+
     @OnlyIn(Dist.CLIENT)
     public boolean isInRangeToRenderDist(double distance) {
         double d0 = getBoundingBox().getAverageEdgeLength() * 4;
@@ -55,11 +65,11 @@ public class EntityBullet extends Entity {
 
     public Entity getShootingEntity() {
         return shooter != null
-            && world instanceof WorldServer ? ((WorldServer)world).getEntityFromUuid(shooter) : null;
+            && world instanceof ServerWorld ? ((ServerWorld)world).getEntityByUuid(shooter) : null;
     }
 
     public DamageSource causeMusketDamage(EntityBullet bullet, Entity attacker) {
-        return (new EntityDamageSourceIndirect("musket", bullet, attacker)).setProjectile();
+        return (new IndirectEntityDamageSource("musket", bullet, attacker)).setProjectile();
     }
 
     @Override
@@ -76,57 +86,57 @@ public class EntityBullet extends Entity {
             return;
         }
 
-        posX += motionX;
-        posY += motionY;
-        posZ += motionZ;
+        Vec3d motion = getMotion();
 
-        motionY -= GRAVITY;
+        posX += motion.x;
+        posY += motion.y;
+        posZ += motion.z;
+
+        motion = motion.subtract(0, GRAVITY, 0);
 
         double friction = AIR_FRICTION;
         if (isInWater()) {
             final int count = 4;
             for (int i = 0; i != count; ++i) {
                 double t = (i + 1.0) / count;
-                world.spawnParticle(
-                    Particles.BUBBLE,
-                    posX - motionX * t,
-                    posY - motionY * t,
-                    posZ - motionZ * t,
-                    motionX,
-                    motionY,
-                    motionZ
+                world.addParticle(
+                    ParticleTypes.BUBBLE,
+                    posX - motion.x * t,
+                    posY - motion.y * t,
+                    posZ - motion.z * t,
+                    motion.x,
+                    motion.y,
+                    motion.z
                 );
             }
             friction = WATER_FRICTION;
         }
 
-        motionX *= friction;
-        motionY *= friction;
-        motionZ *= friction;
+        setMotion(motion.scale(friction));
 
-        // copied from EntityArrow
+        // copied from EntityAbstractArrow
         setPosition(posX, posY, posZ);
         doBlockCollisions();
     }
 
     private boolean processCollision() {
         Vec3d from = new Vec3d(posX, posY, posZ);
-        Vec3d to = new Vec3d(posX + motionX, posY + motionY, posZ + motionZ);
+        Vec3d to = from.add(getMotion());
 
-        RayTraceResult collision = world.rayTraceBlocks(from, to, RayTraceFluidMode.NEVER, true, false);
+        BlockRayTraceResult collision = world.rayTraceBlocks(
+            new RayTraceContext(from, to, RayTraceContext.BlockMode.COLLIDER, RayTraceContext.FluidMode.NONE, this));
 
         // prevents hitting entities behind an obstacle
-        if (collision != null) {
-            Vec3d hitVec = collision.hitVec;
-            to = new Vec3d(hitVec.x, hitVec.y, hitVec.z);
+        if (collision.getType() != RayTraceResult.Type.MISS) {
+            to = collision.getHitVec();
         }
 
         Entity target = closestEntityOnPath(from, to);
         if (target != null) {
-            if (target instanceof EntityPlayer) {
+            if (target instanceof PlayerEntity) {
                 Entity shooter = getShootingEntity();
-                if (shooter instanceof EntityPlayer
-                    && !((EntityPlayer)shooter).canAttackPlayer((EntityPlayer)target)) {
+                if (shooter instanceof PlayerEntity
+                    && !((PlayerEntity)shooter).canAttackPlayer((PlayerEntity)target)) {
 
                     target = null;
                 }
@@ -137,13 +147,10 @@ public class EntityBullet extends Entity {
             }
         }
 
-        if (collision == null) return false;
+        if (collision.getType() == RayTraceResult.Type.MISS) return false;
 
-        BlockPos blockpos = collision.getBlockPos();
-        IBlockState blockstate = world.getBlockState(blockpos);
-        if (!blockstate.isAir(world, blockpos)) {
-            blockstate.onEntityCollision(world, blockpos, this);
-        }
+        BlockState blockstate = world.getBlockState(collision.getPos());
+        blockstate.onProjectileCollision(world, blockstate, collision, this);
 
         return true;
     }
@@ -152,25 +159,32 @@ public class EntityBullet extends Entity {
         Entity shooter = getShootingEntity();
         DamageSource damagesource = causeMusketDamage(this, shooter != null ? shooter : this);
 
-        float energy = (float)(motionX*motionX + motionY*motionY + motionZ*motionZ);
+        float energy = (float)getMotion().lengthSquared();
         float factor = DAMAGE_FACTOR_MIN + random.nextFloat() * (DAMAGE_FACTOR_MAX - DAMAGE_FACTOR_MIN);
         target.attackEntityFrom(damagesource, energy * factor);
     }
 
-    private static final Predicate<Entity> TARGETS = EntitySelectors.NOT_SPECTATING.and(EntitySelectors.IS_ALIVE.and(Entity::canBeCollidedWith));
+    private Predicate<Entity> getTargetPredicate() {
+        Entity shooter = getShootingEntity();
+        return (entity) -> {
+            return !entity.isSpectator() && entity.isAlive() && entity.canBeCollidedWith() && entity != shooter;
+        };
+    }
 
     private Entity closestEntityOnPath(Vec3d start, Vec3d end) {
         Entity result = null;
         double result_dist = 0;
 
-        List<Entity> list = world.getEntitiesInAABBexcluding(this, getBoundingBox().expand(motionX, motionY, motionZ).grow(0.01), TARGETS);
+        Vec3d motion = getMotion();
         Entity shooter = getShootingEntity();
-        for (Entity entity : list) {
+
+        AxisAlignedBB aabbSelection = getBoundingBox().expand(motion.x, motion.y, motion.z).grow(0.01);
+        for (Entity entity : world.getEntitiesInAABBexcluding(this, aabbSelection, getTargetPredicate())) {
             if (entity != shooter) {
                 AxisAlignedBB aabb = entity.getBoundingBox();
-                RayTraceResult collision = aabb.calculateIntercept(start, end);
-                if (collision != null) {
-                    double dist = start.squareDistanceTo(collision.hitVec);
+                Optional<Vec3d> optional = aabb.rayTrace(start, end);
+                if (optional.isPresent()) {
+                    double dist = start.squareDistanceTo(optional.get());
                     if (dist < result_dist || result == null) {
                         result = entity;
                         result_dist = dist;
@@ -186,16 +200,23 @@ public class EntityBullet extends Entity {
     protected void registerData() {}
 
     @Override
-    protected void readAdditional(NBTTagCompound compound) {
-        shooter = compound.getUniqueId("OwnerUUID");
+    protected void readAdditional(CompoundNBT compound) {
+        if (compound.hasUniqueId("OwnerUUID")) {
+            shooter = compound.getUniqueId("OwnerUUID");
+        }
         ticksLeft = compound.getShort("life");
     }
 
     @Override
-    protected void writeAdditional(NBTTagCompound compound) {
+    protected void writeAdditional(CompoundNBT compound) {
         if (shooter != null) {
-            compound.setUniqueId("OwnerUUID", shooter);
+            compound.putUniqueId("OwnerUUID", shooter);
         }
-        compound.setShort("life", ticksLeft);
+        compound.putShort("life", ticksLeft);
+    }
+
+    @Override
+    public IPacket<?> createSpawnPacket() {
+        return NetworkHooks.getEntitySpawningPacket(this);
     }
 }

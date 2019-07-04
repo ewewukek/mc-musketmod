@@ -1,16 +1,16 @@
 package ewewukek.musketmod;
 
-import net.minecraft.entity.EntityLivingBase;
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.init.Particles;
-import net.minecraft.item.EnumAction;
+import net.minecraft.entity.LivingEntity;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemGroup;
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.item.UseAction;
+import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.particles.ParticleTypes;
 import net.minecraft.util.ActionResult;
-import net.minecraft.util.EnumActionResult;
-import net.minecraft.util.EnumHand;
+import net.minecraft.util.ActionResultType;
+import net.minecraft.util.Hand;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.SoundEvent;
 import net.minecraft.util.math.MathHelper;
@@ -22,7 +22,7 @@ public class ItemMusket extends Item {
     public static final int RELOAD_DURATION = 30;
     public static final int AIM_DURATION = 20;
     public static final float DISPERSION_MULTIPLIER = 3;
-    public static final float DISPERSION_STD = 0.4f * (float)Math.PI / 180;
+    public static final float DISPERSION_STD = (float)Math.toRadians(0.4);
 
     @ObjectHolder(MusketMod.MODID + ":musket_ready")
     public static SoundEvent SOUND_MUSKET_READY;
@@ -41,23 +41,23 @@ public class ItemMusket extends Item {
     }
 
     @Override
-    public ActionResult<ItemStack> onItemRightClick(World worldIn, EntityPlayer player, EnumHand hand) {
+    public ActionResult<ItemStack> onItemRightClick(World worldIn, PlayerEntity player, Hand hand) {
         ItemStack stack = player.getHeldItem(hand);
 
         boolean haveAmmo = !findAmmo(player).isEmpty() || player.abilities.isCreativeMode;
         if (isLoaded(stack) || haveAmmo) {
             player.setActiveHand(hand);
-            return new ActionResult<>(EnumActionResult.SUCCESS, stack);
+            return new ActionResult<>(ActionResultType.SUCCESS, stack);
 
         } else {
-            return new ActionResult<>(EnumActionResult.FAIL, stack);
+            return new ActionResult<>(ActionResultType.FAIL, stack);
         }
     }
 
     @Override
-    public void onPlayerStoppedUsing(ItemStack stack, World worldIn, EntityLivingBase entityLiving, int timeLeft) {
-        if (!(entityLiving instanceof EntityPlayer)) return;
-        EntityPlayer player = (EntityPlayer)entityLiving;
+    public void onPlayerStoppedUsing(ItemStack stack, World worldIn, LivingEntity entityLiving, int timeLeft) {
+        if (!(entityLiving instanceof PlayerEntity)) return;
+        PlayerEntity player = (PlayerEntity)entityLiving;
 
         if (isReady(stack)) {
             if (!worldIn.isRemote) {
@@ -75,7 +75,9 @@ public class ItemMusket extends Item {
             }
             player.playSound(SOUND_MUSKET_FIRE, 1, 1);
 
-            stack.damageItem(1, player);
+            stack.damageItem(1, player, (entity) -> {
+                entity.sendBreakAnimation(player.getActiveHand());
+            });
 
             setReady(stack, false);
             setLoaded(stack, false);
@@ -86,11 +88,11 @@ public class ItemMusket extends Item {
     }
 
     @Override
-    public void onUsingTick(ItemStack stack, EntityLivingBase entityLiving, int timeLeft) {
-        if (!(entityLiving instanceof EntityPlayer)) return;
+    public void onUsingTick(ItemStack stack, LivingEntity entityLiving, int timeLeft) {
+        if (!(entityLiving instanceof PlayerEntity)) return;
 
         if (getUseDuration(stack) - timeLeft >= RELOAD_DURATION && !isReady(stack) && !isLoaded(stack)) {
-            EntityPlayer player = (EntityPlayer)entityLiving;
+            PlayerEntity player = (PlayerEntity)entityLiving;
 
             if (!player.abilities.isCreativeMode) {
                 ItemStack ammoStack = findAmmo(player);
@@ -111,11 +113,11 @@ public class ItemMusket extends Item {
     }
 
     @Override
-    public EnumAction getUseAction(ItemStack stack) {
+    public UseAction getUseAction(ItemStack stack) {
         if (isReady(stack)) {
-            return EnumAction.BOW;
+            return UseAction.BOW;
         } else {
-            return isLoaded(stack) ? EnumAction.NONE : EnumAction.BLOCK;
+            return isLoaded(stack) ? UseAction.NONE : UseAction.BLOCK;
         }
     }
 
@@ -128,12 +130,12 @@ public class ItemMusket extends Item {
         return stack.getItem() instanceof ItemCartridge;
     }
 
-    private ItemStack findAmmo(EntityPlayer player) {
-        if (isAmmo(player.getHeldItem(EnumHand.OFF_HAND))) {
-            return player.getHeldItem(EnumHand.OFF_HAND);
+    private ItemStack findAmmo(PlayerEntity player) {
+        if (isAmmo(player.getHeldItem(Hand.OFF_HAND))) {
+            return player.getHeldItem(Hand.OFF_HAND);
 
-        } else if (isAmmo(player.getHeldItem(EnumHand.MAIN_HAND))) {
-            return player.getHeldItem(EnumHand.MAIN_HAND);
+        } else if (isAmmo(player.getHeldItem(Hand.MAIN_HAND))) {
+            return player.getHeldItem(Hand.MAIN_HAND);
 
         } else {
             for (int i = 0; i != player.inventory.getSizeInventory(); ++i) {
@@ -145,10 +147,10 @@ public class ItemMusket extends Item {
         }
     }
 
-    private void fireBullet(World worldIn, EntityPlayer player, float dispersion_std) {
+    private void fireBullet(World worldIn, PlayerEntity player, float dispersion_std) {
         Vec3d front = Vec3d.fromPitchYaw(player.rotationPitch, player.rotationYaw);
         Vec3d side = Vec3d.fromPitchYaw(0, player.rotationYaw + 90);
-        if (player.getActiveHand() == EnumHand.OFF_HAND) side = side.scale(-1);
+        if (player.getActiveHand() == Hand.OFF_HAND) side = side.scale(-1);
         Vec3d down = Vec3d.fromPitchYaw(player.rotationPitch + 90, player.rotationYaw);
 
         Vec3d spawnPoint = new Vec3d(
@@ -168,23 +170,24 @@ public class ItemMusket extends Item {
         front = front.rotatePitch(dispersion_std * gaussian * MathHelper.sin(angle))
                        .rotateYaw(dispersion_std * gaussian * MathHelper.cos(angle));
 
-        bullet.motionX = front.x * EntityBullet.VELOCITY;
-        bullet.motionY = front.y * EntityBullet.VELOCITY;
-        bullet.motionZ = front.z * EntityBullet.VELOCITY;
+        Vec3d motion = front.scale(EntityBullet.VELOCITY);
 
-        bullet.motionX += player.motionX;
-        bullet.motionZ += player.motionZ;
-        if (!player.onGround) {
-            bullet.motionY += player.motionY;
-        }
+        Vec3d playerMotion = player.getMotion();
+        motion.add(
+            playerMotion.x,
+            player.onGround ? 0 : playerMotion.y,
+            playerMotion.z
+        );
 
-        worldIn.spawnEntity(bullet);
+        bullet.setMotion(motion);
+
+        worldIn.addEntity(bullet);
     }
 
-    private void fireParticles(World world, EntityPlayer player) {
+    private void fireParticles(World world, PlayerEntity player) {
         Vec3d front = Vec3d.fromPitchYaw(player.rotationPitch, player.rotationYaw);
         Vec3d side = Vec3d.fromPitchYaw(0, player.rotationYaw + 90);
-        if (player.getActiveHand() == EnumHand.OFF_HAND) side = side.scale(-1);
+        if (player.getActiveHand() == Hand.OFF_HAND) side = side.scale(-1);
         Vec3d down = Vec3d.fromPitchYaw(player.rotationPitch + 90, player.rotationYaw);
 
         Vec3d spawnPoint = new Vec3d(
@@ -199,7 +202,7 @@ public class ItemMusket extends Item {
             Vec3d p = spawnPoint.add(front.scale(0.5 + t));
             Vec3d v = front.scale(0.1 + 0.05 * (1 - t));
 
-            world.spawnParticle(Particles.SMOKE,
+            world.addParticle(ParticleTypes.SMOKE,
                 p.x,
                 p.y,
                 p.z,
@@ -211,20 +214,20 @@ public class ItemMusket extends Item {
     }
 
     private void setLoaded(ItemStack stack, boolean loaded) {
-        stack.getOrCreateTag().setByte("loaded", (byte)(loaded ? 1 : 0));
+        stack.getOrCreateTag().putByte("loaded", (byte)(loaded ? 1 : 0));
     }
 
     private boolean isLoaded(ItemStack stack) {
-        NBTTagCompound tag = stack.getTag();
+        CompoundNBT tag = stack.getTag();
         return tag != null && tag.getByte("loaded") == 1;
     }
 
     private void setReady(ItemStack stack, boolean ready) {
-        stack.getOrCreateTag().setByte("ready", (byte)(ready ? 1 : 0));
+        stack.getOrCreateTag().putByte("ready", (byte)(ready ? 1 : 0));
     }
 
     private boolean isReady(ItemStack stack) {
-        NBTTagCompound tag = stack.getTag();
+        CompoundNBT tag = stack.getTag();
         return tag != null && tag.getByte("ready") == 1;
     }
 }

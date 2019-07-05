@@ -73,7 +73,7 @@ public class ItemMusket extends Item {
             } else {
                 fireParticles(worldIn, player);
             }
-            player.playSound(SOUND_MUSKET_FIRE, 1, 1);
+            player.playSound(SOUND_MUSKET_FIRE, 1.5f, 1);
 
             stack.damageItem(1, player, (entity) -> {
                 entity.sendBreakAnimation(player.getActiveHand());
@@ -102,7 +102,7 @@ public class ItemMusket extends Item {
                 if (ammoStack.isEmpty()) player.inventory.deleteStack(ammoStack);
             }
 
-            player.playSound(SOUND_MUSKET_READY, 1, 1);
+            player.playSound(SOUND_MUSKET_READY, 0.5f, 1);
             setLoaded(stack, true);
         }
     }

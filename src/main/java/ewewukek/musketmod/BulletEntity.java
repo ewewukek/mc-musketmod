@@ -27,7 +27,7 @@ import net.minecraftforge.fml.network.FMLPlayMessages;
 import net.minecraftforge.fml.network.NetworkHooks;
 import net.minecraftforge.registries.ObjectHolder;
 
-public class EntityBullet extends Entity implements IEntityAdditionalSpawnData {
+public class BulletEntity extends Entity implements IEntityAdditionalSpawnData {
     private static final Random random = new Random();
     static final double VELOCITY = 9; // 180 m/s
     static final double GRAVITY = 0.05;
@@ -40,14 +40,14 @@ public class EntityBullet extends Entity implements IEntityAdditionalSpawnData {
     public short ticksLeft;
 
     @ObjectHolder(MusketMod.MODID + ":bullet")
-    public static EntityType<EntityBullet> TYPE;
+    public static EntityType<BulletEntity> TYPE;
 
-    public EntityBullet(World world) {
+    public BulletEntity(World world) {
         super(TYPE, world);
         ticksLeft = 50;
     }
 
-    public EntityBullet(FMLPlayMessages.SpawnEntity packet, World world) {
+    public BulletEntity(FMLPlayMessages.SpawnEntity packet, World world) {
         this(world);
     }
 
@@ -56,7 +56,7 @@ public class EntityBullet extends Entity implements IEntityAdditionalSpawnData {
             && world instanceof ServerWorld ? ((ServerWorld)world).getEntityByUuid(shooterUuid) : null;
     }
 
-    public DamageSource causeMusketDamage(EntityBullet bullet, Entity attacker) {
+    public DamageSource causeMusketDamage(BulletEntity bullet, Entity attacker) {
         return (new IndirectEntityDamageSource("musket", bullet, attacker)).setProjectile();
     }
 

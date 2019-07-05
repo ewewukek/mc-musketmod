@@ -17,7 +17,7 @@ import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 import net.minecraftforge.registries.ObjectHolder;
 
-public class ItemMusket extends Item {
+public class MusketItem extends Item {
     public static final int DURABILITY = 250;
     public static final int RELOAD_DURATION = 30;
     public static final int AIM_DURATION = 20;
@@ -33,7 +33,7 @@ public class ItemMusket extends Item {
     @ObjectHolder(MusketMod.MODID + ":musket_fire")
     public static SoundEvent SOUND_MUSKET_FIRE;
 
-    public ItemMusket(Item.Properties properties) {
+    public MusketItem(Item.Properties properties) {
         super(properties.defaultMaxDamage(DURABILITY));
 
         addPropertyOverride(new ResourceLocation("loaded"), (stack, world, player) -> {
@@ -167,12 +167,12 @@ public class ItemMusket extends Item {
         front = front.rotatePitch(dispersion_std * gaussian * MathHelper.sin(angle))
                        .rotateYaw(dispersion_std * gaussian * MathHelper.cos(angle));
 
-        Vec3d motion = front.scale(EntityBullet.VELOCITY);
+        Vec3d motion = front.scale(BulletEntity.VELOCITY);
 
         Vec3d playerMotion = player.getMotion();
         motion.add(playerMotion.x, player.onGround ? 0 : playerMotion.y, playerMotion.z);
 
-        EntityBullet bullet = new EntityBullet(worldIn);
+        BulletEntity bullet = new BulletEntity(worldIn);
         bullet.shooterUuid = player.getUniqueID();
         bullet.setPosition(pos.x, pos.y, pos.z);
         bullet.setMotion(motion);

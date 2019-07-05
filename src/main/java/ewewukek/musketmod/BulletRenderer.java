@@ -14,20 +14,20 @@ import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 
 @OnlyIn(Dist.CLIENT)
-public class RenderBullet extends EntityRenderer<EntityBullet> {
+public class BulletRenderer extends EntityRenderer<BulletEntity> {
     public static final ResourceLocation TEXTURE = new ResourceLocation(MusketMod.MODID + ":textures/entity/bullet.png");
 
-    public RenderBullet(EntityRendererManager manager) {
+    public BulletRenderer(EntityRendererManager manager) {
         super(manager);
     }
 
     @Override
-    protected ResourceLocation getEntityTexture(EntityBullet arg0) {
+    protected ResourceLocation getEntityTexture(BulletEntity bullet) {
         return TEXTURE;
     }
 
     @Override
-    public void doRender(EntityBullet bullet, double x, double y, double z, float yaw, float partialTicks) {
+    public void doRender(BulletEntity bullet, double x, double y, double z, float yaw, float partialTicks) {
         bindEntityTexture(bullet);
         GlStateManager.pushMatrix();
         GlStateManager.disableLighting();

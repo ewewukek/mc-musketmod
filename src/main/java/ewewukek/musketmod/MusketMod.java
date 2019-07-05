@@ -24,7 +24,7 @@ public class MusketMod {
     }
 
     public void onClientSetup(FMLClientSetupEvent event) {
-        RenderingRegistry.registerEntityRenderingHandler(EntityBullet.class, RenderBullet::new);
+        RenderingRegistry.registerEntityRenderingHandler(BulletEntity.class, BulletRenderer::new);
     }
 
     @Mod.EventBusSubscriber(bus = Mod.EventBusSubscriber.Bus.MOD)
@@ -35,15 +35,15 @@ public class MusketMod {
                 new Item(new Item.Properties().group(ItemGroup.MISC)).setRegistryName(MODID, "barrel"),
                 new Item(new Item.Properties().group(ItemGroup.MISC)).setRegistryName(MODID, "stock"),
                 new Item(new Item.Properties().group(ItemGroup.COMBAT)).setRegistryName(MODID, "cartridge"),
-                new ItemMusket(new Item.Properties().group(ItemGroup.COMBAT)).setRegistryName(MODID, "musket")
+                new MusketItem(new Item.Properties().group(ItemGroup.COMBAT)).setRegistryName(MODID, "musket")
             );
         }
 
         @SubscribeEvent
         public static void onEntityRegistry(final RegistryEvent.Register<EntityType<?>> event) {
             event.getRegistry().register(
-                EntityType.Builder.<EntityBullet>create(EntityClassification.MISC)
-                    .setCustomClientFactory(EntityBullet::new)
+                EntityType.Builder.<BulletEntity>create(EntityClassification.MISC)
+                    .setCustomClientFactory(BulletEntity::new)
                     .setTrackingRange(64).setUpdateInterval(5).setShouldReceiveVelocityUpdates(false)
                     .build(MODID + ":bullet").setRegistryName(MODID, "bullet")
             );

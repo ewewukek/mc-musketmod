@@ -153,11 +153,8 @@ public class ItemMusket extends Item {
         if (player.getActiveHand() == Hand.OFF_HAND) side = side.scale(-1);
         Vec3d down = Vec3d.fromPitchYaw(player.rotationPitch + 90, player.rotationYaw);
 
-        Vec3d spawnPoint = new Vec3d(
-            player.posX,
-            player.posY + player.getEyeHeight(),
-            player.posZ
-        ).add(side.add(down).scale(0.1));
+        Vec3d spawnPoint = new Vec3d(player.posX, player.posY + player.getEyeHeight(), player.posZ)
+                                .add(side.add(down).scale(0.1));
 
         EntityBullet bullet = new EntityBullet(worldIn);
         bullet.shooter = player.getUniqueID();
@@ -173,11 +170,7 @@ public class ItemMusket extends Item {
         Vec3d motion = front.scale(EntityBullet.VELOCITY);
 
         Vec3d playerMotion = player.getMotion();
-        motion.add(
-            playerMotion.x,
-            player.onGround ? 0 : playerMotion.y,
-            playerMotion.z
-        );
+        motion.add(playerMotion.x, player.onGround ? 0 : playerMotion.y, playerMotion.z);
 
         bullet.setMotion(motion);
 
@@ -190,11 +183,8 @@ public class ItemMusket extends Item {
         if (player.getActiveHand() == Hand.OFF_HAND) side = side.scale(-1);
         Vec3d down = Vec3d.fromPitchYaw(player.rotationPitch + 90, player.rotationYaw);
 
-        Vec3d spawnPoint = new Vec3d(
-            player.posX,
-            player.posY + player.getEyeHeight(),
-            player.posZ
-        ).add(side.add(down).scale(0.1));
+        Vec3d spawnPoint = new Vec3d(player.posX, player.posY + player.getEyeHeight(), player.posZ)
+                                .add(side.add(down).scale(0.1));
 
         for (int i = 0; i != 10; ++i) {
             float t = random.nextFloat();

@@ -27,7 +27,7 @@ public class MusketMod {
         RenderingRegistry.registerEntityRenderingHandler(EntityBullet.class, RenderBullet::new);
     }
 
-    @Mod.EventBusSubscriber(bus=Mod.EventBusSubscriber.Bus.MOD)
+    @Mod.EventBusSubscriber(bus = Mod.EventBusSubscriber.Bus.MOD)
     public static class RegistryEvents {
         @SubscribeEvent
         public static void onItemsRegistry(final RegistryEvent.Register<Item> event) {

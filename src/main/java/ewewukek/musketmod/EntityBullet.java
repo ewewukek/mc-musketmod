@@ -135,8 +135,7 @@ public class EntityBullet extends Entity {
         if (target != null) {
             if (target instanceof PlayerEntity) {
                 Entity shooter = getShootingEntity();
-                if (shooter instanceof PlayerEntity
-                    && !((PlayerEntity)shooter).canAttackPlayer((PlayerEntity)target)) {
+                if (shooter instanceof PlayerEntity && !((PlayerEntity)shooter).canAttackPlayer((PlayerEntity)target)) {
 
                     target = null;
                 }

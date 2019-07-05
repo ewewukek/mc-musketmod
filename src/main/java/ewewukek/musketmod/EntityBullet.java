@@ -51,10 +51,6 @@ public class EntityBullet extends Entity implements IEntityAdditionalSpawnData {
         this(world);
     }
 
-    public EntityBullet(EntityType<EntityBullet> type, World world) {
-        super(type, world);
-    }
-
     public Entity getShooter() {
         return shooterUuid != null
             && world instanceof ServerWorld ? ((ServerWorld)world).getEntityByUuid(shooterUuid) : null;

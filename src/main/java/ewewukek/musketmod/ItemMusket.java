@@ -160,7 +160,7 @@ public class ItemMusket extends Item {
         Vec3d front = Vec3d.fromPitchYaw(player.rotationPitch, player.rotationYaw);
 
         EntityBullet bullet = new EntityBullet(worldIn);
-        bullet.shooter = player.getUniqueID();
+        bullet.shooterUuid = player.getUniqueID();
         bullet.setPosition(pos.x, pos.y, pos.z);
 
         float angle = (float)Math.PI * 2 * random.nextFloat();

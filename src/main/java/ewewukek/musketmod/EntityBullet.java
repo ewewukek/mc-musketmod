@@ -36,7 +36,7 @@ public class EntityBullet extends Entity {
     static final float DAMAGE_FACTOR_MIN = 0.255f;
     static final float DAMAGE_FACTOR_MAX = 0.275f;
 
-    public UUID shooter;
+    public UUID shooterUuid;
     public short ticksLeft;
 
     @ObjectHolder(MusketMod.MODID + ":bullet")
@@ -63,9 +63,9 @@ public class EntityBullet extends Entity {
         return distance < d0 * d0;
     }
 
-    public Entity getShootingEntity() {
-        return shooter != null
-            && world instanceof ServerWorld ? ((ServerWorld)world).getEntityByUuid(shooter) : null;
+    public Entity getShooter() {
+        return shooterUuid != null
+            && world instanceof ServerWorld ? ((ServerWorld)world).getEntityByUuid(shooterUuid) : null;
     }
 
     public DamageSource causeMusketDamage(EntityBullet bullet, Entity attacker) {
@@ -134,7 +134,7 @@ public class EntityBullet extends Entity {
         Entity target = closestEntityOnPath(from, to);
         if (target != null) {
             if (target instanceof PlayerEntity) {
-                Entity shooter = getShootingEntity();
+                Entity shooter = getShooter();
                 if (shooter instanceof PlayerEntity && !((PlayerEntity)shooter).canAttackPlayer((PlayerEntity)target)) {
 
                     target = null;
@@ -155,7 +155,7 @@ public class EntityBullet extends Entity {
     }
 
     private void hitEntity(Entity target) {
-        Entity shooter = getShootingEntity();
+        Entity shooter = getShooter();
         DamageSource damagesource = causeMusketDamage(this, shooter != null ? shooter : this);
 
         float energy = (float)getMotion().lengthSquared();
@@ -164,7 +164,7 @@ public class EntityBullet extends Entity {
     }
 
     private Predicate<Entity> getTargetPredicate() {
-        Entity shooter = getShootingEntity();
+        Entity shooter = getShooter();
         return (entity) -> {
             return !entity.isSpectator() && entity.isAlive() && entity.canBeCollidedWith() && entity != shooter;
         };
@@ -175,7 +175,7 @@ public class EntityBullet extends Entity {
         double result_dist = 0;
 
         Vec3d motion = getMotion();
-        Entity shooter = getShootingEntity();
+        Entity shooter = getShooter();
 
         AxisAlignedBB aabbSelection = getBoundingBox().expand(motion.x, motion.y, motion.z).grow(0.01);
         for (Entity entity : world.getEntitiesInAABBexcluding(this, aabbSelection, getTargetPredicate())) {
@@ -200,18 +200,18 @@ public class EntityBullet extends Entity {
 
     @Override
     protected void readAdditional(CompoundNBT compound) {
-        if (compound.hasUniqueId("OwnerUUID")) {
-            shooter = compound.getUniqueId("OwnerUUID");
+        if (compound.hasUniqueId("shooterUuid")) {
+            shooterUuid = compound.getUniqueId("shooterUuid");
         }
-        ticksLeft = compound.getShort("life");
+        ticksLeft = compound.getShort("ticksLeft");
     }
 
     @Override
     protected void writeAdditional(CompoundNBT compound) {
-        if (shooter != null) {
-            compound.putUniqueId("OwnerUUID", shooter);
+        if (shooterUuid != null) {
+            compound.putUniqueId("shooterUuid", shooterUuid);
         }
-        compound.putShort("life", ticksLeft);
+        compound.putShort("ticksLeft", ticksLeft);
     }
 
     @Override

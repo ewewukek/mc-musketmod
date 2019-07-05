@@ -159,10 +159,6 @@ public class ItemMusket extends Item {
         Vec3d pos = getPlayerFiringPoint(player);
         Vec3d front = Vec3d.fromPitchYaw(player.rotationPitch, player.rotationYaw);
 
-        EntityBullet bullet = new EntityBullet(worldIn);
-        bullet.shooterUuid = player.getUniqueID();
-        bullet.setPosition(pos.x, pos.y, pos.z);
-
         float angle = (float)Math.PI * 2 * random.nextFloat();
         float gaussian = Math.abs((float)random.nextGaussian());
         if (gaussian > 4) gaussian = 4;
@@ -175,6 +171,9 @@ public class ItemMusket extends Item {
         Vec3d playerMotion = player.getMotion();
         motion.add(playerMotion.x, player.onGround ? 0 : playerMotion.y, playerMotion.z);
 
+        EntityBullet bullet = new EntityBullet(worldIn);
+        bullet.shooterUuid = player.getUniqueID();
+        bullet.setPosition(pos.x, pos.y, pos.z);
         bullet.setMotion(motion);
 
         worldIn.addEntity(bullet);

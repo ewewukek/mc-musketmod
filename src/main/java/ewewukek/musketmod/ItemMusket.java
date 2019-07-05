@@ -3,7 +3,6 @@ package ewewukek.musketmod;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Item;
-import net.minecraft.item.ItemGroup;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.UseAction;
 import net.minecraft.nbt.CompoundNBT;
@@ -19,6 +18,7 @@ import net.minecraft.world.World;
 import net.minecraftforge.registries.ObjectHolder;
 
 public class ItemMusket extends Item {
+    public static final int DURABILITY = 250;
     public static final int RELOAD_DURATION = 30;
     public static final int AIM_DURATION = 20;
     public static final float DISPERSION_MULTIPLIER = 3;
@@ -33,10 +33,8 @@ public class ItemMusket extends Item {
     @ObjectHolder(MusketMod.MODID + ":musket_fire")
     public static SoundEvent SOUND_MUSKET_FIRE;
 
-    public ItemMusket() {
-        super(new Item.Properties()
-            .defaultMaxDamage(250)
-            .group(ItemGroup.COMBAT));
+    public ItemMusket(Item.Properties properties) {
+        super(properties.defaultMaxDamage(DURABILITY));
 
         addPropertyOverride(new ResourceLocation("loaded"), (stack, world, player) -> {
             return isLoaded(stack) ? 1 : 0;

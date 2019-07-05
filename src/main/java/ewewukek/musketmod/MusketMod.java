@@ -35,7 +35,7 @@ public class MusketMod {
                 new Item(new Item.Properties().group(ItemGroup.MISC)).setRegistryName(MODID, "barrel"),
                 new Item(new Item.Properties().group(ItemGroup.MISC)).setRegistryName(MODID, "stock"),
                 new Item(new Item.Properties().group(ItemGroup.COMBAT)).setRegistryName(MODID, "cartridge"),
-                new ItemMusket().setRegistryName(MODID, "musket")
+                new ItemMusket(new Item.Properties().group(ItemGroup.COMBAT)).setRegistryName(MODID, "musket")
             );
         }
 

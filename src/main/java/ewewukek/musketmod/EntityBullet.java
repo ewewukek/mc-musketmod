@@ -11,6 +11,7 @@ import net.minecraft.entity.EntityType;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.network.IPacket;
+import net.minecraft.network.PacketBuffer;
 import net.minecraft.particles.ParticleTypes;
 import net.minecraft.util.DamageSource;
 import net.minecraft.util.IndirectEntityDamageSource;
@@ -21,11 +22,12 @@ import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.ServerWorld;
 import net.minecraft.world.World;
+import net.minecraftforge.fml.common.registry.IEntityAdditionalSpawnData;
 import net.minecraftforge.fml.network.FMLPlayMessages;
 import net.minecraftforge.fml.network.NetworkHooks;
 import net.minecraftforge.registries.ObjectHolder;
 
-public class EntityBullet extends Entity {
+public class EntityBullet extends Entity implements IEntityAdditionalSpawnData {
     private static final Random random = new Random();
     static final double VELOCITY = 9; // 180 m/s
     static final double GRAVITY = 0.05;
@@ -207,5 +209,20 @@ public class EntityBullet extends Entity {
     @Override
     public IPacket<?> createSpawnPacket() {
         return NetworkHooks.getEntitySpawningPacket(this);
+    }
+
+    private static final UUID EMPTY_UUID = new UUID(0, 0);
+
+    @Override
+    public void writeSpawnData(PacketBuffer data) {
+        data.writeUniqueId(shooterUuid != null ? shooterUuid : EMPTY_UUID);
+        data.writeShort(ticksLeft);
+    }
+
+    @Override
+    public void readSpawnData(PacketBuffer data) {
+        UUID uuid = data.readUniqueId();
+        if (!uuid.equals(EMPTY_UUID)) shooterUuid = uuid;
+        ticksLeft = data.readShort();
     }
 }

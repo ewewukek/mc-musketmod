@@ -34,8 +34,8 @@ public class MusketMod {
             event.getRegistry().registerAll(
                 new Item(new Item.Properties().group(ItemGroup.MISC)).setRegistryName(MODID, "barrel"),
                 new Item(new Item.Properties().group(ItemGroup.MISC)).setRegistryName(MODID, "stock"),
-                new ItemCartridge().setRegistryName(MusketMod.MODID, "cartridge"),
-                new ItemMusket().setRegistryName(MusketMod.MODID, "musket")
+                new ItemCartridge().setRegistryName(MODID, "cartridge"),
+                new ItemMusket().setRegistryName(MODID, "musket")
             );
         }
 

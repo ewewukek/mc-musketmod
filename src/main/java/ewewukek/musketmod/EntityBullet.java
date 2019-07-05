@@ -21,8 +21,6 @@ import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.ServerWorld;
 import net.minecraft.world.World;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.fml.network.FMLPlayMessages;
 import net.minecraftforge.fml.network.NetworkHooks;
 import net.minecraftforge.registries.ObjectHolder;
@@ -53,15 +51,6 @@ public class EntityBullet extends Entity {
 
     public EntityBullet(EntityType<EntityBullet> type, World world) {
         super(type, world);
-    }
-
-    @Override
-    @OnlyIn(Dist.CLIENT)
-    public boolean isInRangeToRenderDist(double distance) {
-        double d0 = getBoundingBox().getAverageEdgeLength() * 4;
-        if (Double.isNaN(d0)) d0 = 4;
-        d0 = d0 * 64;
-        return distance < d0 * d0;
     }
 
     public Entity getShooter() {

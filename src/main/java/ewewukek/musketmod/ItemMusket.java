@@ -24,6 +24,9 @@ public class ItemMusket extends Item {
     public static final float DISPERSION_MULTIPLIER = 3;
     public static final float DISPERSION_STD = (float)Math.toRadians(0.4);
 
+    @ObjectHolder(MusketMod.MODID + ":cartridge")
+    public static Item CARTRIDGE;
+
     @ObjectHolder(MusketMod.MODID + ":musket_ready")
     public static SoundEvent SOUND_MUSKET_READY;
 
@@ -127,7 +130,7 @@ public class ItemMusket extends Item {
     }
 
     private boolean isAmmo(ItemStack stack) {
-        return stack.getItem() instanceof ItemCartridge;
+        return stack.getItem() == CARTRIDGE;
     }
 
     private ItemStack findAmmo(PlayerEntity player) {

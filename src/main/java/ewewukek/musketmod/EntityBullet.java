@@ -55,6 +55,7 @@ public class EntityBullet extends Entity {
         super(type, world);
     }
 
+    @Override
     @OnlyIn(Dist.CLIENT)
     public boolean isInRangeToRenderDist(double distance) {
         double d0 = getBoundingBox().getAverageEdgeLength() * 4;

@@ -147,18 +147,21 @@ public class ItemMusket extends Item {
         }
     }
 
-    private void fireBullet(World worldIn, PlayerEntity player, float dispersion_std) {
-        Vec3d front = Vec3d.fromPitchYaw(player.rotationPitch, player.rotationYaw);
+    private Vec3d getPlayerFiringPoint(PlayerEntity player) {
         Vec3d side = Vec3d.fromPitchYaw(0, player.rotationYaw + 90);
         if (player.getActiveHand() == Hand.OFF_HAND) side = side.scale(-1);
         Vec3d down = Vec3d.fromPitchYaw(player.rotationPitch + 90, player.rotationYaw);
+        return new Vec3d(player.posX, player.posY + player.getEyeHeight(), player.posZ)
+                    .add(side.add(down).scale(0.1));
+    }
 
-        Vec3d spawnPoint = new Vec3d(player.posX, player.posY + player.getEyeHeight(), player.posZ)
-                                .add(side.add(down).scale(0.1));
+    private void fireBullet(World worldIn, PlayerEntity player, float dispersion_std) {
+        Vec3d pos = getPlayerFiringPoint(player);
+        Vec3d front = Vec3d.fromPitchYaw(player.rotationPitch, player.rotationYaw);
 
         EntityBullet bullet = new EntityBullet(worldIn);
         bullet.shooter = player.getUniqueID();
-        bullet.setPosition(spawnPoint.x, spawnPoint.y, spawnPoint.z);
+        bullet.setPosition(pos.x, pos.y, pos.z);
 
         float angle = (float)Math.PI * 2 * random.nextFloat();
         float gaussian = Math.abs((float)random.nextGaussian());
@@ -178,18 +181,13 @@ public class ItemMusket extends Item {
     }
 
     private void fireParticles(World world, PlayerEntity player) {
+        Vec3d pos = getPlayerFiringPoint(player);
         Vec3d front = Vec3d.fromPitchYaw(player.rotationPitch, player.rotationYaw);
-        Vec3d side = Vec3d.fromPitchYaw(0, player.rotationYaw + 90);
-        if (player.getActiveHand() == Hand.OFF_HAND) side = side.scale(-1);
-        Vec3d down = Vec3d.fromPitchYaw(player.rotationPitch + 90, player.rotationYaw);
-
-        Vec3d spawnPoint = new Vec3d(player.posX, player.posY + player.getEyeHeight(), player.posZ)
-                                .add(side.add(down).scale(0.1));
 
         for (int i = 0; i != 10; ++i) {
             float t = random.nextFloat();
 
-            Vec3d p = spawnPoint.add(front.scale(0.5 + t));
+            Vec3d p = pos.add(front.scale(0.5 + t));
             Vec3d v = front.scale(0.1 + 0.05 * (1 - t));
 
             world.addParticle(ParticleTypes.SMOKE,

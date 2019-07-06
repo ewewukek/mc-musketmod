@@ -186,18 +186,9 @@ public class MusketItem extends Item {
 
         for (int i = 0; i != 10; ++i) {
             float t = random.nextFloat();
-
             Vec3d p = pos.add(front.scale(0.5 + t));
-            Vec3d v = front.scale(0.1 + 0.05 * (1 - t));
-
-            world.addParticle(ParticleTypes.SMOKE,
-                p.x,
-                p.y,
-                p.z,
-                v.x + (random.nextFloat() - 0.5) * (1 - t) * 0.05,
-                v.y + (random.nextFloat() - 0.5) * (1 - t) * 0.05,
-                v.z + (random.nextFloat() - 0.5) * (1 - t) * 0.05
-            );
+            Vec3d v = front.scale(0.1).scale(1 - t);
+            world.addParticle(ParticleTypes.POOF, p.x, p.y, p.z, v.x, v.y, v.z);
         }
     }
 

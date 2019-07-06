@@ -213,6 +213,10 @@ public class BulletEntity extends Entity implements IEntityAdditionalSpawnData {
     public void writeSpawnData(PacketBuffer data) {
         data.writeUniqueId(shooterUuid != null ? shooterUuid : EMPTY_UUID);
         data.writeShort(ticksLeft);
+        Vec3d motion = getMotion();
+        data.writeFloat((float)motion.x);
+        data.writeFloat((float)motion.y);
+        data.writeFloat((float)motion.z);
     }
 
     @Override
@@ -220,5 +224,7 @@ public class BulletEntity extends Entity implements IEntityAdditionalSpawnData {
         UUID uuid = data.readUniqueId();
         if (!uuid.equals(EMPTY_UUID)) shooterUuid = uuid;
         ticksLeft = data.readShort();
+        Vec3d motion = new Vec3d(data.readFloat(), data.readFloat(), data.readFloat());
+        setMotion(motion);
     }
 }

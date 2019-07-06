@@ -1,5 +1,6 @@
 package ewewukek.musketmod;
 
+import net.minecraft.entity.EntityClassification;
 import net.minecraft.entity.EntityType;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemGroup;
@@ -23,26 +24,27 @@ public class MusketMod {
     }
 
     public void onClientSetup(FMLClientSetupEvent event) {
-        RenderingRegistry.registerEntityRenderingHandler(EntityBullet.class, RenderBullet::new);
+        RenderingRegistry.registerEntityRenderingHandler(BulletEntity.class, BulletRenderer::new);
     }
 
-    @Mod.EventBusSubscriber(bus=Mod.EventBusSubscriber.Bus.MOD)
+    @Mod.EventBusSubscriber(bus = Mod.EventBusSubscriber.Bus.MOD)
     public static class RegistryEvents {
         @SubscribeEvent
         public static void onItemsRegistry(final RegistryEvent.Register<Item> event) {
             event.getRegistry().registerAll(
                 new Item(new Item.Properties().group(ItemGroup.MISC)).setRegistryName(MODID, "barrel"),
                 new Item(new Item.Properties().group(ItemGroup.MISC)).setRegistryName(MODID, "stock"),
-                new ItemCartridge().setRegistryName(MusketMod.MODID, "cartridge"),
-                new ItemMusket().setRegistryName(MusketMod.MODID, "musket")
+                new Item(new Item.Properties().group(ItemGroup.COMBAT)).setRegistryName(MODID, "cartridge"),
+                new MusketItem(new Item.Properties().group(ItemGroup.COMBAT)).setRegistryName(MODID, "musket")
             );
         }
 
         @SubscribeEvent
         public static void onEntityRegistry(final RegistryEvent.Register<EntityType<?>> event) {
             event.getRegistry().register(
-                EntityType.Builder.create(EntityBullet.class, EntityBullet::new)
-                    .tracker(64, 5, false)
+                EntityType.Builder.<BulletEntity>create(EntityClassification.MISC)
+                    .setCustomClientFactory(BulletEntity::new)
+                    .setTrackingRange(64).setUpdateInterval(5).setShouldReceiveVelocityUpdates(false)
                     .build(MODID + ":bullet").setRegistryName(MODID, "bullet")
             );
         }

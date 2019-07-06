@@ -2,31 +2,32 @@ package ewewukek.musketmod;
 
 import org.lwjgl.opengl.GL11;
 
+import com.mojang.blaze3d.platform.GlStateManager;
+
 import net.minecraft.client.renderer.BufferBuilder;
-import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.Tessellator;
-import net.minecraft.client.renderer.entity.Render;
-import net.minecraft.client.renderer.entity.RenderManager;
+import net.minecraft.client.renderer.entity.EntityRenderer;
+import net.minecraft.client.renderer.entity.EntityRendererManager;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.util.ResourceLocation;
-import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
 
 @OnlyIn(Dist.CLIENT)
-public class RenderBullet extends Render<EntityBullet> {
+public class BulletRenderer extends EntityRenderer<BulletEntity> {
     public static final ResourceLocation TEXTURE = new ResourceLocation(MusketMod.MODID + ":textures/entity/bullet.png");
 
-    public RenderBullet(RenderManager manager) {
+    public BulletRenderer(EntityRendererManager manager) {
         super(manager);
     }
 
     @Override
-    protected ResourceLocation getEntityTexture(EntityBullet arg0) {
+    protected ResourceLocation getEntityTexture(BulletEntity bullet) {
         return TEXTURE;
     }
 
     @Override
-    public void doRender(EntityBullet bullet, double x, double y, double z, float yaw, float partialTicks) {
+    public void doRender(BulletEntity bullet, double x, double y, double z, float yaw, float partialTicks) {
         bindEntityTexture(bullet);
         GlStateManager.pushMatrix();
         GlStateManager.disableLighting();

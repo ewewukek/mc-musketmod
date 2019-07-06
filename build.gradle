@@ -18,13 +18,14 @@ archivesBaseName = 'musketmod'
 sourceCompatibility = targetCompatibility = compileJava.sourceCompatibility = compileJava.targetCompatibility = '1.8'
 
 minecraft {
-    mappings channel: 'snapshot', version: '20180921-1.13'
+    mappings channel: 'snapshot', version: '20190621-1.14.2'
 
     runs {
         client {
             workingDirectory project.file('run')
 
             property 'forge.logging.markers', 'SCAN,REGISTRIES,REGISTRYDUMP'
+
             property 'forge.logging.console.level', 'debug'
 
             mods {
@@ -38,7 +39,24 @@ minecraft {
             workingDirectory project.file('run')
 
             property 'forge.logging.markers', 'SCAN,REGISTRIES,REGISTRYDUMP'
+
             property 'forge.logging.console.level', 'debug'
+
+            mods {
+                musketmod {
+                    source sourceSets.main
+                }
+            }
+        }
+
+        data {
+            workingDirectory project.file('run')
+
+            property 'forge.logging.markers', 'SCAN,REGISTRIES,REGISTRYDUMP'
+
+            property 'forge.logging.console.level', 'debug'
+
+            args '--mod', 'musketmod', '--all', '--output', file('src/generated/resources/')
 
             mods {
                 musketmod {
@@ -50,5 +68,5 @@ minecraft {
 }
 
 dependencies {
-    minecraft 'net.minecraftforge:forge:1.13.2-25.0.193'
+    minecraft 'net.minecraftforge:forge:1.14.3-27.0.24'
 }

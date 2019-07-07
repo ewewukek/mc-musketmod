@@ -7,6 +7,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.item.UseAction;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.particles.ParticleTypes;
+import net.minecraft.tags.FluidTags;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.ActionResultType;
 import net.minecraft.util.Hand;
@@ -44,6 +45,10 @@ public class MusketItem extends Item {
     @Override
     public ActionResult<ItemStack> onItemRightClick(World worldIn, PlayerEntity player, Hand hand) {
         ItemStack stack = player.getHeldItem(hand);
+
+        if (player.areEyesInFluid(FluidTags.WATER)) {
+            return new ActionResult<>(ActionResultType.FAIL, stack);
+        }
 
         boolean haveAmmo = !findAmmo(player).isEmpty() || player.abilities.isCreativeMode;
         if (isLoaded(stack) || haveAmmo) {

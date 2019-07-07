@@ -12,6 +12,7 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.network.IPacket;
 import net.minecraft.network.PacketBuffer;
+import net.minecraft.particles.BlockParticleData;
 import net.minecraft.particles.ParticleTypes;
 import net.minecraft.util.DamageSource;
 import net.minecraft.util.IndirectEntityDamageSource;
@@ -138,6 +139,16 @@ public class BulletEntity extends Entity implements IEntityAdditionalSpawnData {
 
         BlockState blockstate = world.getBlockState(collision.getPos());
         blockstate.onProjectileCollision(world, blockstate, collision, this);
+
+        int impactParticleCount = (int)(getMotion().lengthSquared() / 20);
+        if (impactParticleCount > 0) {
+            ((ServerWorld)world).spawnParticle(
+                new BlockParticleData(ParticleTypes.BLOCK, blockstate),
+                to.x, to.y, to.z,
+                impactParticleCount,
+                0, 0, 0, 0.01
+            );
+        }
 
         return true;
     }

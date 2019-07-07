@@ -63,8 +63,6 @@ public class BulletEntity extends Entity implements IEntityAdditionalSpawnData {
 
     @Override
     public void tick() {
-        super.tick();
-
         if (!world.isRemote && processCollision()) {
             remove();
             return;

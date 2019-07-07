@@ -51,7 +51,18 @@ public class MusketItem extends Item {
             return new ActionResult<>(ActionResultType.FAIL, stack);
         }
 
+        if (hand == Hand.MAIN_HAND) {
+            ItemStack offHandStack = player.getHeldItem(Hand.OFF_HAND);
+            if (offHandStack.getItem() == MusketMod.MUSKET) {
+                if (isReady(offHandStack) && isReady(stack)) {
+                    player.setActiveHand(Hand.OFF_HAND);
+                    return new ActionResult<>(ActionResultType.SUCCESS, stack);
+                }
+            }
+        }
+
         boolean haveAmmo = !findAmmo(player).isEmpty() || creative;
+
         if (isLoaded(stack) || haveAmmo) {
             player.setActiveHand(hand);
             return new ActionResult<>(ActionResultType.SUCCESS, stack);

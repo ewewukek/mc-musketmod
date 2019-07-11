@@ -1,11 +1,15 @@
 package ewewukek.musketmod;
 
+import net.minecraft.client.Minecraft;
 import net.minecraft.entity.EntityClassification;
 import net.minecraft.entity.EntityType;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemGroup;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.SoundEvent;
+import net.minecraftforge.client.event.RenderPlayerEvent;
+import net.minecraftforge.client.event.RenderSpecificHandEvent;
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.client.registry.RenderingRegistry;
@@ -57,6 +61,32 @@ public class MusketMod {
                 new SoundEvent(new ResourceLocation(MODID, "musket_ready")).setRegistryName(MODID, "musket_ready"),
                 new SoundEvent(new ResourceLocation(MODID, "musket_fire")).setRegistryName(MODID, "musket_fire")
             );
+        }
+
+    }
+
+    @Mod.EventBusSubscriber(bus = Mod.EventBusSubscriber.Bus.FORGE)
+    public static class ForgeEvents {
+        public static boolean playerHasMusketInHands(PlayerEntity player) {
+            Item mainHandItem = player.getHeldItemMainhand().getItem();
+            Item offHandItem = player.getHeldItemOffhand().getItem();
+            return mainHandItem == MUSKET || offHandItem == MUSKET;
+        }
+
+        @SubscribeEvent
+        public static void onRenderSpecificHandEvent(final RenderSpecificHandEvent event) {
+            PlayerEntity player = Minecraft.getInstance().player;
+            if (playerHasMusketInHands(player)) {
+                event.setCanceled(true);
+            }
+        }
+
+        @SubscribeEvent
+        public static void onRenderPlayerEventPre(final RenderPlayerEvent.Pre event) {
+            PlayerEntity player = event.getEntityPlayer();
+            if (playerHasMusketInHands(player)) {
+                event.setCanceled(true);
+            }
         }
     }
 }

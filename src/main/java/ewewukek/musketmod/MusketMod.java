@@ -1,6 +1,5 @@
 package ewewukek.musketmod;
 
-import net.minecraft.client.Minecraft;
 import net.minecraft.entity.EntityClassification;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.player.PlayerEntity;
@@ -75,8 +74,7 @@ public class MusketMod {
 
         @SubscribeEvent
         public static void onRenderSpecificHandEvent(final RenderSpecificHandEvent event) {
-            PlayerEntity player = Minecraft.getInstance().player;
-            if (playerHasMusketInHands(player)) {
+            if (event.getItemStack().getItem() == MUSKET) {
                 event.setCanceled(true);
             }
         }

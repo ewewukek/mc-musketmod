@@ -5,6 +5,7 @@ import net.minecraft.entity.EntityType;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemGroup;
+import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.SoundEvent;
 import net.minecraftforge.client.event.RenderPlayerEvent;
@@ -74,7 +75,8 @@ public class MusketMod {
 
         @SubscribeEvent
         public static void onRenderSpecificHandEvent(final RenderSpecificHandEvent event) {
-            if (event.getItemStack().getItem() == MUSKET) {
+            ItemStack stack = event.getItemStack();
+            if (!stack.isEmpty() && stack.getItem() == MUSKET) {
                 event.setCanceled(true);
             }
         }

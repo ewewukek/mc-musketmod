@@ -144,6 +144,16 @@ public class MusketItem extends Item {
         return slotChanged;
     }
 
+    public static boolean isLoaded(ItemStack stack) {
+        CompoundNBT tag = stack.getTag();
+        return tag != null && tag.getByte("loaded") == 1;
+    }
+
+    public static boolean isReady(ItemStack stack) {
+        CompoundNBT tag = stack.getTag();
+        return tag != null && tag.getByte("ready") == 1;
+    }
+
     private boolean isAmmo(ItemStack stack) {
         return stack.getItem() == CARTRIDGE;
     }
@@ -213,17 +223,7 @@ public class MusketItem extends Item {
         stack.getOrCreateTag().putByte("loaded", (byte)(loaded ? 1 : 0));
     }
 
-    private boolean isLoaded(ItemStack stack) {
-        CompoundNBT tag = stack.getTag();
-        return tag != null && tag.getByte("loaded") == 1;
-    }
-
     private void setReady(ItemStack stack, boolean ready) {
         stack.getOrCreateTag().putByte("ready", (byte)(ready ? 1 : 0));
-    }
-
-    private boolean isReady(ItemStack stack) {
-        CompoundNBT tag = stack.getTag();
-        return tag != null && tag.getByte("ready") == 1;
     }
 }

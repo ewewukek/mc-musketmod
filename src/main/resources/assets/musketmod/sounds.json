@@ -1,4 +1,19 @@
 {
+  "musket_load0": {
+    "sounds": [
+      "musketmod:musket_load0"
+    ]
+  },
+  "musket_load1": {
+    "sounds": [
+      "musketmod:musket_load1"
+    ]
+  },
+  "musket_load2": {
+    "sounds": [
+      "musketmod:musket_load2"
+    ]
+  },
   "musket_ready": {
     "sounds": [
       "musketmod:musket_ready"

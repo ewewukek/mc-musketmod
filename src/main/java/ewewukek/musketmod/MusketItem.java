@@ -12,6 +12,7 @@ import net.minecraft.util.ActionResult;
 import net.minecraft.util.ActionResultType;
 import net.minecraft.util.Hand;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.SoundCategory;
 import net.minecraft.util.SoundEvent;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3d;
@@ -25,8 +26,17 @@ public class MusketItem extends Item {
     public static final float DISPERSION_MULTIPLIER = 3;
     public static final float DISPERSION_STD = (float)Math.toRadians(0.4);
 
+    private int loadingStage;
+
     @ObjectHolder(MusketMod.MODID + ":cartridge")
     public static Item CARTRIDGE;
+
+    @ObjectHolder(MusketMod.MODID + ":musket_load0")
+    public static SoundEvent SOUND_MUSKET_LOAD_0;
+    @ObjectHolder(MusketMod.MODID + ":musket_load1")
+    public static SoundEvent SOUND_MUSKET_LOAD_1;
+    @ObjectHolder(MusketMod.MODID + ":musket_load2")
+    public static SoundEvent SOUND_MUSKET_LOAD_2;
 
     @ObjectHolder(MusketMod.MODID + ":musket_ready")
     public static SoundEvent SOUND_MUSKET_READY;
@@ -64,6 +74,7 @@ public class MusketItem extends Item {
         boolean haveAmmo = !findAmmo(player).isEmpty() || creative;
 
         if (isLoaded(stack) || haveAmmo) {
+            loadingStage = 0;
             player.setActiveHand(hand);
             return new ActionResult<>(ActionResultType.SUCCESS, stack);
 
@@ -102,6 +113,27 @@ public class MusketItem extends Item {
 
         } else if (isLoaded(stack)) {
             setReady(stack, true);
+        }
+    }
+
+    // called by LivingEntity.updateActiveHand
+    @Override
+    public void func_219972_a(World world, LivingEntity entity, ItemStack stack, int timeLeft) {
+        if (!(entity instanceof PlayerEntity)) return;
+
+        float usingDuration = (getUseDuration(stack) - timeLeft) / 20f;
+
+        if (!isLoaded(stack) && !world.isRemote) {
+            if (usingDuration > 0.2f && loadingStage == 0) {
+                world.playSound(null, entity.posX, entity.posY, entity.posZ, SOUND_MUSKET_LOAD_0, SoundCategory.PLAYERS, 0.5F, 1.0F);
+                loadingStage = 1;
+            } else if (usingDuration > 0.5f && loadingStage == 1) {
+                world.playSound(null, entity.posX, entity.posY, entity.posZ, SOUND_MUSKET_LOAD_1, SoundCategory.PLAYERS, 0.5F, 1.0F);
+                loadingStage = 2;
+            } else if (usingDuration > 1.0f && loadingStage == 2) {
+                world.playSound(null, entity.posX, entity.posY, entity.posZ, SOUND_MUSKET_LOAD_2, SoundCategory.PLAYERS, 0.5F, 1.0F);
+                loadingStage = 3;
+            }
         }
     }
 

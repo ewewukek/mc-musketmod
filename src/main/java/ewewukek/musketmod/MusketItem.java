@@ -165,9 +165,9 @@ public class MusketItem extends Item {
     @Override
     public UseAction getUseAction(ItemStack stack) {
         if (isReady(stack)) {
-            return UseAction.BOW;
+            return UseAction.CROSSBOW;
         } else {
-            return isLoaded(stack) ? UseAction.NONE : UseAction.BLOCK;
+            return UseAction.NONE;
         }
     }
 

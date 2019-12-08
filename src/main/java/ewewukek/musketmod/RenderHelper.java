@@ -53,6 +53,10 @@ public class RenderHelper {
             }
         }
 
+        // compensate rotated model
+        GlStateManager.translatef(0, 0.085f, 0);
+        GlStateManager.rotatef(-70f, 1, 0, 0);
+
         mc.getFirstPersonRenderer().renderItemSide(player, stack, isRightHand ? ItemCameraTransforms.TransformType.FIRST_PERSON_RIGHT_HAND : ItemCameraTransforms.TransformType.FIRST_PERSON_LEFT_HAND, !isRightHand);
 
         GlStateManager.popMatrix();

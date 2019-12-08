@@ -1,5 +1,7 @@
 package ewewukek.musketmod;
 
+import net.minecraft.client.renderer.entity.model.BipedModel;
+import net.minecraft.client.renderer.entity.model.PlayerModel;
 import net.minecraft.entity.EntityClassification;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.player.PlayerEntity;
@@ -7,9 +9,10 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemGroup;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.Hand;
+import net.minecraft.util.HandSide;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.SoundEvent;
-import net.minecraftforge.client.event.RenderPlayerEvent;
+import net.minecraftforge.client.event.RenderLivingEvent;
 import net.minecraftforge.client.event.RenderSpecificHandEvent;
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
@@ -71,11 +74,6 @@ public class MusketMod {
 
     @Mod.EventBusSubscriber(bus = Mod.EventBusSubscriber.Bus.FORGE)
     public static class ForgeEvents {
-        public static boolean playerHasMusketInHands(PlayerEntity player) {
-            ItemStack stack = player.getHeldItemMainhand();
-            return !stack.isEmpty() && stack.getItem() == MUSKET;
-        }
-
         @SubscribeEvent
         public static void onRenderSpecificHandEvent(final RenderSpecificHandEvent event) {
             if (event.getHand() != Hand.MAIN_HAND) return;
@@ -88,10 +86,17 @@ public class MusketMod {
         }
 
         @SubscribeEvent
-        public static void onRenderPlayerEventPre(final RenderPlayerEvent.Pre event) {
-            PlayerEntity player = event.getEntityPlayer();
-            if (playerHasMusketInHands(player)) {
-                event.setCanceled(true);
+        public static void onRenderLivingEventPre(final RenderLivingEvent.Pre<PlayerEntity, PlayerModel<PlayerEntity>> event) {
+            if (!(event.getEntity() instanceof PlayerEntity)) return;
+            PlayerEntity player = (PlayerEntity)event.getEntity();
+            ItemStack stack = player.getHeldItemMainhand();
+            if (!stack.isEmpty() && stack.getItem() == MUSKET && MusketItem.isLoaded(stack)) {
+                PlayerModel<PlayerEntity> model = event.getRenderer().getEntityModel();
+                if (player.getPrimaryHand() == HandSide.RIGHT) {
+                    model.rightArmPose = BipedModel.ArmPose.CROSSBOW_HOLD;
+                } else {
+                    model.leftArmPose = BipedModel.ArmPose.CROSSBOW_HOLD;
+                }
             }
         }
     }

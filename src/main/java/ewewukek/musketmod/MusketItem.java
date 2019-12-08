@@ -54,21 +54,13 @@ public class MusketItem extends Item {
 
     @Override
     public ActionResult<ItemStack> onItemRightClick(World worldIn, PlayerEntity player, Hand hand) {
+        if (hand != Hand.MAIN_HAND) return super.onItemRightClick(worldIn, player, hand);
+
         ItemStack stack = player.getHeldItem(hand);
         boolean creative = player.abilities.isCreativeMode;
 
         if (player.areEyesInFluid(FluidTags.WATER) && !creative) {
             return new ActionResult<>(ActionResultType.FAIL, stack);
-        }
-
-        if (hand == Hand.MAIN_HAND) {
-            ItemStack offHandStack = player.getHeldItem(Hand.OFF_HAND);
-            if (offHandStack.getItem() == MusketMod.MUSKET) {
-                if (isReady(offHandStack) && isReady(stack)) {
-                    player.setActiveHand(Hand.OFF_HAND);
-                    return new ActionResult<>(ActionResultType.SUCCESS, stack);
-                }
-            }
         }
 
         boolean haveAmmo = !findAmmo(player).isEmpty() || creative;

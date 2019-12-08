@@ -6,6 +6,7 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemGroup;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.Hand;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.SoundEvent;
 import net.minecraftforge.client.event.RenderPlayerEvent;
@@ -71,13 +72,13 @@ public class MusketMod {
     @Mod.EventBusSubscriber(bus = Mod.EventBusSubscriber.Bus.FORGE)
     public static class ForgeEvents {
         public static boolean playerHasMusketInHands(PlayerEntity player) {
-            Item mainHandItem = player.getHeldItemMainhand().getItem();
-            Item offHandItem = player.getHeldItemOffhand().getItem();
-            return mainHandItem == MUSKET || offHandItem == MUSKET;
+            ItemStack stack = player.getHeldItemMainhand();
+            return !stack.isEmpty() && stack.getItem() == MUSKET;
         }
 
         @SubscribeEvent
         public static void onRenderSpecificHandEvent(final RenderSpecificHandEvent event) {
+            if (event.getHand() != Hand.MAIN_HAND) return;
             ItemStack stack = event.getItemStack();
             if (!stack.isEmpty() && stack.getItem() == MUSKET) {
                 RenderHelper.renderSpecificFirstPersonHand(event.getHand(), event.getPartialTicks(), event.getInterpolatedPitch(),

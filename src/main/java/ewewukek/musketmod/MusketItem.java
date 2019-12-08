@@ -22,9 +22,7 @@ import net.minecraftforge.registries.ObjectHolder;
 public class MusketItem extends Item {
     public static final int DURABILITY = 250;
     public static final int RELOAD_DURATION = 30;
-    public static final int AIM_DURATION = 20;
-    public static final float DISPERSION_MULTIPLIER = 3;
-    public static final float DISPERSION_STD = (float)Math.toRadians(0.4);
+    public static final float DISPERSION_STD = (float)Math.toRadians(1);
 
     private int loadingStage;
 
@@ -82,14 +80,7 @@ public class MusketItem extends Item {
 
         if (isReady(stack)) {
             if (!worldIn.isRemote) {
-                float dispersion = DISPERSION_STD;
-
-                float t = (float)(getUseDuration(stack) - timeLeft) / AIM_DURATION;
-                if (t < 1) {
-                    dispersion *= t + (1 - t) * DISPERSION_MULTIPLIER;
-                }
-
-                fireBullet(worldIn, player, dispersion);
+                fireBullet(worldIn, player);
 
             } else {
                 fireParticles(worldIn, player);
@@ -207,7 +198,7 @@ public class MusketItem extends Item {
                     .add(side.add(down).scale(0.1));
     }
 
-    private void fireBullet(World worldIn, PlayerEntity player, float dispersion_std) {
+    private void fireBullet(World worldIn, PlayerEntity player) {
         Vec3d pos = getPlayerFiringPoint(player);
         Vec3d front = Vec3d.fromPitchYaw(player.rotationPitch, player.rotationYaw);
 
@@ -215,8 +206,8 @@ public class MusketItem extends Item {
         float gaussian = Math.abs((float)random.nextGaussian());
         if (gaussian > 4) gaussian = 4;
 
-        front = front.rotatePitch(dispersion_std * gaussian * MathHelper.sin(angle))
-                       .rotateYaw(dispersion_std * gaussian * MathHelper.cos(angle));
+        front = front.rotatePitch(DISPERSION_STD * gaussian * MathHelper.sin(angle))
+                       .rotateYaw(DISPERSION_STD * gaussian * MathHelper.cos(angle));
 
         Vec3d motion = front.scale(BulletEntity.VELOCITY);
 

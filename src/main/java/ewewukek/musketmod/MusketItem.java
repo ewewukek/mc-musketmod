@@ -154,11 +154,6 @@ public class MusketItem extends Item {
         }
     }
 
-    @Override
-    public boolean shouldCauseReequipAnimation(ItemStack oldStack, ItemStack newStack, boolean slotChanged) {
-        return slotChanged;
-    }
-
     public static boolean isLoaded(ItemStack stack) {
         CompoundNBT tag = stack.getTag();
         return tag != null && tag.getByte("loaded") == 1;

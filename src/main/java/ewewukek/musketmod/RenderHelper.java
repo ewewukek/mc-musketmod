@@ -11,12 +11,20 @@ import net.minecraft.util.HandSide;
 import net.minecraft.util.math.MathHelper;
 
 public class RenderHelper {
+    private static int previousSlot = -1;
+    public static boolean equipCycleCompleted;
+
     public static void renderSpecificFirstPersonHand(Hand hand, float partialTicks, float interpolatedPitch, float swingProgress, float equipProgress, ItemStack stack) {
         Minecraft mc = Minecraft.getInstance();
         PlayerEntity player = mc.player;
         HandSide handside = hand == Hand.MAIN_HAND ? player.getPrimaryHand() : player.getPrimaryHand().opposite();
         boolean isRightHand = handside == HandSide.RIGHT;
         float sign = isRightHand ? 1 : -1;
+
+        int slot = player.inventory.currentItem;
+        boolean slotChanged = slot != previousSlot;
+        ItemStack clientStack = hand == Hand.MAIN_HAND ? player.getHeldItemMainhand() : player.getHeldItemOffhand();
+        if (slotChanged || clientStack.isEmpty() || clientStack.getItem() != MusketMod.MUSKET) equipCycleCompleted = false;
 
         GlStateManager.pushMatrix();
 
@@ -48,7 +56,17 @@ public class RenderHelper {
                 }
 
             } else {
-                equipProgress = 0;
+                if (equipCycleCompleted) {
+                    equipProgress = 0;
+                } else {
+                    // postpone updating previousSlot because slot changing animation
+                    // sometimes begins with equipProgress == 0
+                    if (slotChanged) {
+                        if (equipProgress > 0.1) previousSlot = slot;
+                    } else {
+                        if (equipProgress == 0f) equipCycleCompleted = true;
+                    }
+                }
                 GlStateManager.translatef(sign * 0.15f, -0.27f + equipProgress * -0.6f, -0.37f);
             }
         }
@@ -61,6 +79,4 @@ public class RenderHelper {
 
         GlStateManager.popMatrix();
      }
-
-
 }

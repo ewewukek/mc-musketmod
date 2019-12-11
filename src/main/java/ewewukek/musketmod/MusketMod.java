@@ -53,7 +53,7 @@ public class MusketMod {
         public static void onEntityRegistry(final RegistryEvent.Register<EntityType<?>> event) {
             event.getRegistry().register(
                 EntityType.Builder.<BulletEntity>create(EntityClassification.MISC)
-                    .setCustomClientFactory(BulletEntity::new)
+                    .setCustomClientFactory(BulletEntity::new).size(0.5f, 0.5f)
                     .setTrackingRange(64).setUpdateInterval(5).setShouldReceiveVelocityUpdates(false)
                     .build(MODID + ":bullet").setRegistryName(MODID, "bullet")
             );

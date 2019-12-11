@@ -168,13 +168,13 @@ public class BulletEntity extends Entity implements IEntityAdditionalSpawnData {
     }
 
     private Entity closestEntityOnPath(Vec3d start, Vec3d end) {
-        Entity result = null;
-        double result_dist = 0;
-
         Vec3d motion = getMotion();
         Entity shooter = getShooter();
 
-        AxisAlignedBB aabbSelection = getBoundingBox().expand(motion.x, motion.y, motion.z).grow(0.01);
+        Entity result = null;
+        double result_dist = motion.length() + 0.05;
+
+        AxisAlignedBB aabbSelection = getBoundingBox().expand(motion.x, motion.y, motion.z).grow(0.5);
         for (Entity entity : world.getEntitiesInAABBexcluding(this, aabbSelection, getTargetPredicate())) {
             if (entity != shooter) {
                 AxisAlignedBB aabb = entity.getBoundingBox();

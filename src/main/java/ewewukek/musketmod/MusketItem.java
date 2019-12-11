@@ -4,7 +4,6 @@ import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import net.minecraft.item.UseAction;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.particles.ParticleTypes;
 import net.minecraft.tags.FluidTags;
@@ -62,23 +61,9 @@ public class MusketItem extends Item {
         }
 
         boolean haveAmmo = !findAmmo(player).isEmpty() || creative;
+        boolean loaded = isLoaded(stack);
 
-        if (isLoaded(stack) || haveAmmo) {
-            loadingStage = 0;
-            player.setActiveHand(hand);
-            return new ActionResult<>(ActionResultType.SUCCESS, stack);
-
-        } else {
-            return new ActionResult<>(ActionResultType.FAIL, stack);
-        }
-    }
-
-    @Override
-    public void onPlayerStoppedUsing(ItemStack stack, World worldIn, LivingEntity entityLiving, int timeLeft) {
-        if (!(entityLiving instanceof PlayerEntity)) return;
-        PlayerEntity player = (PlayerEntity)entityLiving;
-
-        if (isReady(stack)) {
+        if (loaded && isReady(stack)) {
             if (!worldIn.isRemote) {
                 fireBullet(worldIn, player);
 
@@ -94,29 +79,42 @@ public class MusketItem extends Item {
             setReady(stack, false);
             setLoaded(stack, false);
 
-        } else if (isLoaded(stack)) {
-            setReady(stack, true);
+            return new ActionResult<>(ActionResultType.SUCCESS, stack);
+
+        } else if (loaded || haveAmmo) {
+
+            if (!loaded) loadingStage = 0;
+            player.setActiveHand(hand);
+            return new ActionResult<>(ActionResultType.SUCCESS, stack);
+
+        } else {
+            return new ActionResult<>(ActionResultType.FAIL, stack);
         }
+    }
+
+    @Override
+    public void onPlayerStoppedUsing(ItemStack stack, World worldIn, LivingEntity entityLiving, int timeLeft) {
+        if (isLoaded(stack)) setReady(stack, true);
     }
 
     // called by LivingEntity.updateActiveHand
     @Override
     public void func_219972_a(World world, LivingEntity entity, ItemStack stack, int timeLeft) {
-        if (!(entity instanceof PlayerEntity)) return;
+        if (world.isRemote || !(entity instanceof PlayerEntity)) return;
 
         float usingDuration = (getUseDuration(stack) - timeLeft) / 20f;
 
-        if (!isLoaded(stack) && !world.isRemote) {
-            if (usingDuration > 0.2f && loadingStage == 0) {
-                world.playSound(null, entity.posX, entity.posY, entity.posZ, SOUND_MUSKET_LOAD_0, SoundCategory.PLAYERS, 0.5F, 1.0F);
-                loadingStage = 1;
-            } else if (usingDuration > 0.5f && loadingStage == 1) {
-                world.playSound(null, entity.posX, entity.posY, entity.posZ, SOUND_MUSKET_LOAD_1, SoundCategory.PLAYERS, 0.5F, 1.0F);
-                loadingStage = 2;
-            } else if (usingDuration > 1.0f && loadingStage == 2) {
-                world.playSound(null, entity.posX, entity.posY, entity.posZ, SOUND_MUSKET_LOAD_2, SoundCategory.PLAYERS, 0.5F, 1.0F);
-                loadingStage = 3;
-            }
+        if (usingDuration > 0.2f && loadingStage == 0) {
+            world.playSound(null, entity.posX, entity.posY, entity.posZ, SOUND_MUSKET_LOAD_0, SoundCategory.PLAYERS, 0.5F, 1.0F);
+            loadingStage = 1;
+
+        } else if (usingDuration > 0.5f && loadingStage == 1) {
+            world.playSound(null, entity.posX, entity.posY, entity.posZ, SOUND_MUSKET_LOAD_1, SoundCategory.PLAYERS, 0.5F, 1.0F);
+            loadingStage = 2;
+
+        } else if (usingDuration > 1.0f && loadingStage == 2) {
+            world.playSound(null, entity.posX, entity.posY, entity.posZ, SOUND_MUSKET_LOAD_2, SoundCategory.PLAYERS, 0.5F, 1.0F);
+            loadingStage = 3;
         }
     }
 
@@ -124,7 +122,7 @@ public class MusketItem extends Item {
     public void onUsingTick(ItemStack stack, LivingEntity entityLiving, int timeLeft) {
         if (!(entityLiving instanceof PlayerEntity)) return;
 
-        if (getUseDuration(stack) - timeLeft >= RELOAD_DURATION && !isReady(stack) && !isLoaded(stack)) {
+        if (getUseDuration(stack) - timeLeft >= RELOAD_DURATION && !isLoaded(stack)) {
             PlayerEntity player = (PlayerEntity)entityLiving;
 
             if (!player.abilities.isCreativeMode) {
@@ -143,15 +141,6 @@ public class MusketItem extends Item {
     @Override
     public int getUseDuration(ItemStack stack) {
         return 72000;
-    }
-
-    @Override
-    public UseAction getUseAction(ItemStack stack) {
-        if (isReady(stack)) {
-            return UseAction.CROSSBOW;
-        } else {
-            return UseAction.NONE;
-        }
     }
 
     public static boolean isLoaded(ItemStack stack) {

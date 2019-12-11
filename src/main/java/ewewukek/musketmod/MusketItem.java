@@ -20,6 +20,9 @@ import net.minecraftforge.registries.ObjectHolder;
 
 public class MusketItem extends Item {
     public static final int DURABILITY = 250;
+    public static final int LOADING_STAGE_1 = 5;
+    public static final int LOADING_STAGE_2 = 10;
+    public static final int LOADING_STAGE_3 = 20;
     public static final int RELOAD_DURATION = 30;
     public static final float DISPERSION_STD = (float)Math.toRadians(1);
 
@@ -102,17 +105,17 @@ public class MusketItem extends Item {
     public void func_219972_a(World world, LivingEntity entity, ItemStack stack, int timeLeft) {
         if (world.isRemote || !(entity instanceof PlayerEntity)) return;
 
-        float usingDuration = (getUseDuration(stack) - timeLeft) / 20f;
+        int usingDuration = getUseDuration(stack) - timeLeft;
 
-        if (usingDuration > 0.2f && loadingStage == 0) {
+        if (loadingStage == 0 && usingDuration >= LOADING_STAGE_1) {
             world.playSound(null, entity.posX, entity.posY, entity.posZ, SOUND_MUSKET_LOAD_0, SoundCategory.PLAYERS, 0.5F, 1.0F);
             loadingStage = 1;
 
-        } else if (usingDuration > 0.5f && loadingStage == 1) {
+        } else if (loadingStage == 1 && usingDuration >= LOADING_STAGE_2) {
             world.playSound(null, entity.posX, entity.posY, entity.posZ, SOUND_MUSKET_LOAD_1, SoundCategory.PLAYERS, 0.5F, 1.0F);
             loadingStage = 2;
 
-        } else if (usingDuration > 1.0f && loadingStage == 2) {
+        } else if (loadingStage == 2 && usingDuration >= LOADING_STAGE_3) {
             world.playSound(null, entity.posX, entity.posY, entity.posZ, SOUND_MUSKET_LOAD_2, SoundCategory.PLAYERS, 0.5F, 1.0F);
             loadingStage = 3;
         }

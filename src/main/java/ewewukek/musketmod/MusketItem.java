@@ -1,5 +1,6 @@
 package ewewukek.musketmod;
 
+import net.minecraft.block.BlockState;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Item;
@@ -13,6 +14,7 @@ import net.minecraft.util.Hand;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.SoundCategory;
 import net.minecraft.util.SoundEvent;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
@@ -75,10 +77,7 @@ public class MusketItem extends Item {
             }
             player.playSound(SOUND_MUSKET_FIRE, 1.5f, 1);
 
-            stack.damageItem(1, player, (entity) -> {
-                entity.sendBreakAnimation(player.getActiveHand());
-            });
-
+            damageItem(stack, player);
             setReady(stack, false);
             setLoaded(stack, false);
 
@@ -139,6 +138,20 @@ public class MusketItem extends Item {
             player.playSound(SOUND_MUSKET_READY, 0.5f, 1);
             setLoaded(stack, true);
         }
+    }
+
+    @Override
+    public boolean onBlockDestroyed(ItemStack stack, World worldIn, BlockState state, BlockPos pos, LivingEntity entityLiving) {
+        if (entityLiving instanceof PlayerEntity) {
+            damageItem(stack, (PlayerEntity)entityLiving);
+        }
+        return false;
+    }
+
+    public static void damageItem(ItemStack stack, PlayerEntity player) {
+        stack.damageItem(1, player, (entity) -> {
+            entity.sendBreakAnimation(player.getActiveHand());
+        });
     }
 
     @Override

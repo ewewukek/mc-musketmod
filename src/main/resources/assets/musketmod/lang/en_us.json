@@ -1,7 +1,7 @@
 {
   "death.attack.musket": "%1$s was shot by %2$s",
-  "item.musketmod.barrel": "Gun barrel",
-  "item.musketmod.cartridge": "Cartridge",
+  "item.musketmod.barrel": "Gun Barrel",
+  "item.musketmod.cartridge": "Paper Cartridge",
   "item.musketmod.musket": "Musket",
   "item.musketmod.stock": "Gunstock"
 }

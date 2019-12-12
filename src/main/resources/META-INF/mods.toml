@@ -3,7 +3,7 @@ loaderVersion="[25,)"
 issueTrackerURL="https://github.com/ewewukek/mc-musketmod/issues"
 [[mods]]
 modId="musketmod"
-version="0.1"
+version="${file.jarVersion}"
 displayName="Musket Mod"
 #updateJSONURL=""
 displayURL="https://github.com/ewewukek/mc-musketmod"

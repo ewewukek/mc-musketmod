@@ -34,8 +34,8 @@ public class BulletEntity extends Entity implements IEntityAdditionalSpawnData {
     static final double GRAVITY = 0.05;
     static final double AIR_FRICTION = 0.99;
     static final double WATER_FRICTION = 0.6;
-    static final float DAMAGE_FACTOR_MIN = 0.255f;
-    static final float DAMAGE_FACTOR_MAX = 0.275f;
+    static final float DAMAGE_FACTOR_MIN = 0.265f;
+    static final float DAMAGE_FACTOR_MAX = 0.285f;
 
     public UUID shooterUuid;
     public short ticksLeft;

@@ -1,0 +1,7 @@
+{
+  "death.attack.musket": "%1$s застрелен %2$s",
+  "item.musketmod.barrel": "Ствол",
+  "item.musketmod.cartridge": "Бумажный патрон",
+  "item.musketmod.musket": "Мушкет",
+  "item.musketmod.stock": "Приклад"
+}

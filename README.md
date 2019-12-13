@@ -1,8 +1,8 @@
-### Musket Mod
+### Musket Mod (for MC 1.14.4)
 
 Simple mod that adds a craftable musket. Use RMB to both load and fire. Doesn't work under water. [Download](https://github.com/ewewukek/mc-musketmod/releases/latest)
 
-#### Recipes:
+#### Recipes (similar to other mods):
 
 ##### Gun barrel
 ![](doc/barrel_recipe.png?raw=true)

@@ -12,6 +12,7 @@ import net.minecraft.util.Hand;
 import net.minecraft.util.HandSide;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.SoundEvent;
+import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.event.RenderLivingEvent;
 import net.minecraftforge.client.event.RenderSpecificHandEvent;
 import net.minecraftforge.event.RegistryEvent;
@@ -72,7 +73,7 @@ public class MusketMod {
 
     }
 
-    @Mod.EventBusSubscriber(bus = Mod.EventBusSubscriber.Bus.FORGE)
+    @Mod.EventBusSubscriber(Dist.CLIENT)
     public static class ForgeEvents {
         @SubscribeEvent
         public static void onRenderSpecificHandEvent(final RenderSpecificHandEvent event) {

@@ -106,16 +106,20 @@ public class MusketItem extends Item {
 
         int usingDuration = getUseDuration(stack) - timeLeft;
 
+        double posX = entity.func_226277_ct_();
+        double posY = entity.func_226278_cu_();
+        double posZ = entity.func_226281_cx_();
+
         if (loadingStage == 0 && usingDuration >= LOADING_STAGE_1) {
-            world.playSound(null, entity.posX, entity.posY, entity.posZ, SOUND_MUSKET_LOAD_0, SoundCategory.PLAYERS, 0.5F, 1.0F);
+            world.playSound(null, posX, posY, posZ, SOUND_MUSKET_LOAD_0, SoundCategory.PLAYERS, 0.5F, 1.0F);
             loadingStage = 1;
 
         } else if (loadingStage == 1 && usingDuration >= LOADING_STAGE_2) {
-            world.playSound(null, entity.posX, entity.posY, entity.posZ, SOUND_MUSKET_LOAD_1, SoundCategory.PLAYERS, 0.5F, 1.0F);
+            world.playSound(null, posX, posY, posZ, SOUND_MUSKET_LOAD_1, SoundCategory.PLAYERS, 0.5F, 1.0F);
             loadingStage = 2;
 
         } else if (loadingStage == 2 && usingDuration >= LOADING_STAGE_3) {
-            world.playSound(null, entity.posX, entity.posY, entity.posZ, SOUND_MUSKET_LOAD_2, SoundCategory.PLAYERS, 0.5F, 1.0F);
+            world.playSound(null, posX, posY, posZ, SOUND_MUSKET_LOAD_2, SoundCategory.PLAYERS, 0.5F, 1.0F);
             loadingStage = 3;
         }
     }
@@ -194,7 +198,12 @@ public class MusketItem extends Item {
         Vec3d side = Vec3d.fromPitchYaw(0, player.rotationYaw + 90);
         if (player.getActiveHand() == Hand.OFF_HAND) side = side.scale(-1);
         Vec3d down = Vec3d.fromPitchYaw(player.rotationPitch + 90, player.rotationYaw);
-        return new Vec3d(player.posX, player.posY + player.getEyeHeight(), player.posZ)
+
+        double posX = player.func_226277_ct_();
+        double posY = player.func_226278_cu_();
+        double posZ = player.func_226281_cx_();
+
+        return new Vec3d(posX, posY + player.getEyeHeight(), posZ)
                     .add(side.add(down).scale(0.1));
     }
 

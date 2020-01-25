@@ -75,9 +75,9 @@ public class BulletEntity extends Entity implements IEntityAdditionalSpawnData {
 
         Vec3d motion = getMotion();
 
-        posX += motion.x;
-        posY += motion.y;
-        posZ += motion.z;
+        double posX = func_226277_ct_() + motion.x;
+        double posY = func_226278_cu_() + motion.y;
+        double posZ = func_226281_cx_() + motion.z;
 
         motion = motion.subtract(0, GRAVITY, 0);
 
@@ -107,7 +107,11 @@ public class BulletEntity extends Entity implements IEntityAdditionalSpawnData {
     }
 
     private boolean processCollision() {
-        Vec3d from = new Vec3d(posX, posY, posZ);
+        Vec3d from = new Vec3d(
+            func_226277_ct_(), // posX
+            func_226278_cu_(), // posY
+            func_226281_cx_()  // posZ
+        );
         Vec3d to = from.add(getMotion());
 
         BlockRayTraceResult collision = world.rayTraceBlocks(

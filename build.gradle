@@ -18,7 +18,7 @@ archivesBaseName = 'musketmod-1.14.4'
 sourceCompatibility = targetCompatibility = compileJava.sourceCompatibility = compileJava.targetCompatibility = '1.8'
 
 minecraft {
-    mappings channel: 'snapshot', version: '20190719-1.14.3'
+    mappings channel: 'stable', version: '60-1.15' // from export.mcpbot.bspk.rs
 
     runs {
         client {
@@ -58,7 +58,7 @@ minecraft {
 }
 
 dependencies {
-    minecraft 'net.minecraftforge:forge:1.14.4-28.1.104'
+    minecraft 'net.minecraftforge:forge:1.15.1-30.0.51'
 }
 
 jar {

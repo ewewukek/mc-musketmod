@@ -82,7 +82,8 @@ public class MusketMod {
             if (!stack.isEmpty() && stack.getItem() == MUSKET) {
                 RenderHelper.renderSpecificFirstPersonHand(
                     event.getHand(), event.getPartialTicks(), event.getInterpolatedPitch(),
-                    event.getSwingProgress(), event.getEquipProgress(), stack);
+                    event.getSwingProgress(), event.getEquipProgress(), stack,
+                    event.getMatrixStack());
                 event.setCanceled(true);
             }
         }

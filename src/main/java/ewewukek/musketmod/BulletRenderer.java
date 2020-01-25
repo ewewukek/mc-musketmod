@@ -7,6 +7,7 @@ import net.minecraft.client.renderer.IRenderTypeBuffer;
 import net.minecraft.client.renderer.Matrix3f;
 import net.minecraft.client.renderer.Matrix4f;
 import net.minecraft.client.renderer.RenderType;
+import net.minecraft.client.renderer.Vector3f;
 import net.minecraft.client.renderer.entity.EntityRenderer;
 import net.minecraft.client.renderer.entity.EntityRendererManager;
 import net.minecraft.client.renderer.texture.OverlayTexture;
@@ -33,14 +34,10 @@ public class BulletRenderer extends EntityRenderer<BulletEntity> {
         matrixStack.func_227860_a_(); // push
 
         // scale
-//        matrixStack.func_227862_a_(0.1f, 0.1f, 0.1f);
-        // rotate around Y
-//        matrixStack.func_227863_a_(Vector3f.field_229181_d_.func_229187_a_(-renderManager.playerViewY));
-        float sign = renderManager.options.thirdPersonView == 2 ? -1 : 1;
-        // rotate around X
-//        matrixStack.func_227863_a_(Vector3f.field_229179_b_.func_229187_a_(sign * renderManager.playerViewX));
-        // rotate around Y
-//        matrixStack.func_227863_a_(Vector3f.field_229181_d_.func_229187_a_(180));
+        matrixStack.func_227862_a_(0.1f, 0.1f, 0.1f);
+        // billboarding
+        matrixStack.func_227863_a_(renderManager.func_229098_b_());
+        matrixStack.func_227863_a_(Vector3f.field_229181_d_.func_229187_a_(180));
 
         MatrixStack.Entry entry = matrixStack.func_227866_c_();
         Matrix4f viewMatrix = entry.func_227870_a_();

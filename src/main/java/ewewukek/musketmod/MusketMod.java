@@ -35,7 +35,7 @@ public class MusketMod {
     }
 
     public void onClientSetup(FMLClientSetupEvent event) {
-        RenderingRegistry.registerEntityRenderingHandler(BulletEntity.class, BulletRenderer::new);
+        RenderingRegistry.registerEntityRenderingHandler(BulletEntity.TYPE, (manager) -> new BulletRenderer(manager));
     }
 
     @Mod.EventBusSubscriber(bus = Mod.EventBusSubscriber.Bus.MOD)

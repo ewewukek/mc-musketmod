@@ -1,14 +1,15 @@
 package ewewukek.musketmod;
 
-import org.lwjgl.opengl.GL11;
+import com.mojang.blaze3d.matrix.MatrixStack;
+import com.mojang.blaze3d.vertex.IVertexBuilder;
 
-import com.mojang.blaze3d.platform.GlStateManager;
-
-import net.minecraft.client.renderer.BufferBuilder;
-import net.minecraft.client.renderer.Tessellator;
+import net.minecraft.client.renderer.IRenderTypeBuffer;
+import net.minecraft.client.renderer.Matrix3f;
+import net.minecraft.client.renderer.Matrix4f;
+import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.entity.EntityRenderer;
 import net.minecraft.client.renderer.entity.EntityRendererManager;
-import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
+import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
@@ -22,39 +23,46 @@ public class BulletRenderer extends EntityRenderer<BulletEntity> {
     }
 
     @Override
-    protected ResourceLocation getEntityTexture(BulletEntity bullet) {
+    public ResourceLocation getEntityTexture(BulletEntity bullet) {
         return TEXTURE;
     }
 
+    // doRender ?
     @Override
-    public void doRender(BulletEntity bullet, double x, double y, double z, float yaw, float partialTicks) {
-        bindEntityTexture(bullet);
-        GlStateManager.pushMatrix();
-        GlStateManager.disableLighting();
-        GlStateManager.enableRescaleNormal();
+    public void func_225623_a_(BulletEntity bullet, float yaw, float partialTicks, MatrixStack matrixStack, IRenderTypeBuffer render, int mask) {
+        matrixStack.func_227860_a_(); // push
 
-        GlStateManager.translatef((float)x, (float)y, (float)z);
-        GlStateManager.scalef(0.1f, 0.1f, 0.1f);
-        GlStateManager.rotatef(-renderManager.playerViewY, 0, 1, 0);
+        // scale
+//        matrixStack.func_227862_a_(0.1f, 0.1f, 0.1f);
+        // rotate around Y
+//        matrixStack.func_227863_a_(Vector3f.field_229181_d_.func_229187_a_(-renderManager.playerViewY));
         float sign = renderManager.options.thirdPersonView == 2 ? -1 : 1;
-        GlStateManager.rotatef(sign * renderManager.playerViewX, 1, 0, 0);
-        GlStateManager.rotatef(180, 0, 1, 0);
+        // rotate around X
+//        matrixStack.func_227863_a_(Vector3f.field_229179_b_.func_229187_a_(sign * renderManager.playerViewX));
+        // rotate around Y
+//        matrixStack.func_227863_a_(Vector3f.field_229181_d_.func_229187_a_(180));
 
-        Tessellator tessellator = Tessellator.getInstance();
-        BufferBuilder bufferbuilder = tessellator.getBuffer();
+        MatrixStack.Entry entry = matrixStack.func_227866_c_();
+        Matrix4f viewMatrix = entry.func_227870_a_();
+        Matrix3f normalMatrix = entry.func_227872_b_();
 
-        GlStateManager.color4f(1, 1, 1, 1);
+        IVertexBuilder builder = render.getBuffer(RenderType.func_228638_b_(getEntityTexture(bullet)));
 
-        GlStateManager.normal3f(0, 0, 1);
-        bufferbuilder.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_TEX);
-        bufferbuilder.pos(-1, -1, 0).tex(0, 1).endVertex();
-        bufferbuilder.pos( 1, -1, 0).tex(1, 1).endVertex();
-        bufferbuilder.pos( 1,  1, 0).tex(1, 0).endVertex();
-        bufferbuilder.pos(-1,  1, 0).tex(0, 0).endVertex();
-        tessellator.draw();
+        addVertex(builder, viewMatrix, normalMatrix, -1, -1, 0, 0, 1, 0, 0, 1, mask);
+        addVertex(builder, viewMatrix, normalMatrix,  1, -1, 0, 1, 1, 0, 0, 1, mask);
+        addVertex(builder, viewMatrix, normalMatrix,  1,  1, 0, 1, 0, 0, 0, 1, mask);
+        addVertex(builder, viewMatrix, normalMatrix, -1,  1, 0, 0, 0, 0, 0, 1, mask);
 
-        GlStateManager.disableRescaleNormal();
-        GlStateManager.enableLighting();
-        GlStateManager.popMatrix();
+        matrixStack.func_227865_b_(); // pop
+    }
+
+    void addVertex(IVertexBuilder builder, Matrix4f viewMatrix, Matrix3f normalMatrix, float x, float y, float z, float u, float v, float nx, float ny, float nz, int mask) {
+        builder.func_227888_a_(viewMatrix, x, y, z)
+               .func_225586_a_(255, 255, 255, 255)
+               .func_225583_a_(u, v)
+               .func_227891_b_(OverlayTexture.field_229196_a_)
+               .func_227886_a_(mask)
+               .func_227887_a_(normalMatrix, nx, ny, nz)
+               .endVertex();
     }
 }

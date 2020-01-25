@@ -28,38 +28,36 @@ public class BulletRenderer extends EntityRenderer<BulletEntity> {
         return TEXTURE;
     }
 
-    // doRender ?
     @Override
-    public void func_225623_a_(BulletEntity bullet, float yaw, float partialTicks, MatrixStack matrixStack, IRenderTypeBuffer render, int mask) {
-        matrixStack.func_227860_a_(); // push
+    public void render(BulletEntity bullet, float yaw, float partialTicks, MatrixStack matrixStack, IRenderTypeBuffer render, int packedLight) {
+        matrixStack.push();
 
-        // scale
-        matrixStack.func_227862_a_(0.1f, 0.1f, 0.1f);
+        matrixStack.scale(0.1f, 0.1f, 0.1f);
         // billboarding
-        matrixStack.func_227863_a_(renderManager.func_229098_b_());
-        matrixStack.func_227863_a_(Vector3f.field_229181_d_.func_229187_a_(180));
+        matrixStack.rotate(renderManager.getCameraOrientation());
+        matrixStack.rotate(Vector3f.YP.rotationDegrees(180));
 
-        MatrixStack.Entry entry = matrixStack.func_227866_c_();
-        Matrix4f viewMatrix = entry.func_227870_a_();
-        Matrix3f normalMatrix = entry.func_227872_b_();
+        MatrixStack.Entry entry = matrixStack.getLast();
+        Matrix4f positionMatrix = entry.getPositionMatrix();
+        Matrix3f normalMatrix = entry.getNormalMatrix();
 
-        IVertexBuilder builder = render.getBuffer(RenderType.func_228638_b_(getEntityTexture(bullet)));
+        IVertexBuilder builder = render.getBuffer(RenderType.entityCutout(getEntityTexture(bullet)));
 
-        addVertex(builder, viewMatrix, normalMatrix, -1, -1, 0, 0, 1, 0, 0, 1, mask);
-        addVertex(builder, viewMatrix, normalMatrix,  1, -1, 0, 1, 1, 0, 0, 1, mask);
-        addVertex(builder, viewMatrix, normalMatrix,  1,  1, 0, 1, 0, 0, 0, 1, mask);
-        addVertex(builder, viewMatrix, normalMatrix, -1,  1, 0, 0, 0, 0, 0, 1, mask);
+        addVertex(builder, positionMatrix, normalMatrix, -1, -1, 0, 0, 1, 0, 0, 1, packedLight);
+        addVertex(builder, positionMatrix, normalMatrix,  1, -1, 0, 1, 1, 0, 0, 1, packedLight);
+        addVertex(builder, positionMatrix, normalMatrix,  1,  1, 0, 1, 0, 0, 0, 1, packedLight);
+        addVertex(builder, positionMatrix, normalMatrix, -1,  1, 0, 0, 0, 0, 0, 1, packedLight);
 
-        matrixStack.func_227865_b_(); // pop
+        matrixStack.pop();
     }
 
-    void addVertex(IVertexBuilder builder, Matrix4f viewMatrix, Matrix3f normalMatrix, float x, float y, float z, float u, float v, float nx, float ny, float nz, int mask) {
-        builder.func_227888_a_(viewMatrix, x, y, z)
-               .func_225586_a_(255, 255, 255, 255)
-               .func_225583_a_(u, v)
-               .func_227891_b_(OverlayTexture.field_229196_a_)
-               .func_227886_a_(mask)
-               .func_227887_a_(normalMatrix, nx, ny, nz)
+    void addVertex(IVertexBuilder builder, Matrix4f positionMatrix, Matrix3f normalMatrix, float x, float y, float z, float u, float v, float nx, float ny, float nz, int packedLight) {
+        builder.pos(positionMatrix, x, y, z)
+               .color(255, 255, 255, 255)
+               .tex(u, v)
+               .overlay(OverlayTexture.DEFAULT_LIGHT)
+               .lightmap(packedLight)
+               .normal(normalMatrix, nx, ny, nz)
                .endVertex();
     }
 }

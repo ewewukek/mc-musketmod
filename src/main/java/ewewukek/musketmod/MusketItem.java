@@ -106,9 +106,9 @@ public class MusketItem extends Item {
 
         int usingDuration = getUseDuration(stack) - timeLeft;
 
-        double posX = entity.func_226277_ct_();
-        double posY = entity.func_226278_cu_();
-        double posZ = entity.func_226281_cx_();
+        double posX = entity.getPosX();
+        double posY = entity.getPosY();
+        double posZ = entity.getPosZ();
 
         if (loadingStage == 0 && usingDuration >= LOADING_STAGE_1) {
             world.playSound(null, posX, posY, posZ, SOUND_MUSKET_LOAD_0, SoundCategory.PLAYERS, 0.5F, 1.0F);
@@ -199,9 +199,9 @@ public class MusketItem extends Item {
         if (player.getActiveHand() == Hand.OFF_HAND) side = side.scale(-1);
         Vec3d down = Vec3d.fromPitchYaw(player.rotationPitch + 90, player.rotationYaw);
 
-        double posX = player.func_226277_ct_();
-        double posY = player.func_226278_cu_();
-        double posZ = player.func_226281_cx_();
+        double posX = player.getPosX();
+        double posY = player.getPosY();
+        double posZ = player.getPosZ();
 
         return new Vec3d(posX, posY + player.getEyeHeight(), posZ)
                     .add(side.add(down).scale(0.1));

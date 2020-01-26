@@ -80,10 +80,11 @@ public class MusketMod {
             if (event.getHand() != Hand.MAIN_HAND) return;
             ItemStack stack = event.getItemStack();
             if (!stack.isEmpty() && stack.getItem() == MUSKET) {
-                RenderHelper.renderSpecificFirstPersonHand(
-                    event.getHand(), event.getPartialTicks(), event.getInterpolatedPitch(),
-                    event.getSwingProgress(), event.getEquipProgress(), stack,
-                    event.getMatrixStack());
+                // waiting for MinecraftForge PR #6444
+//                RenderHelper.renderSpecificFirstPersonHand(
+//                    event.getHand(), event.getPartialTicks(), event.getInterpolatedPitch(),
+//                    event.getSwingProgress(), event.getEquipProgress(), stack,
+//                    event.getMatrixStack(), event.getBuffers(), event.getLight());
                 event.setCanceled(true);
             }
         }

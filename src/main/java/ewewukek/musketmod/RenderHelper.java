@@ -1,9 +1,11 @@
 package ewewukek.musketmod;
 
 import com.mojang.blaze3d.matrix.MatrixStack;
-import com.mojang.blaze3d.systems.RenderSystem;
 
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.renderer.IRenderTypeBuffer;
+import net.minecraft.client.renderer.Vector3f;
+import net.minecraft.client.renderer.model.ItemCameraTransforms;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.Hand;
@@ -14,7 +16,7 @@ public class RenderHelper {
     private static int previousSlot = -1;
     public static boolean equipCycleCompleted;
 
-    public static void renderSpecificFirstPersonHand(Hand hand, float partialTicks, float interpolatedPitch, float swingProgress, float equipProgress, ItemStack stack, MatrixStack matrixStack) {
+    public static void renderSpecificFirstPersonHand(Hand hand, float partialTicks, float interpolatedPitch, float swingProgress, float equipProgress, ItemStack stack, MatrixStack matrixStack, IRenderTypeBuffer render, int packedLight) {
         Minecraft mc = Minecraft.getInstance();
         PlayerEntity player = mc.player;
         HandSide handside = hand == Hand.MAIN_HAND ? player.getPrimaryHand() : player.getPrimaryHand().opposite();
@@ -26,22 +28,22 @@ public class RenderHelper {
         ItemStack clientStack = hand == Hand.MAIN_HAND ? player.getHeldItemMainhand() : player.getHeldItemOffhand();
         if (slotChanged || clientStack.isEmpty() || clientStack.getItem() != MusketMod.MUSKET) equipCycleCompleted = false;
 
-        RenderSystem.pushMatrix();
+        matrixStack.push();
 
         if (swingProgress > 0) {
             float swingSharp = MathHelper.sin(MathHelper.sqrt(swingProgress) * (float)Math.PI);
             float swingNormal = MathHelper.sin(swingProgress * (float)Math.PI);
-            RenderSystem.translatef(sign * (0.2f - 0.05f * swingNormal), -0.2f - 0.05f * swingNormal, -0.3f - 0.4f * swingSharp);
-            RenderSystem.rotatef(180 + sign * (20 - 20 * swingSharp), 1, 0, 0);
+            matrixStack.translate(sign * (0.2f - 0.05f * swingNormal), -0.2f - 0.05f * swingNormal, -0.3f - 0.4f * swingSharp);
+            matrixStack.rotate(Vector3f.XP.rotationDegrees(180 + sign * (20 - 20 * swingSharp)));
 
         } else {
             float usingDuration = stack.getUseDuration() - (player.getItemInUseCount() - partialTicks + 1);
             boolean isLoading = player.isHandActive() && player.getActiveHand() == hand && !MusketItem.isLoaded(stack)
                                 && usingDuration > 0 && usingDuration < MusketItem.RELOAD_DURATION;
             if (isLoading) {
-                RenderSystem.translatef(sign * 0.15f, -0.55f, -0.3f);
-                RenderSystem.rotatef(60, 1, 0, 0);
-                RenderSystem.rotatef(10, 0, 0, 1);
+                matrixStack.translate(sign * 0.15f, -0.55f, -0.3f);
+                matrixStack.rotate(Vector3f.XP.rotationDegrees(60));
+                matrixStack.rotate(Vector3f.ZP.rotationDegrees(10));
 
                 if (usingDuration >= 8 && usingDuration <= 14 || usingDuration >= 18 && usingDuration <= 24) {
                     if (usingDuration >= 18) usingDuration -= 10;
@@ -52,7 +54,7 @@ public class RenderHelper {
                     } else {
                         t = (14 - usingDuration) / 4;
                     }
-                    RenderSystem.translatef(0, 0, 0.02f * t);
+                    matrixStack.translate(0, 0, 0.02f * t);
                 }
 
             } else {
@@ -67,20 +69,15 @@ public class RenderHelper {
                         if (equipProgress == 0f) equipCycleCompleted = true;
                     }
                 }
-                RenderSystem.translatef(sign * 0.15f, -0.27f + equipProgress * -0.6f, -0.37f);
+                matrixStack.translate(sign * 0.15f, -0.27f + equipProgress * -0.6f, -0.37f);
             }
         }
 
         // compensate rotated model
-        RenderSystem.translatef(0, 0.085f, 0);
-        RenderSystem.rotatef(-70f, 1, 0, 0);
+        matrixStack.translate(0, 0.085f, 0);
+        matrixStack.rotate(Vector3f.XP.rotationDegrees(-70));
 
-        // renderItemSide
-        // I'll uncomment this call when I figure out how to get these last 2 arguments
-        // IRenderTypeBuffer.Impl
-        // int
-//        mc.getFirstPersonRenderer().func_228397_a_(player, stack, isRightHand ? ItemCameraTransforms.TransformType.FIRST_PERSON_RIGHT_HAND : ItemCameraTransforms.TransformType.FIRST_PERSON_LEFT_HAND, !isRightHand, matrixStack, ?, ?);
-
-        RenderSystem.popMatrix();
+        mc.getFirstPersonRenderer().renderItemSide(player, stack, isRightHand ? ItemCameraTransforms.TransformType.FIRST_PERSON_RIGHT_HAND : ItemCameraTransforms.TransformType.FIRST_PERSON_LEFT_HAND, !isRightHand, matrixStack, render, packedLight);
+        matrixStack.pop();
      }
 }

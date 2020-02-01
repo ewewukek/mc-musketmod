@@ -79,5 +79,5 @@ public class RenderHelper {
 
         mc.getFirstPersonRenderer().renderItemSide(player, stack, isRightHand ? ItemCameraTransforms.TransformType.FIRST_PERSON_RIGHT_HAND : ItemCameraTransforms.TransformType.FIRST_PERSON_LEFT_HAND, !isRightHand, matrixStack, render, packedLight);
         matrixStack.pop();
-     }
+    }
 }

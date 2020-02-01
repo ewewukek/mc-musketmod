@@ -13,7 +13,7 @@ apply plugin: 'eclipse'
 
 version = '1.0.1'
 group = 'ewewukek.musketmod'
-archivesBaseName = 'musketmod-1.14.4'
+archivesBaseName = 'musketmod-1.15.2'
 
 sourceCompatibility = targetCompatibility = compileJava.sourceCompatibility = compileJava.targetCompatibility = '1.8'
 

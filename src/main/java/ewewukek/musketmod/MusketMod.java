@@ -14,7 +14,7 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.SoundEvent;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.event.RenderLivingEvent;
-import net.minecraftforge.client.event.RenderSpecificHandEvent;
+import net.minecraftforge.client.event.RenderHandEvent;
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.client.registry.RenderingRegistry;
@@ -76,15 +76,14 @@ public class MusketMod {
     @Mod.EventBusSubscriber(Dist.CLIENT)
     public static class ForgeEvents {
         @SubscribeEvent
-        public static void onRenderSpecificHandEvent(final RenderSpecificHandEvent event) {
+        public static void onRenderHandEvent(final RenderHandEvent event) {
             if (event.getHand() != Hand.MAIN_HAND) return;
             ItemStack stack = event.getItemStack();
             if (!stack.isEmpty() && stack.getItem() == MUSKET) {
-                // waiting for MinecraftForge PR #6444
-//                RenderHelper.renderSpecificFirstPersonHand(
-//                    event.getHand(), event.getPartialTicks(), event.getInterpolatedPitch(),
-//                    event.getSwingProgress(), event.getEquipProgress(), stack,
-//                    event.getMatrixStack(), event.getBuffers(), event.getLight());
+                RenderHelper.renderSpecificFirstPersonHand(
+                    event.getHand(), event.getPartialTicks(), event.getInterpolatedPitch(),
+                    event.getSwingProgress(), event.getEquipProgress(), stack,
+                    event.getMatrixStack(), event.getBuffers(), event.getLight());
                 event.setCanceled(true);
             }
         }

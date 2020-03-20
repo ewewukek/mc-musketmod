@@ -38,10 +38,10 @@ public class BulletRenderer extends EntityRenderer<BulletEntity> {
         matrixStack.rotate(Vector3f.YP.rotationDegrees(180));
 
         MatrixStack.Entry entry = matrixStack.getLast();
-        Matrix4f positionMatrix = entry.getPositionMatrix();
-        Matrix3f normalMatrix = entry.getNormalMatrix();
+        Matrix4f positionMatrix = entry.getMatrix();
+        Matrix3f normalMatrix = entry.getNormal();
 
-        IVertexBuilder builder = render.getBuffer(RenderType.entityCutout(getEntityTexture(bullet)));
+        IVertexBuilder builder = render.getBuffer(RenderType.getEntityCutout(getEntityTexture(bullet)));
 
         addVertex(builder, positionMatrix, normalMatrix, -1, -1, 0, 0, 1, 0, 0, 1, packedLight);
         addVertex(builder, positionMatrix, normalMatrix,  1, -1, 0, 1, 1, 0, 0, 1, packedLight);
@@ -55,7 +55,7 @@ public class BulletRenderer extends EntityRenderer<BulletEntity> {
         builder.pos(positionMatrix, x, y, z)
                .color(255, 255, 255, 255)
                .tex(u, v)
-               .overlay(OverlayTexture.DEFAULT_LIGHT)
+               .overlay(OverlayTexture.NO_OVERLAY)
                .lightmap(packedLight)
                .normal(normalMatrix, nx, ny, nz)
                .endVertex();

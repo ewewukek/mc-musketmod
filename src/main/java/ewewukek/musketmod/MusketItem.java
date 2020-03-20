@@ -9,7 +9,6 @@ import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.particles.ParticleTypes;
 import net.minecraft.tags.FluidTags;
 import net.minecraft.util.ActionResult;
-import net.minecraft.util.ActionResultType;
 import net.minecraft.util.Hand;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.SoundCategory;
@@ -62,7 +61,7 @@ public class MusketItem extends Item {
         boolean creative = player.abilities.isCreativeMode;
 
         if (player.areEyesInFluid(FluidTags.WATER) && !creative) {
-            return new ActionResult<>(ActionResultType.FAIL, stack);
+            return ActionResult.resultFail(stack);
         }
 
         boolean haveAmmo = !findAmmo(player).isEmpty() || creative;
@@ -81,16 +80,16 @@ public class MusketItem extends Item {
             setReady(stack, false);
             setLoaded(stack, false);
 
-            return new ActionResult<>(ActionResultType.SUCCESS, stack);
+            return ActionResult.resultConsume(stack);
 
         } else if (loaded || haveAmmo) {
 
             if (!loaded) loadingStage = 0;
             player.setActiveHand(hand);
-            return new ActionResult<>(ActionResultType.SUCCESS, stack);
+            return ActionResult.resultConsume(stack);
 
         } else {
-            return new ActionResult<>(ActionResultType.FAIL, stack);
+            return ActionResult.resultFail(stack);
         }
     }
 

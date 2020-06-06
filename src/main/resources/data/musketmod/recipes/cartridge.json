@@ -1,23 +1,24 @@
 {
-  "type": "crafting_shaped",
-  "pattern": [
-    "I",
-    "G",
-    "P"
-  ],
-  "key": {
-    "I": {
+  "type": "crafting_shapeless",
+  "ingredients": [
+    {
       "item": "minecraft:iron_nugget"
     },
-    "G": {
+    {
+      "item": "minecraft:iron_nugget"
+    },
+    {
+      "item": "minecraft:iron_nugget"
+    },
+    {
       "item": "minecraft:gunpowder"
     },
-    "P": {
+    {
       "item": "minecraft:paper"
     }
-  },
+  ],
   "result": {
     "item": "musketmod:cartridge",
-    "count": 1
+    "count": 3
   }
 }

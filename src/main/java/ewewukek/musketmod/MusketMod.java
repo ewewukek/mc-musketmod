@@ -13,10 +13,12 @@ import net.minecraft.util.HandSide;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.SoundEvent;
 import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.client.event.RenderLivingEvent;
+import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.client.event.RenderHandEvent;
+import net.minecraftforge.client.event.RenderLivingEvent;
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
+import net.minecraftforge.fml.DistExecutor;
 import net.minecraftforge.fml.client.registry.RenderingRegistry;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
@@ -31,9 +33,12 @@ public class MusketMod {
     public static Item MUSKET;
 
     public MusketMod() {
-        FMLJavaModLoadingContext.get().getModEventBus().addListener(this::onClientSetup);
+        DistExecutor.runWhenOn(Dist.CLIENT, () -> () -> {
+            FMLJavaModLoadingContext.get().getModEventBus().addListener(this::onClientSetup);
+        });
     }
 
+    @OnlyIn(Dist.CLIENT)
     public void onClientSetup(FMLClientSetupEvent event) {
         RenderingRegistry.registerEntityRenderingHandler(BulletEntity.TYPE, (manager) -> new BulletRenderer(manager));
     }

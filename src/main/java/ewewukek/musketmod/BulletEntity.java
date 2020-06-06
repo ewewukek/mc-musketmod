@@ -30,12 +30,12 @@ import net.minecraftforge.registries.ObjectHolder;
 
 public class BulletEntity extends Entity implements IEntityAdditionalSpawnData {
     private static final Random random = new Random();
-    static final double VELOCITY = 9; // 180 m/s
     static final double GRAVITY = 0.05;
     static final double AIR_FRICTION = 0.99;
     static final double WATER_FRICTION = 0.6;
-    static final float DAMAGE_FACTOR_MIN = 0.265f;
-    static final float DAMAGE_FACTOR_MAX = 0.285f;
+
+    public static float damageFactorMin;
+    public static float damageFactorMax;
 
     public UUID shooterUuid;
     public short ticksLeft;
@@ -156,7 +156,7 @@ public class BulletEntity extends Entity implements IEntityAdditionalSpawnData {
         DamageSource damagesource = causeMusketDamage(this, shooter != null ? shooter : this);
 
         float energy = (float)getMotion().lengthSquared();
-        float factor = DAMAGE_FACTOR_MIN + random.nextFloat() * (DAMAGE_FACTOR_MAX - DAMAGE_FACTOR_MIN);
+        float factor = damageFactorMin + random.nextFloat() * (damageFactorMax - damageFactorMin);
         target.attackEntityFrom(damagesource, energy * factor);
     }
 

@@ -25,7 +25,9 @@ public class MusketItem extends Item {
     public static final int LOADING_STAGE_2 = 10;
     public static final int LOADING_STAGE_3 = 20;
     public static final int RELOAD_DURATION = 30;
-    public static final float DISPERSION_STD = (float)Math.toRadians(1);
+
+    public static float bulletStdDev;
+    public static double bulletSpeed;
 
     private int loadingStage;
 
@@ -214,10 +216,10 @@ public class MusketItem extends Item {
         float gaussian = Math.abs((float)random.nextGaussian());
         if (gaussian > 4) gaussian = 4;
 
-        front = front.rotatePitch(DISPERSION_STD * gaussian * MathHelper.sin(angle))
-                       .rotateYaw(DISPERSION_STD * gaussian * MathHelper.cos(angle));
+        front = front.rotatePitch(bulletStdDev * gaussian * MathHelper.sin(angle))
+                       .rotateYaw(bulletStdDev * gaussian * MathHelper.cos(angle));
 
-        Vec3d motion = front.scale(BulletEntity.VELOCITY);
+        Vec3d motion = front.scale(bulletSpeed);
 
         Vec3d playerMotion = player.getMotion();
         motion.add(playerMotion.x, player.onGround ? 0 : playerMotion.y, playerMotion.z);

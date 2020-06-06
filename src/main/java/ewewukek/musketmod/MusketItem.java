@@ -145,7 +145,7 @@ public class MusketItem extends Item {
 
     @Override
     public boolean onBlockDestroyed(ItemStack stack, World worldIn, BlockState state, BlockPos pos, LivingEntity entityLiving) {
-        if (entityLiving instanceof PlayerEntity) {
+        if (!worldIn.isRemote && entityLiving instanceof PlayerEntity && state.getBlockHardness(worldIn, pos) != 0.0f) {
             damageItem(stack, (PlayerEntity)entityLiving);
         }
         return false;

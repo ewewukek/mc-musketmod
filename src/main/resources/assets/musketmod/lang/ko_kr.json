@@ -1,0 +1,7 @@
+{
+  "death.attack.musket": "%1$s 가 %2$s 의 총에 맞았습니다!",
+  "item.musketmod.barrel": "총신",
+  "item.musketmod.cartridge": "종이탄피",
+  "item.musketmod.musket": "머스킷",
+  "item.musketmod.stock": "개머리판"
+}

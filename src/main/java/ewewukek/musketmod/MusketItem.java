@@ -29,8 +29,6 @@ public class MusketItem extends Item {
     public static float bulletStdDev;
     public static double bulletSpeed;
 
-    private int loadingStage;
-
     @ObjectHolder(MusketMod.MODID + ":cartridge")
     public static Item CARTRIDGE;
 
@@ -86,7 +84,9 @@ public class MusketItem extends Item {
 
         } else if (loaded || haveAmmo) {
 
-            if (!loaded) loadingStage = 0;
+            if (!loaded) {
+                setLoadingStage(stack, 0);
+            }
             player.setActiveHand(hand);
             return ActionResult.resultConsume(stack);
 
@@ -100,12 +100,12 @@ public class MusketItem extends Item {
         if (isLoaded(stack)) setReady(stack, true);
     }
 
-    // called by LivingEntity.updateActiveHand
     @Override
-    public void func_219972_a(World world, LivingEntity entity, ItemStack stack, int timeLeft) {
+    public void onUse(World world, LivingEntity entity, ItemStack stack, int timeLeft) {
         if (world.isRemote || !(entity instanceof PlayerEntity)) return;
 
         int usingDuration = getUseDuration(stack) - timeLeft;
+        int loadingStage = getLoadingStage(stack);
 
         double posX = entity.getPosX();
         double posY = entity.getPosY();
@@ -123,14 +123,16 @@ public class MusketItem extends Item {
             world.playSound(null, posX, posY, posZ, SOUND_MUSKET_LOAD_2, SoundCategory.PLAYERS, 0.5F, 1.0F);
             loadingStage = 3;
         }
+        setLoadingStage(stack, loadingStage);
     }
+
 
     @Override
     public void onUsingTick(ItemStack stack, LivingEntity entityLiving, int timeLeft) {
         if (!(entityLiving instanceof PlayerEntity)) return;
 
         if (getUseDuration(stack) - timeLeft >= RELOAD_DURATION && !isLoaded(stack)) {
-            PlayerEntity player = (PlayerEntity)entityLiving;
+            PlayerEntity player = (PlayerEntity) entityLiving;
 
             if (!player.abilities.isCreativeMode) {
                 ItemStack ammoStack = findAmmo(player);
@@ -148,7 +150,7 @@ public class MusketItem extends Item {
     @Override
     public boolean onBlockDestroyed(ItemStack stack, World worldIn, BlockState state, BlockPos pos, LivingEntity entityLiving) {
         if (!worldIn.isRemote && entityLiving instanceof PlayerEntity && state.getBlockHardness(worldIn, pos) != 0.0f) {
-            damageItem(stack, (PlayerEntity)entityLiving);
+            damageItem(stack, (PlayerEntity) entityLiving);
         }
         return false;
     }
@@ -205,19 +207,19 @@ public class MusketItem extends Item {
         double posZ = player.getPosZ();
 
         return new Vec3d(posX, posY + player.getEyeHeight(), posZ)
-                    .add(side.add(down).scale(0.1));
+                .add(side.add(down).scale(0.1));
     }
 
     private void fireBullet(World worldIn, PlayerEntity player) {
         Vec3d pos = getPlayerFiringPoint(player);
         Vec3d front = Vec3d.fromPitchYaw(player.rotationPitch, player.rotationYaw);
 
-        float angle = (float)Math.PI * 2 * random.nextFloat();
-        float gaussian = Math.abs((float)random.nextGaussian());
+        float angle = (float) Math.PI * 2 * random.nextFloat();
+        float gaussian = Math.abs((float) random.nextGaussian());
         if (gaussian > 4) gaussian = 4;
 
         front = front.rotatePitch(bulletStdDev * gaussian * MathHelper.sin(angle))
-                       .rotateYaw(bulletStdDev * gaussian * MathHelper.cos(angle));
+                .rotateYaw(bulletStdDev * gaussian * MathHelper.cos(angle));
 
         Vec3d motion = front.scale(bulletSpeed);
 
@@ -245,10 +247,18 @@ public class MusketItem extends Item {
     }
 
     private void setLoaded(ItemStack stack, boolean loaded) {
-        stack.getOrCreateTag().putByte("loaded", (byte)(loaded ? 1 : 0));
+        stack.getOrCreateTag().putByte("loaded", (byte) (loaded ? 1 : 0));
     }
 
     private void setReady(ItemStack stack, boolean ready) {
-        stack.getOrCreateTag().putByte("ready", (byte)(ready ? 1 : 0));
+        stack.getOrCreateTag().putByte("ready", (byte) (ready ? 1 : 0));
+    }
+
+    private void setLoadingStage(ItemStack stack, int loadingStage) {
+        stack.getOrCreateTag().putInt("loadingStage", loadingStage);
+    }
+
+    private int getLoadingStage(ItemStack stack) {
+        return stack.getOrCreateTag().getInt("loadingStage");
     }
 }

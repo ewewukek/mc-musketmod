@@ -34,15 +34,8 @@ public class MusketMod {
     public static Item MUSKET;
 
     public MusketMod() {
-        DistExecutor.runWhenOn(Dist.CLIENT, () -> () -> {
-            FMLJavaModLoadingContext.get().getModEventBus().addListener(this::onClientSetup);
-        });
         ModLoadingContext.get().registerConfig(net.minecraftforge.fml.config.ModConfig.Type.SERVER, Config.SPEC);
-    }
-
-    @OnlyIn(Dist.CLIENT)
-    public void onClientSetup(FMLClientSetupEvent event) {
-        RenderingRegistry.registerEntityRenderingHandler(BulletEntity.TYPE, (manager) -> new BulletRenderer(manager));
+        FMLJavaModLoadingContext.get().getModEventBus().addListener(ClientSetup::init);
     }
 
     @Mod.EventBusSubscriber(bus = Mod.EventBusSubscriber.Bus.MOD)
@@ -50,64 +43,33 @@ public class MusketMod {
         @SubscribeEvent
         public static void onItemsRegistry(final RegistryEvent.Register<Item> event) {
             event.getRegistry().registerAll(
-                new Item(new Item.Properties().group(ItemGroup.MISC)).setRegistryName(MODID, "barrel"),
-                new Item(new Item.Properties().group(ItemGroup.MISC)).setRegistryName(MODID, "stock"),
-                new Item(new Item.Properties().group(ItemGroup.COMBAT)).setRegistryName(MODID, "cartridge"),
-                new MusketItem(new Item.Properties().group(ItemGroup.COMBAT)).setRegistryName(MODID, "musket")
+                    new Item(new Item.Properties().group(ItemGroup.MISC)).setRegistryName(MODID, "barrel"),
+                    new Item(new Item.Properties().group(ItemGroup.MISC)).setRegistryName(MODID, "stock"),
+                    new Item(new Item.Properties().group(ItemGroup.COMBAT)).setRegistryName(MODID, "cartridge"),
+                    new MusketItem(new Item.Properties().group(ItemGroup.COMBAT)).setRegistryName(MODID, "musket")
             );
         }
 
         @SubscribeEvent
         public static void onEntityRegistry(final RegistryEvent.Register<EntityType<?>> event) {
             event.getRegistry().register(
-                EntityType.Builder.<BulletEntity>create(EntityClassification.MISC)
-                    .setCustomClientFactory(BulletEntity::new).size(0.5f, 0.5f)
-                    .setTrackingRange(64).setUpdateInterval(5).setShouldReceiveVelocityUpdates(false)
-                    .build(MODID + ":bullet").setRegistryName(MODID, "bullet")
+                    EntityType.Builder.<BulletEntity>create(EntityClassification.MISC)
+                            .setCustomClientFactory(BulletEntity::new).size(0.5f, 0.5f)
+                            .setTrackingRange(64).setUpdateInterval(5).setShouldReceiveVelocityUpdates(false)
+                            .build(MODID + ":bullet").setRegistryName(MODID, "bullet")
             );
         }
 
         @SubscribeEvent
         public static void onSoundRegistry(final RegistryEvent.Register<SoundEvent> event) {
             event.getRegistry().registerAll(
-                new SoundEvent(new ResourceLocation(MODID, "musket_load0")).setRegistryName(MODID, "musket_load0"),
-                new SoundEvent(new ResourceLocation(MODID, "musket_load1")).setRegistryName(MODID, "musket_load1"),
-                new SoundEvent(new ResourceLocation(MODID, "musket_load2")).setRegistryName(MODID, "musket_load2"),
-                new SoundEvent(new ResourceLocation(MODID, "musket_ready")).setRegistryName(MODID, "musket_ready"),
-                new SoundEvent(new ResourceLocation(MODID, "musket_fire")).setRegistryName(MODID, "musket_fire")
+                    new SoundEvent(new ResourceLocation(MODID, "musket_load0")).setRegistryName(MODID, "musket_load0"),
+                    new SoundEvent(new ResourceLocation(MODID, "musket_load1")).setRegistryName(MODID, "musket_load1"),
+                    new SoundEvent(new ResourceLocation(MODID, "musket_load2")).setRegistryName(MODID, "musket_load2"),
+                    new SoundEvent(new ResourceLocation(MODID, "musket_ready")).setRegistryName(MODID, "musket_ready"),
+                    new SoundEvent(new ResourceLocation(MODID, "musket_fire")).setRegistryName(MODID, "musket_fire")
             );
         }
 
-    }
-
-    @Mod.EventBusSubscriber(Dist.CLIENT)
-    public static class ForgeEvents {
-        @SubscribeEvent
-        public static void onRenderHandEvent(final RenderHandEvent event) {
-            if (event.getHand() != Hand.MAIN_HAND) return;
-            ItemStack stack = event.getItemStack();
-            if (!stack.isEmpty() && stack.getItem() == MUSKET) {
-                RenderHelper.renderSpecificFirstPersonHand(
-                    event.getHand(), event.getPartialTicks(), event.getInterpolatedPitch(),
-                    event.getSwingProgress(), event.getEquipProgress(), stack,
-                    event.getMatrixStack(), event.getBuffers(), event.getLight());
-                event.setCanceled(true);
-            }
-        }
-
-        @SubscribeEvent
-        public static void onRenderLivingEventPre(final RenderLivingEvent.Pre<PlayerEntity, PlayerModel<PlayerEntity>> event) {
-            if (!(event.getEntity() instanceof PlayerEntity)) return;
-            PlayerEntity player = (PlayerEntity)event.getEntity();
-            ItemStack stack = player.getHeldItemMainhand();
-            if (!stack.isEmpty() && stack.getItem() == MUSKET && MusketItem.isLoaded(stack)) {
-                PlayerModel<PlayerEntity> model = event.getRenderer().getEntityModel();
-                if (player.getPrimaryHand() == HandSide.RIGHT) {
-                    model.rightArmPose = BipedModel.ArmPose.CROSSBOW_HOLD;
-                } else {
-                    model.leftArmPose = BipedModel.ArmPose.CROSSBOW_HOLD;
-                }
-            }
-        }
     }
 }

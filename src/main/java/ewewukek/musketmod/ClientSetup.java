@@ -1,11 +1,15 @@
 package ewewukek.musketmod;
 
+import static ewewukek.musketmod.MusketMod.MUSKET;
+
 import net.minecraft.client.renderer.entity.model.BipedModel;
 import net.minecraft.client.renderer.entity.model.PlayerModel;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.item.ItemModelsProperties;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.Hand;
 import net.minecraft.util.HandSide;
+import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.event.RenderHandEvent;
 import net.minecraftforge.client.event.RenderLivingEvent;
@@ -14,14 +18,14 @@ import net.minecraftforge.fml.client.registry.RenderingRegistry;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 
-import static ewewukek.musketmod.MusketMod.MUSKET;
-
 @Mod.EventBusSubscriber(Dist.CLIENT)
 public class ClientSetup {
 
-    
     public static void init(final FMLClientSetupEvent event) {
         RenderingRegistry.registerEntityRenderingHandler(BulletEntity.TYPE, BulletRenderer::new);
+        ItemModelsProperties.func_239418_a_(MUSKET, new ResourceLocation("loaded"), (stack, world, player) -> {
+            return MusketItem.isLoaded(stack) ? 1 : 0;
+        });
     }
 
     @SubscribeEvent

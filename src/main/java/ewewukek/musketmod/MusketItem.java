@@ -46,11 +46,6 @@ public class MusketItem extends Item {
 
     public MusketItem(Item.Properties properties) {
         super(properties.defaultMaxDamage(DURABILITY));
-
-        // TODO: fix
-//        addPropertyOverride(new ResourceLocation("loaded"), (stack, world, player) -> {
-//            return isLoaded(stack) ? 1 : 0;
-//        });
     }
 
     @Override

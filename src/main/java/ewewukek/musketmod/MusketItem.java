@@ -219,8 +219,8 @@ public class MusketItem extends Item {
         Vector3d motion = front.scale(bulletSpeed);
 
         Vector3d playerMotion = player.getMotion();
-        // TODO: fix
-//        motion.add(playerMotion.x, player.onGround ? 0 : playerMotion.y, playerMotion.z);
+        // getOnGround
+        motion.add(playerMotion.x, player.func_233570_aj_() ? 0 : playerMotion.y, playerMotion.z);
 
         BulletEntity bullet = new BulletEntity(worldIn);
         bullet.shooterUuid = player.getUniqueID();

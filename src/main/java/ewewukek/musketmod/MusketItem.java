@@ -6,7 +6,6 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.particles.ParticleTypes;
 import net.minecraft.tags.FluidTags;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.Hand;
@@ -70,9 +69,6 @@ public class MusketItem extends Item {
         if (loaded && isReady(stack)) {
             if (!worldIn.isRemote) {
                 fireBullet(worldIn, player);
-
-            } else {
-                fireParticles(worldIn, player);
             }
             player.playSound(SOUND_MUSKET_FIRE, 1.5f, 1);
 
@@ -230,20 +226,9 @@ public class MusketItem extends Item {
         bullet.shooterUuid = player.getUniqueID();
         bullet.setPosition(pos.x, pos.y, pos.z);
         bullet.setMotion(motion);
+        bullet.doFireParticles = true;
 
         worldIn.addEntity(bullet);
-    }
-
-    private void fireParticles(World world, PlayerEntity player) {
-        Vec3d pos = getPlayerFiringPoint(player);
-        Vec3d front = Vec3d.fromPitchYaw(player.rotationPitch, player.rotationYaw);
-
-        for (int i = 0; i != 10; ++i) {
-            float t = random.nextFloat();
-            Vec3d p = pos.add(front.scale(0.5 + t));
-            Vec3d v = front.scale(0.1).scale(1 - t);
-            world.addParticle(ParticleTypes.POOF, p.x, p.y, p.z, v.x, v.y, v.z);
-        }
     }
 
     private void setLoaded(ItemStack stack, boolean loaded) {

@@ -16,6 +16,10 @@ Simple mod that adds a craftable musket. Use RMB to both load and fire. Doesn't 
 ##### Paper cartridge (ammunition)
 ![](doc/cartridge_recipe.png?raw=true)
 
+#### Configuration:
+
+Configurable values are damage, bullet speed and accuracy. Default configuration is stored in world's serverconfig directory.
+
 #### Credits:
 - Mojang (duh)
 - Minecraft Forge and guys from the forum

@@ -9,6 +9,7 @@ import net.minecraft.block.BlockState;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.entity.projectile.ThrowableEntity;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.network.IPacket;
 import net.minecraft.network.PacketBuffer;
@@ -28,7 +29,7 @@ import net.minecraftforge.fml.network.FMLPlayMessages;
 import net.minecraftforge.fml.network.NetworkHooks;
 import net.minecraftforge.registries.ObjectHolder;
 
-public class BulletEntity extends Entity implements IEntityAdditionalSpawnData {
+public class BulletEntity extends ThrowableEntity implements IEntityAdditionalSpawnData {
     private static final Random random = new Random();
     static final double GRAVITY = 0.05;
     static final double AIR_FRICTION = 0.99;
@@ -37,7 +38,7 @@ public class BulletEntity extends Entity implements IEntityAdditionalSpawnData {
     public static float damageFactorMin;
     public static float damageFactorMax;
 
-    public UUID shooterUuid;
+    public UUID shooterUuid; // TODO: reuse ProjectileEntity's fields
     public short ticksLeft;
 
     @ObjectHolder(MusketMod.MODID + ":bullet")
@@ -136,8 +137,7 @@ public class BulletEntity extends Entity implements IEntityAdditionalSpawnData {
         if (collision.getType() == RayTraceResult.Type.MISS) return false;
 
         BlockState blockstate = world.getBlockState(collision.getPos());
-        // TODO: refactor BulletEntity to inherit from ProjectileEntity
-//        blockstate.onProjectileCollision(world, blockstate, collision, this);
+        blockstate.onProjectileCollision(world, blockstate, collision, this);
 
         int impactParticleCount = (int)(getMotion().lengthSquared() / 20);
         if (impactParticleCount > 0) {

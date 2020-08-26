@@ -19,6 +19,7 @@ Simple mod that adds a craftable musket. Use RMB to both load and fire. Doesn't 
 #### Credits:
 - Mojang (duh)
 - Minecraft Forge and guys from the forum
+- lilypuree
 - [Some sounds I've used](src/main/resources/assets/musketmod/sounds/credits.txt)
 
 #### Permissions:

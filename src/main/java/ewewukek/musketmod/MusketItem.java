@@ -10,12 +10,11 @@ import net.minecraft.particles.ParticleTypes;
 import net.minecraft.tags.FluidTags;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.Hand;
-import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.SoundCategory;
 import net.minecraft.util.SoundEvent;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
-import net.minecraft.util.math.Vec3d;
+import net.minecraft.util.math.vector.Vector3d;
 import net.minecraft.world.World;
 import net.minecraftforge.registries.ObjectHolder;
 
@@ -48,9 +47,10 @@ public class MusketItem extends Item {
     public MusketItem(Item.Properties properties) {
         super(properties.defaultMaxDamage(DURABILITY));
 
-        addPropertyOverride(new ResourceLocation("loaded"), (stack, world, player) -> {
-            return isLoaded(stack) ? 1 : 0;
-        });
+        // TODO: fix
+//        addPropertyOverride(new ResourceLocation("loaded"), (stack, world, player) -> {
+//            return isLoaded(stack) ? 1 : 0;
+//        });
     }
 
     @Override
@@ -197,22 +197,22 @@ public class MusketItem extends Item {
         }
     }
 
-    private Vec3d getPlayerFiringPoint(PlayerEntity player) {
-        Vec3d side = Vec3d.fromPitchYaw(0, player.rotationYaw + 90);
+    private Vector3d getPlayerFiringPoint(PlayerEntity player) {
+        Vector3d side = Vector3d.fromPitchYaw(0, player.rotationYaw + 90);
         if (player.getActiveHand() == Hand.OFF_HAND) side = side.scale(-1);
-        Vec3d down = Vec3d.fromPitchYaw(player.rotationPitch + 90, player.rotationYaw);
+        Vector3d down = Vector3d.fromPitchYaw(player.rotationPitch + 90, player.rotationYaw);
 
         double posX = player.getPosX();
         double posY = player.getPosY();
         double posZ = player.getPosZ();
 
-        return new Vec3d(posX, posY + player.getEyeHeight(), posZ)
+        return new Vector3d(posX, posY + player.getEyeHeight(), posZ)
                 .add(side.add(down).scale(0.1));
     }
 
     private void fireBullet(World worldIn, PlayerEntity player) {
-        Vec3d pos = getPlayerFiringPoint(player);
-        Vec3d front = Vec3d.fromPitchYaw(player.rotationPitch, player.rotationYaw);
+        Vector3d pos = getPlayerFiringPoint(player);
+        Vector3d front = Vector3d.fromPitchYaw(player.rotationPitch, player.rotationYaw);
 
         float angle = (float) Math.PI * 2 * random.nextFloat();
         float gaussian = Math.abs((float) random.nextGaussian());
@@ -221,10 +221,11 @@ public class MusketItem extends Item {
         front = front.rotatePitch(bulletStdDev * gaussian * MathHelper.sin(angle))
                 .rotateYaw(bulletStdDev * gaussian * MathHelper.cos(angle));
 
-        Vec3d motion = front.scale(bulletSpeed);
+        Vector3d motion = front.scale(bulletSpeed);
 
-        Vec3d playerMotion = player.getMotion();
-        motion.add(playerMotion.x, player.onGround ? 0 : playerMotion.y, playerMotion.z);
+        Vector3d playerMotion = player.getMotion();
+        // TODO: fix
+//        motion.add(playerMotion.x, player.onGround ? 0 : playerMotion.y, playerMotion.z);
 
         BulletEntity bullet = new BulletEntity(worldIn);
         bullet.shooterUuid = player.getUniqueID();
@@ -235,13 +236,13 @@ public class MusketItem extends Item {
     }
 
     private void fireParticles(World world, PlayerEntity player) {
-        Vec3d pos = getPlayerFiringPoint(player);
-        Vec3d front = Vec3d.fromPitchYaw(player.rotationPitch, player.rotationYaw);
+        Vector3d pos = getPlayerFiringPoint(player);
+        Vector3d front = Vector3d.fromPitchYaw(player.rotationPitch, player.rotationYaw);
 
         for (int i = 0; i != 10; ++i) {
             float t = random.nextFloat();
-            Vec3d p = pos.add(front.scale(0.5 + t));
-            Vec3d v = front.scale(0.1).scale(1 - t);
+            Vector3d p = pos.add(front.scale(0.5 + t));
+            Vector3d v = front.scale(0.1).scale(1 - t);
             world.addParticle(ParticleTypes.POOF, p.x, p.y, p.z, v.x, v.y, v.z);
         }
     }

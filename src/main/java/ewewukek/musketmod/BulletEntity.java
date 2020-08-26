@@ -20,7 +20,7 @@ import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockRayTraceResult;
 import net.minecraft.util.math.RayTraceContext;
 import net.minecraft.util.math.RayTraceResult;
-import net.minecraft.util.math.Vec3d;
+import net.minecraft.util.math.vector.Vector3d;
 import net.minecraft.world.World;
 import net.minecraft.world.server.ServerWorld;
 import net.minecraftforge.fml.common.registry.IEntityAdditionalSpawnData;
@@ -73,7 +73,7 @@ public class BulletEntity extends Entity implements IEntityAdditionalSpawnData {
             return;
         }
 
-        Vec3d motion = getMotion();
+        Vector3d motion = getMotion();
 
         double posX = getPosX() + motion.x;
         double posY = getPosY() + motion.y;
@@ -107,8 +107,8 @@ public class BulletEntity extends Entity implements IEntityAdditionalSpawnData {
     }
 
     private boolean processCollision() {
-        Vec3d from = new Vec3d(getPosX(), getPosY(), getPosZ());
-        Vec3d to = from.add(getMotion());
+        Vector3d from = new Vector3d(getPosX(), getPosY(), getPosZ());
+        Vector3d to = from.add(getMotion());
 
         BlockRayTraceResult collision = world.rayTraceBlocks(
             new RayTraceContext(from, to, RayTraceContext.BlockMode.COLLIDER, RayTraceContext.FluidMode.NONE, this));
@@ -136,7 +136,8 @@ public class BulletEntity extends Entity implements IEntityAdditionalSpawnData {
         if (collision.getType() == RayTraceResult.Type.MISS) return false;
 
         BlockState blockstate = world.getBlockState(collision.getPos());
-        blockstate.onProjectileCollision(world, blockstate, collision, this);
+        // TODO: refactor BulletEntity to inherit from ProjectileEntity
+//        blockstate.onProjectileCollision(world, blockstate, collision, this);
 
         int impactParticleCount = (int)(getMotion().lengthSquared() / 20);
         if (impactParticleCount > 0) {
@@ -167,8 +168,8 @@ public class BulletEntity extends Entity implements IEntityAdditionalSpawnData {
         };
     }
 
-    private Entity closestEntityOnPath(Vec3d start, Vec3d end) {
-        Vec3d motion = getMotion();
+    private Entity closestEntityOnPath(Vector3d start, Vector3d end) {
+        Vector3d motion = getMotion();
         Entity shooter = getShooter();
 
         Entity result = null;
@@ -178,7 +179,7 @@ public class BulletEntity extends Entity implements IEntityAdditionalSpawnData {
         for (Entity entity : world.getEntitiesInAABBexcluding(this, aabbSelection, getTargetPredicate())) {
             if (entity != shooter) {
                 AxisAlignedBB aabb = entity.getBoundingBox();
-                Optional<Vec3d> optional = aabb.rayTrace(start, end);
+                Optional<Vector3d> optional = aabb.rayTrace(start, end);
                 if (optional.isPresent()) {
                     double dist = start.squareDistanceTo(optional.get());
                     if (dist < result_dist || result == null) {
@@ -222,7 +223,7 @@ public class BulletEntity extends Entity implements IEntityAdditionalSpawnData {
     public void writeSpawnData(PacketBuffer data) {
         data.writeUniqueId(shooterUuid != null ? shooterUuid : EMPTY_UUID);
         data.writeShort(ticksLeft);
-        Vec3d motion = getMotion();
+        Vector3d motion = getMotion();
         data.writeFloat((float)motion.x);
         data.writeFloat((float)motion.y);
         data.writeFloat((float)motion.z);
@@ -233,7 +234,7 @@ public class BulletEntity extends Entity implements IEntityAdditionalSpawnData {
         UUID uuid = data.readUniqueId();
         if (!uuid.equals(EMPTY_UUID)) shooterUuid = uuid;
         ticksLeft = data.readShort();
-        Vec3d motion = new Vec3d(data.readFloat(), data.readFloat(), data.readFloat());
+        Vector3d motion = new Vector3d(data.readFloat(), data.readFloat(), data.readFloat());
         setMotion(motion);
     }
 }

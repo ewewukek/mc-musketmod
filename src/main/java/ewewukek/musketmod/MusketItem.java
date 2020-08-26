@@ -223,7 +223,7 @@ public class MusketItem extends Item {
         motion.add(playerMotion.x, player.func_233570_aj_() ? 0 : playerMotion.y, playerMotion.z);
 
         BulletEntity bullet = new BulletEntity(worldIn);
-        bullet.shooterUuid = player.getUniqueID();
+        bullet.setShooter(player);
         bullet.setPosition(pos.x, pos.y, pos.z);
         bullet.setMotion(motion);
 

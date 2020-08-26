@@ -2,7 +2,6 @@ package ewewukek.musketmod;
 
 import java.util.Optional;
 import java.util.Random;
-import java.util.UUID;
 import java.util.function.Predicate;
 
 import net.minecraft.block.BlockState;
@@ -38,7 +37,6 @@ public class BulletEntity extends ThrowableEntity implements IEntityAdditionalSp
     public static float damageFactorMin;
     public static float damageFactorMax;
 
-    public UUID shooterUuid; // TODO: reuse ProjectileEntity's fields
     public short ticksLeft;
 
     @ObjectHolder(MusketMod.MODID + ":bullet")
@@ -53,9 +51,9 @@ public class BulletEntity extends ThrowableEntity implements IEntityAdditionalSp
         this(world);
     }
 
+    // temporary adapter until mappings are updated
     public Entity getShooter() {
-        return shooterUuid != null
-            && world instanceof ServerWorld ? ((ServerWorld)world).getEntityByUuid(shooterUuid) : null;
+        return super.func_234616_v_();
     }
 
     public DamageSource causeMusketDamage(BulletEntity bullet, Entity attacker) {
@@ -198,17 +196,13 @@ public class BulletEntity extends ThrowableEntity implements IEntityAdditionalSp
 
     @Override
     protected void readAdditional(CompoundNBT compound) {
-        if (compound.hasUniqueId("shooterUuid")) {
-            shooterUuid = compound.getUniqueId("shooterUuid");
-        }
+        super.readAdditional(compound);
         ticksLeft = compound.getShort("ticksLeft");
     }
 
     @Override
     protected void writeAdditional(CompoundNBT compound) {
-        if (shooterUuid != null) {
-            compound.putUniqueId("shooterUuid", shooterUuid);
-        }
+        super.writeAdditional(compound);
         compound.putShort("ticksLeft", ticksLeft);
     }
 
@@ -217,11 +211,8 @@ public class BulletEntity extends ThrowableEntity implements IEntityAdditionalSp
         return NetworkHooks.getEntitySpawningPacket(this);
     }
 
-    private static final UUID EMPTY_UUID = new UUID(0, 0);
-
     @Override
     public void writeSpawnData(PacketBuffer data) {
-        data.writeUniqueId(shooterUuid != null ? shooterUuid : EMPTY_UUID);
         data.writeShort(ticksLeft);
         Vector3d motion = getMotion();
         data.writeFloat((float)motion.x);
@@ -231,8 +222,6 @@ public class BulletEntity extends ThrowableEntity implements IEntityAdditionalSp
 
     @Override
     public void readSpawnData(PacketBuffer data) {
-        UUID uuid = data.readUniqueId();
-        if (!uuid.equals(EMPTY_UUID)) shooterUuid = uuid;
         ticksLeft = data.readShort();
         Vector3d motion = new Vector3d(data.readFloat(), data.readFloat(), data.readFloat());
         setMotion(motion);

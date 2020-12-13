@@ -23,7 +23,7 @@ public class ClientSetup {
 
     public static void init(final FMLClientSetupEvent event) {
         RenderingRegistry.registerEntityRenderingHandler(BulletEntity.TYPE, BulletRenderer::new);
-        ItemModelsProperties.func_239418_a_(MUSKET, new ResourceLocation("loaded"), (stack, world, player) -> {
+        ItemModelsProperties.registerProperty(MUSKET, new ResourceLocation("loaded"), (stack, world, player) -> {
             return MusketItem.isLoaded(stack) ? 1 : 0;
         });
     }

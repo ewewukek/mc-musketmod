@@ -215,8 +215,7 @@ public class MusketItem extends Item {
         Vector3d motion = front.scale(bulletSpeed);
 
         Vector3d playerMotion = player.getMotion();
-        // getOnGround
-        motion.add(playerMotion.x, player.func_233570_aj_() ? 0 : playerMotion.y, playerMotion.z);
+        motion.add(playerMotion.x, player.isOnGround() ? 0 : playerMotion.y, playerMotion.z);
 
         BulletEntity bullet = new BulletEntity(worldIn);
         bullet.setShooter(player);

@@ -5,7 +5,7 @@ buildscript {
         mavenCentral()
     }
     dependencies {
-        classpath group: 'net.minecraftforge.gradle', name: 'ForgeGradle', version: '3.+', changing: true
+        classpath group: 'net.minecraftforge.gradle', name: 'ForgeGradle', version: '4.1.+', changing: true
     }
 }
 apply plugin: 'net.minecraftforge.gradle'
@@ -13,17 +13,19 @@ apply plugin: 'eclipse'
 
 version = '1.1.2'
 group = 'ewewukek.musketmod'
-archivesBaseName = 'musketmod-1.16.4'
+archivesBaseName = 'musketmod-1.16.5'
 
-sourceCompatibility = targetCompatibility = compileJava.sourceCompatibility = compileJava.targetCompatibility = '1.8'
+java.toolchain.languageVersion = JavaLanguageVersion.of(8)
 
 minecraft {
+    // i'm not sure if it's ok to switch to official mappings yet
+    // mappings channel: 'official', version: '1.16.5'
     mappings channel: 'snapshot', version: '20201028-1.16.3'
 
     runs {
         client {
             workingDirectory project.file('run')
-            property 'forge.logging.markers', 'SCAN,REGISTRIES,REGISTRYDUMP'
+            property 'forge.logging.markers', 'REGISTRIES'
             property 'forge.logging.console.level', 'debug'
             mods {
                 musketmod {
@@ -34,7 +36,7 @@ minecraft {
 
         server {
             workingDirectory project.file('run')
-            property 'forge.logging.markers', 'SCAN,REGISTRIES,REGISTRYDUMP'
+            property 'forge.logging.markers', 'REGISTRIES'
             property 'forge.logging.console.level', 'debug'
             mods {
                 musketmod {
@@ -45,9 +47,9 @@ minecraft {
 
         data {
             workingDirectory project.file('run')
-            property 'forge.logging.markers', 'SCAN,REGISTRIES,REGISTRYDUMP'
+            property 'forge.logging.markers', 'REGISTRIES'
             property 'forge.logging.console.level', 'debug'
-            args '--mod', 'musketmod', '--all', '--output', file('src/generated/resources/')
+            args '--mod', 'musketmod', '--all', '--output', file('src/generated/resources/'), '--existing', file('src/main/resources/')
             mods {
                 musketmod {
                     source sourceSets.main
@@ -57,8 +59,10 @@ minecraft {
     }
 }
 
+sourceSets.main.resources { srcDir 'src/generated/resources' }
+
 dependencies {
-    minecraft 'net.minecraftforge:forge:1.16.4-35.1.0'
+    minecraft 'net.minecraftforge:forge:1.16.5-36.1.0'
 }
 
 jar {

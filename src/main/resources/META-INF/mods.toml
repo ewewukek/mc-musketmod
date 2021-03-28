@@ -9,6 +9,7 @@ displayName="Musket Mod"
 #updateJSONURL=""
 displayURL="https://github.com/ewewukek/mc-musketmod"
 #logoFile="musket.png"
+credits="lilypuree and MikhailTapio for their contribution"
 authors="ewewukek"
 description='''
 Simple mod that adds a craftable musket.

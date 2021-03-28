@@ -23,7 +23,8 @@ Configurable values are damage, bullet speed and accuracy. Configuration file is
 #### Credits:
 - Mojang (duh)
 - Minecraft Forge and guys from the forum
-- lilypuree
+- lilypuree (fixes and Korean translation)
+- MikhailTapio (Chinese translation)
 - [Some sounds I've used](src/main/resources/assets/musketmod/sounds/credits.txt)
 
 #### Permissions:

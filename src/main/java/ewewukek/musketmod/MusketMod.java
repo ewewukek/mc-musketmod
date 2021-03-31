@@ -19,6 +19,22 @@ public class MusketMod {
 
     @ObjectHolder(MusketMod.MODID + ":musket")
     public static Item MUSKET;
+    @ObjectHolder(MusketMod.MODID + ":cartridge")
+    public static Item CARTRIDGE;
+
+    @ObjectHolder(MusketMod.MODID + ":musket_load0")
+    public static SoundEvent SOUND_MUSKET_LOAD_0;
+    @ObjectHolder(MusketMod.MODID + ":musket_load1")
+    public static SoundEvent SOUND_MUSKET_LOAD_1;
+    @ObjectHolder(MusketMod.MODID + ":musket_load2")
+    public static SoundEvent SOUND_MUSKET_LOAD_2;
+    @ObjectHolder(MusketMod.MODID + ":musket_ready")
+    public static SoundEvent SOUND_MUSKET_READY;
+    @ObjectHolder(MusketMod.MODID + ":musket_fire")
+    public static SoundEvent SOUND_MUSKET_FIRE;
+
+    @ObjectHolder(MusketMod.MODID + ":bullet")
+    public static EntityType<BulletEntity> BULLET_ENTITY_TYPE;
 
     public MusketMod() {
         ModLoadingContext.get().registerConfig(net.minecraftforge.fml.config.ModConfig.Type.SERVER, Config.SPEC);

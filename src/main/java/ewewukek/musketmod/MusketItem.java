@@ -10,12 +10,10 @@ import net.minecraft.tags.FluidTags;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.Hand;
 import net.minecraft.util.SoundCategory;
-import net.minecraft.util.SoundEvent;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.vector.Vector3d;
 import net.minecraft.world.World;
-import net.minecraftforge.registries.ObjectHolder;
 
 public class MusketItem extends Item {
     public static final int DURABILITY = 250;
@@ -26,22 +24,6 @@ public class MusketItem extends Item {
 
     public static float bulletStdDev;
     public static double bulletSpeed;
-
-    @ObjectHolder(MusketMod.MODID + ":cartridge")
-    public static Item CARTRIDGE;
-
-    @ObjectHolder(MusketMod.MODID + ":musket_load0")
-    public static SoundEvent SOUND_MUSKET_LOAD_0;
-    @ObjectHolder(MusketMod.MODID + ":musket_load1")
-    public static SoundEvent SOUND_MUSKET_LOAD_1;
-    @ObjectHolder(MusketMod.MODID + ":musket_load2")
-    public static SoundEvent SOUND_MUSKET_LOAD_2;
-
-    @ObjectHolder(MusketMod.MODID + ":musket_ready")
-    public static SoundEvent SOUND_MUSKET_READY;
-
-    @ObjectHolder(MusketMod.MODID + ":musket_fire")
-    public static SoundEvent SOUND_MUSKET_FIRE;
 
     public MusketItem(Item.Properties properties) {
         super(properties.defaultMaxDamage(DURABILITY));
@@ -65,7 +47,7 @@ public class MusketItem extends Item {
             if (!worldIn.isRemote) {
                 fireBullet(worldIn, player);
             }
-            player.playSound(SOUND_MUSKET_FIRE, 1.5f, 1);
+            player.playSound(MusketMod.SOUND_MUSKET_FIRE, 1.5f, 1);
 
             damageItem(stack, player);
             setReady(stack, false);
@@ -74,7 +56,6 @@ public class MusketItem extends Item {
             return ActionResult.resultConsume(stack);
 
         } else if (loaded || haveAmmo) {
-
             if (!loaded) {
                 setLoadingStage(stack, 0);
             }
@@ -95,36 +76,28 @@ public class MusketItem extends Item {
     public void onUse(World world, LivingEntity entity, ItemStack stack, int timeLeft) {
         if (world.isRemote || !(entity instanceof PlayerEntity)) return;
 
+        PlayerEntity player = (PlayerEntity) entity;
         int usingDuration = getUseDuration(stack) - timeLeft;
         int loadingStage = getLoadingStage(stack);
 
-        double posX = entity.getPosX();
-        double posY = entity.getPosY();
-        double posZ = entity.getPosZ();
+        double posX = player.getPosX();
+        double posY = player.getPosY();
+        double posZ = player.getPosZ();
 
         if (loadingStage == 0 && usingDuration >= LOADING_STAGE_1) {
-            world.playSound(null, posX, posY, posZ, SOUND_MUSKET_LOAD_0, SoundCategory.PLAYERS, 0.5F, 1.0F);
-            loadingStage = 1;
+            world.playSound(null, posX, posY, posZ, MusketMod.SOUND_MUSKET_LOAD_0, SoundCategory.PLAYERS, 0.5F, 1.0F);
+            setLoadingStage(stack, 1);
 
         } else if (loadingStage == 1 && usingDuration >= LOADING_STAGE_2) {
-            world.playSound(null, posX, posY, posZ, SOUND_MUSKET_LOAD_1, SoundCategory.PLAYERS, 0.5F, 1.0F);
-            loadingStage = 2;
+            world.playSound(null, posX, posY, posZ, MusketMod.SOUND_MUSKET_LOAD_1, SoundCategory.PLAYERS, 0.5F, 1.0F);
+            setLoadingStage(stack, 2);
 
         } else if (loadingStage == 2 && usingDuration >= LOADING_STAGE_3) {
-            world.playSound(null, posX, posY, posZ, SOUND_MUSKET_LOAD_2, SoundCategory.PLAYERS, 0.5F, 1.0F);
-            loadingStage = 3;
+            world.playSound(null, posX, posY, posZ, MusketMod.SOUND_MUSKET_LOAD_2, SoundCategory.PLAYERS, 0.5F, 1.0F);
+            setLoadingStage(stack, 3);
         }
-        setLoadingStage(stack, loadingStage);
-    }
 
-
-    @Override
-    public void onUsingTick(ItemStack stack, LivingEntity entityLiving, int timeLeft) {
-        if (!(entityLiving instanceof PlayerEntity)) return;
-
-        if (getUseDuration(stack) - timeLeft >= RELOAD_DURATION && !isLoaded(stack)) {
-            PlayerEntity player = (PlayerEntity) entityLiving;
-
+        if (usingDuration >= RELOAD_DURATION && !isLoaded(stack)) {
             if (!player.abilities.isCreativeMode) {
                 ItemStack ammoStack = findAmmo(player);
                 if (ammoStack.isEmpty()) return;
@@ -133,7 +106,7 @@ public class MusketItem extends Item {
                 if (ammoStack.isEmpty()) player.inventory.deleteStack(ammoStack);
             }
 
-            player.playSound(SOUND_MUSKET_READY, 0.5f, 1);
+            world.playSound(null, posX, posY, posZ, MusketMod.SOUND_MUSKET_READY, SoundCategory.PLAYERS, 0.5F, 1.0F);
             setLoaded(stack, true);
         }
     }
@@ -168,7 +141,7 @@ public class MusketItem extends Item {
     }
 
     private boolean isAmmo(ItemStack stack) {
-        return stack.getItem() == CARTRIDGE;
+        return stack.getItem() == MusketMod.CARTRIDGE;
     }
 
     private ItemStack findAmmo(PlayerEntity player) {
@@ -179,8 +152,8 @@ public class MusketItem extends Item {
             return player.getHeldItem(Hand.MAIN_HAND);
 
         } else {
-            for (int i = 0; i != player.inventory.getSizeInventory(); ++i) {
-                ItemStack itemstack = player.inventory.getStackInSlot(i);
+            for (int i = 0; i != player.inventory.mainInventory.size(); ++i) {
+                ItemStack itemstack = player.inventory.mainInventory.get(i);
                 if (isAmmo(itemstack)) return itemstack;
             }
 
@@ -188,22 +161,12 @@ public class MusketItem extends Item {
         }
     }
 
-    private Vector3d getPlayerFiringPoint(PlayerEntity player) {
-        Vector3d side = Vector3d.fromPitchYaw(0, player.rotationYaw + 90);
-        if (player.getActiveHand() == Hand.OFF_HAND) side = side.scale(-1);
-        Vector3d down = Vector3d.fromPitchYaw(player.rotationPitch + 90, player.rotationYaw);
-
-        double posX = player.getPosX();
-        double posY = player.getPosY();
-        double posZ = player.getPosZ();
-
-        return new Vector3d(posX, posY + player.getEyeHeight(), posZ)
-                .add(side.add(down).scale(0.1));
-    }
-
     private void fireBullet(World worldIn, PlayerEntity player) {
-        Vector3d pos = getPlayerFiringPoint(player);
-        Vector3d front = Vector3d.fromPitchYaw(player.rotationPitch, player.rotationYaw);
+        final float deg2rad = 0.017453292f;
+        Vector3d front = new Vector3d(0, 0, 1).rotatePitch(-deg2rad * player.rotationPitch).rotateYaw(-deg2rad * player.rotationYaw);
+
+        Vector3d pos = new Vector3d(player.getPosX(), player.getPosY() + player.getEyeHeight(), player.getPosZ());
+        pos = pos.add(front.scale(0.2));
 
         float angle = (float) Math.PI * 2 * random.nextFloat();
         float gaussian = Math.abs((float) random.nextGaussian());

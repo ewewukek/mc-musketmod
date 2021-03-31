@@ -6,7 +6,6 @@ import java.util.function.Predicate;
 
 import net.minecraft.block.BlockState;
 import net.minecraft.entity.Entity;
-import net.minecraft.entity.EntityType;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.projectile.ThrowableEntity;
 import net.minecraft.nbt.CompoundNBT;
@@ -26,13 +25,13 @@ import net.minecraft.world.server.ServerWorld;
 import net.minecraftforge.fml.common.registry.IEntityAdditionalSpawnData;
 import net.minecraftforge.fml.network.FMLPlayMessages;
 import net.minecraftforge.fml.network.NetworkHooks;
-import net.minecraftforge.registries.ObjectHolder;
 
 public class BulletEntity extends ThrowableEntity implements IEntityAdditionalSpawnData {
     private static final Random random = new Random();
     static final double GRAVITY = 0.05;
     static final double AIR_FRICTION = 0.99;
     static final double WATER_FRICTION = 0.6;
+    static final short LIFETIME = 50;
 
     public static float damageFactorMin;
     public static float damageFactorMax;
@@ -40,12 +39,9 @@ public class BulletEntity extends ThrowableEntity implements IEntityAdditionalSp
     public short ticksLeft;
     public boolean doFireParticles;
 
-    @ObjectHolder(MusketMod.MODID + ":bullet")
-    public static EntityType<BulletEntity> TYPE;
-
     public BulletEntity(World world) {
-        super(TYPE, world);
-        ticksLeft = 50;
+        super(MusketMod.BULLET_ENTITY_TYPE, world);
+        ticksLeft = LIFETIME;
     }
 
     public BulletEntity(FMLPlayMessages.SpawnEntity packet, World world) {
@@ -79,7 +75,6 @@ public class BulletEntity extends ThrowableEntity implements IEntityAdditionalSp
         }
 
         Vector3d motion = getMotion();
-
         double posX = getPosX() + motion.x;
         double posY = getPosY() + motion.y;
         double posZ = getPosZ() + motion.z;
@@ -105,26 +100,25 @@ public class BulletEntity extends ThrowableEntity implements IEntityAdditionalSp
         }
 
         setMotion(motion.scale(friction));
-
-        // copied from EntityAbstractArrow
         setPosition(posX, posY, posZ);
         doBlockCollisions();
     }
 
     private void fireParticles() {
-        Vector3d pos = new Vector3d(getPosX(), getPosY(), getPosZ());
+        Vector3d pos = getPositionVec();
         Vector3d front = getMotion().normalize();
 
         for (int i = 0; i != 10; ++i) {
             double t = Math.pow(random.nextFloat(), 1.5);
             Vector3d p = pos.add(front.scale(1.25 + t));
+            p = p.add(new Vector3d(random.nextFloat() - 0.5, random.nextFloat() - 0.5, random.nextFloat() - 0.5).scale(0.1));
             Vector3d v = front.scale(0.1).scale(1 - t);
             world.addParticle(ParticleTypes.POOF, p.x, p.y, p.z, v.x, v.y, v.z);
         }
     }
 
     private boolean processCollision() {
-        Vector3d from = new Vector3d(getPosX(), getPosY(), getPosZ());
+        Vector3d from = getPositionVec();
         Vector3d to = from.add(getMotion());
 
         BlockRayTraceResult collision = world.rayTraceBlocks(
@@ -150,7 +144,7 @@ public class BulletEntity extends ThrowableEntity implements IEntityAdditionalSp
             }
         }
 
-        if (collision.getType() == RayTraceResult.Type.MISS) return false;
+        if (collision.getType() != RayTraceResult.Type.BLOCK) return false;
 
         BlockState blockstate = world.getBlockState(collision.getPos());
         blockstate.onProjectileCollision(world, blockstate, collision, this);
@@ -186,22 +180,19 @@ public class BulletEntity extends ThrowableEntity implements IEntityAdditionalSp
 
     private Entity closestEntityOnPath(Vector3d start, Vector3d end) {
         Vector3d motion = getMotion();
-        Entity shooter = getShooter();
 
         Entity result = null;
-        double result_dist = motion.length() + 0.05;
+        double result_dist = 0;
 
-        AxisAlignedBB aabbSelection = getBoundingBox().expand(motion.x, motion.y, motion.z).grow(0.5);
+        AxisAlignedBB aabbSelection = getBoundingBox().expand(motion).grow(0.5);
         for (Entity entity : world.getEntitiesInAABBexcluding(this, aabbSelection, getTargetPredicate())) {
-            if (entity != shooter) {
-                AxisAlignedBB aabb = entity.getBoundingBox();
-                Optional<Vector3d> optional = aabb.rayTrace(start, end);
-                if (optional.isPresent()) {
-                    double dist = start.squareDistanceTo(optional.get());
-                    if (dist < result_dist || result == null) {
-                        result = entity;
-                        result_dist = dist;
-                    }
+            AxisAlignedBB aabb = entity.getBoundingBox();
+            Optional<Vector3d> optional = aabb.rayTrace(start, end);
+            if (optional.isPresent()) {
+                double dist = start.squareDistanceTo(optional.get());
+                if (dist < result_dist || result == null) {
+                    result = entity;
+                    result_dist = dist;
                 }
             }
         }
@@ -224,6 +215,7 @@ public class BulletEntity extends ThrowableEntity implements IEntityAdditionalSp
         compound.putShort("ticksLeft", ticksLeft);
     }
 
+// Forge {
     @Override
     public IPacket<?> createSpawnPacket() {
         return NetworkHooks.getEntitySpawningPacket(this);
@@ -246,4 +238,5 @@ public class BulletEntity extends ThrowableEntity implements IEntityAdditionalSp
         Vector3d motion = new Vector3d(data.readFloat(), data.readFloat(), data.readFloat());
         setMotion(motion);
     }
+// }
 }

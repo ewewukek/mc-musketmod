@@ -2,6 +2,7 @@ package ewewukek.musketmod;
 
 import static ewewukek.musketmod.MusketMod.MUSKET;
 
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.entity.model.BipedModel;
 import net.minecraft.client.renderer.entity.model.PlayerModel;
 import net.minecraft.entity.player.PlayerEntity;
@@ -22,7 +23,7 @@ import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 public class ClientSetup {
 
     public static void init(final FMLClientSetupEvent event) {
-        RenderingRegistry.registerEntityRenderingHandler(BulletEntity.TYPE, BulletRenderer::new);
+        RenderingRegistry.registerEntityRenderingHandler(MusketMod.BULLET_ENTITY_TYPE, BulletRenderer::new);
         ItemModelsProperties.registerProperty(MUSKET, new ResourceLocation("loaded"), (stack, world, player) -> {
             return MusketItem.isLoaded(stack) ? 1 : 0;
         });
@@ -33,7 +34,9 @@ public class ClientSetup {
         if (event.getHand() != Hand.MAIN_HAND) return;
         ItemStack stack = event.getItemStack();
         if (!stack.isEmpty() && stack.getItem() == MUSKET) {
+            Minecraft mc = Minecraft.getInstance();
             RenderHelper.renderSpecificFirstPersonHand(
+                    mc.getFirstPersonRenderer(), mc.player,
                     event.getHand(), event.getPartialTicks(), event.getInterpolatedPitch(),
                     event.getSwingProgress(), event.getEquipProgress(), stack,
                     event.getMatrixStack(), event.getBuffers(), event.getLight());
@@ -45,6 +48,7 @@ public class ClientSetup {
     public static void onRenderLivingEventPre(final RenderLivingEvent.Pre<PlayerEntity, PlayerModel<PlayerEntity>> event) {
         if (!(event.getEntity() instanceof PlayerEntity)) return;
         PlayerEntity player = (PlayerEntity)event.getEntity();
+        if (player.isSwingInProgress) return;
         ItemStack stack = player.getHeldItemMainhand();
         if (!stack.isEmpty() && stack.getItem() == MUSKET && MusketItem.isLoaded(stack)) {
             PlayerModel<PlayerEntity> model = event.getRenderer().getEntityModel();

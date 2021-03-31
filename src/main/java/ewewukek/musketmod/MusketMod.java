@@ -1,14 +1,21 @@
 package ewewukek.musketmod;
 
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.Executor;
+
 import net.minecraft.entity.EntityClassification;
 import net.minecraft.entity.EntityType;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemGroup;
+import net.minecraft.profiler.IProfiler;
+import net.minecraft.resources.IFutureReloadListener;
+import net.minecraft.resources.IResourceManager;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.SoundEvent;
+import net.minecraft.util.Unit;
+import net.minecraftforge.event.AddReloadListenerEvent;
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.minecraftforge.fml.ModLoadingContext;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import net.minecraftforge.registries.ObjectHolder;
@@ -37,7 +44,6 @@ public class MusketMod {
     public static EntityType<BulletEntity> BULLET_ENTITY_TYPE;
 
     public MusketMod() {
-        ModLoadingContext.get().registerConfig(net.minecraftforge.fml.config.ModConfig.Type.SERVER, Config.SPEC);
         FMLJavaModLoadingContext.get().getModEventBus().addListener(ClientSetup::init);
     }
 
@@ -74,5 +80,23 @@ public class MusketMod {
             );
         }
 
+    }
+
+    @Mod.EventBusSubscriber(bus = Mod.EventBusSubscriber.Bus.FORGE)
+    public static class ServerEvents {
+        @SubscribeEvent
+        public static void onAddReloadListenerEvent(final AddReloadListenerEvent event) {
+            event.addListener(new IFutureReloadListener() {
+                @Override
+                public CompletableFuture<Void> reload(IStage stage, IResourceManager resourceManager,
+                    IProfiler preparationsProfiler, IProfiler reloadProfiler, Executor backgroundExecutor,
+                    Executor gameExecutor) {
+
+                    return stage.markCompleteAwaitingOthers(Unit.INSTANCE).thenRunAsync(() -> {
+                        Config.reload();
+                    }, gameExecutor);
+                }
+            });
+        }
     }
 }

@@ -30,6 +30,8 @@ public class BulletRenderer extends EntityRenderer<BulletEntity> {
 
     @Override
     public void render(BulletEntity bullet, float yaw, float partialTicks, MatrixStack matrixStack, IRenderTypeBuffer render, int packedLight) {
+        if (bullet.isFirstTick()) return;
+
         matrixStack.push();
 
         matrixStack.scale(0.1f, 0.1f, 0.1f);

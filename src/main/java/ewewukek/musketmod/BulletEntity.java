@@ -37,7 +37,6 @@ public class BulletEntity extends ThrowableEntity implements IEntityAdditionalSp
     public static float damageFactorMax;
 
     public short ticksLeft;
-    public boolean doFireParticles;
 
     public BulletEntity(World world) {
         super(MusketMod.BULLET_ENTITY_TYPE, world);
@@ -46,6 +45,10 @@ public class BulletEntity extends ThrowableEntity implements IEntityAdditionalSp
 
     public BulletEntity(FMLPlayMessages.SpawnEntity packet, World world) {
         this(world);
+    }
+
+    public boolean isFirstTick() {
+        return ticksLeft == LIFETIME;
     }
 
     // temporary adapter until mappings are updated
@@ -64,9 +67,8 @@ public class BulletEntity extends ThrowableEntity implements IEntityAdditionalSp
             return;
         }
 
-        if (world.isRemote && doFireParticles) {
+        if (world.isRemote && isFirstTick()) {
             fireParticles();
-            doFireParticles = false;
         }
 
         if (--ticksLeft <= 0) {
@@ -224,7 +226,6 @@ public class BulletEntity extends ThrowableEntity implements IEntityAdditionalSp
     @Override
     public void writeSpawnData(PacketBuffer data) {
         data.writeShort(ticksLeft);
-        data.writeByte(doFireParticles ? 1 : 0);
         Vector3d motion = getMotion();
         data.writeFloat((float)motion.x);
         data.writeFloat((float)motion.y);
@@ -234,7 +235,6 @@ public class BulletEntity extends ThrowableEntity implements IEntityAdditionalSp
     @Override
     public void readSpawnData(PacketBuffer data) {
         ticksLeft = data.readShort();
-        doFireParticles = data.readByte() != 0 ? true : false;
         Vector3d motion = new Vector3d(data.readFloat(), data.readFloat(), data.readFloat());
         setMotion(motion);
     }

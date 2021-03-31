@@ -164,9 +164,7 @@ public class MusketItem extends Item {
     private void fireBullet(World worldIn, PlayerEntity player) {
         final float deg2rad = 0.017453292f;
         Vector3d front = new Vector3d(0, 0, 1).rotatePitch(-deg2rad * player.rotationPitch).rotateYaw(-deg2rad * player.rotationYaw);
-
         Vector3d pos = new Vector3d(player.getPosX(), player.getPosY() + player.getEyeHeight(), player.getPosZ());
-        pos = pos.add(front.scale(0.2));
 
         float angle = (float) Math.PI * 2 * random.nextFloat();
         float gaussian = Math.abs((float) random.nextGaussian());
@@ -184,7 +182,6 @@ public class MusketItem extends Item {
         bullet.setShooter(player);
         bullet.setPosition(pos.x, pos.y, pos.z);
         bullet.setMotion(motion);
-        bullet.doFireParticles = true;
 
         worldIn.addEntity(bullet);
     }

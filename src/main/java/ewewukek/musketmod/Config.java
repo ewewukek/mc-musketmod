@@ -44,7 +44,7 @@ public class Config {
         damageMax = 21.5;
     }
 
-    private boolean load() {
+    private void load() {
         try (BufferedReader reader = Files.newBufferedReader(CONFIG_PATH)) {
             String line;
             int lineNumber = 0;
@@ -84,7 +84,6 @@ public class Config {
             }
         } catch (ReadException e) {
             logger.warn("Configuration file is corrupted: ", e);
-            return false;
 
         } catch (NoSuchFileException e) {
             save();
@@ -92,10 +91,8 @@ public class Config {
 
         } catch (IOException e) {
             logger.warn("Could not read configuration file: ", e);
-            return false;
 
         }
-        return true;
     }
 
     private void save() {

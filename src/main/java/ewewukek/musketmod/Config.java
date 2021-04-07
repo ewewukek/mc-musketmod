@@ -56,12 +56,19 @@ public class Config {
                 line.trim();
                 if (line.length() == 0) continue;
 
+                String errorPrefix = CONFIG_PATH+": line "+lineNumber+": ";
                 try (Scanner s = new Scanner(line).useDelimiter("\\s*=\\s*")) {
 
-                    if (!s.hasNext()) throw new ReadException(lineNumber, "key is missing");
+                    if (!s.hasNext()) {
+                        logger.warn(errorPrefix+"parameter name is missing");
+                        continue;
+                    }
                     String key = s.next().trim();
 
-                    if (!s.hasNextDouble()) throw new ReadException(lineNumber, "value is missing/wrong/not a number");
+                    if (!s.hasNextDouble()) {
+                        logger.warn(errorPrefix+"value is missing/wrong/not a number");
+                        continue;
+                    }
                     double value = s.nextDouble();
 
                     switch (key) {
@@ -78,20 +85,16 @@ public class Config {
                         damageMax = value;
                         break;
                     default:
-                        throw new ReadException(lineNumber, "unrecognized key: "+key);
+                        logger.warn(errorPrefix+"unrecognized parameter name: "+key);
                     }
                 }
             }
-        } catch (ReadException e) {
-            logger.warn("Configuration file is corrupted: ", e);
-
         } catch (NoSuchFileException e) {
             save();
             logger.info("Configuration file not found, default created");
 
         } catch (IOException e) {
             logger.warn("Could not read configuration file: ", e);
-
         }
     }
 
@@ -108,13 +111,6 @@ public class Config {
 
         } catch (IOException e) {
             logger.warn("Could not save configuration file: ", e);
-        }
-    }
-
-    @SuppressWarnings("serial")
-    public static class ReadException extends Exception {
-        public ReadException(int lineNumber, String message) {
-            super("line "+lineNumber+": "+message);
         }
     }
 }

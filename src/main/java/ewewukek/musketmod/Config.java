@@ -6,6 +6,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.NoSuchFileException;
 import java.nio.file.Path;
+import java.util.Locale;
 import java.util.Scanner;
 
 import org.apache.logging.log4j.LogManager;
@@ -63,7 +64,9 @@ public class Config {
                 if (line.length() == 0) continue;
 
                 String errorPrefix = CONFIG_PATH+": line "+lineNumber+": ";
-                try (Scanner s = new Scanner(line).useDelimiter("\\s*=\\s*")) {
+                try (Scanner s = new Scanner(line)) {
+                    s.useLocale(Locale.US);
+                    s.useDelimiter("\\s*=\\s*");
 
                     if (!s.hasNext()) {
                         logger.warn(errorPrefix+"parameter name is missing");

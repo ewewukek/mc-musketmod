@@ -92,6 +92,7 @@ public class Config {
                         break;
                     case "bulletMaxDistance":
                         bulletMaxDistance = value;
+                        break;
                     case "damageMin":
                         damageMin = value;
                         break;

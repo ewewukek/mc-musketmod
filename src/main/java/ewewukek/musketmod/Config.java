@@ -4,6 +4,7 @@ import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.IOException;
 import java.nio.file.Files;
+import java.nio.file.NoSuchFileException;
 import java.nio.file.Path;
 import java.util.Scanner;
 
@@ -25,9 +26,7 @@ public class Config {
 
     public static void reload() {
         INSTANCE.setDefaults();
-        if (!Files.isReadable(CONFIG_PATH) || !INSTANCE.load()) {
-            INSTANCE.save();
-        }
+        INSTANCE.load();
 
         MusketItem.bulletStdDev = (float)Math.toRadians(INSTANCE.bulletStdDev);
         MusketItem.bulletSpeed = INSTANCE.bulletSpeed / 20;
@@ -86,6 +85,10 @@ public class Config {
         } catch (ReadException e) {
             logger.warn("Configuration file is corrupted: ", e);
             return false;
+
+        } catch (NoSuchFileException e) {
+            save();
+            logger.info("Configuration file not found, default created");
 
         } catch (IOException e) {
             logger.warn("Could not read configuration file: ", e);

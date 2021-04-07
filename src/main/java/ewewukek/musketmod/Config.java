@@ -21,6 +21,7 @@ public class Config {
 
     public double bulletStdDev;
     public double bulletSpeed;
+    public double bulletMaxDistance;
     public double damageMin;
     public double damageMax;
 
@@ -33,6 +34,7 @@ public class Config {
         double maxEnergy = MusketItem.bulletSpeed * MusketItem.bulletSpeed;
         BulletEntity.damageFactorMin = (float)(INSTANCE.damageMin / maxEnergy);
         BulletEntity.damageFactorMax = (float)(INSTANCE.damageMax / maxEnergy);
+        BulletEntity.maxDistance = INSTANCE.bulletMaxDistance;
 
         logger.info("Configuration has been loaded");
     }
@@ -40,6 +42,7 @@ public class Config {
     private void setDefaults() {
         bulletStdDev = 1;
         bulletSpeed = 180;
+        bulletMaxDistance = 256;
         damageMin = 20.5;
         damageMax = 21.5;
     }
@@ -78,6 +81,8 @@ public class Config {
                     case "bulletSpeed":
                         bulletSpeed = value;
                         break;
+                    case "bulletMaxDistance":
+                        bulletMaxDistance = value;
                     case "damageMin":
                         damageMin = value;
                         break;
@@ -104,6 +109,8 @@ public class Config {
             writer.write("bulletStdDev = "+bulletStdDev+"\n");
             writer.write("# Muzzle velocity of bullet (in blocks per second)\n");
             writer.write("bulletSpeed = "+bulletSpeed+"\n");
+            writer.write("# Maximum bullet travel distance (in blocks)\n");
+            writer.write("bulletMaxDistance = "+bulletMaxDistance+"\n");
             writer.write("# Minimum damage at point-blank range\n");
             writer.write("damageMin = "+damageMin+"\n");
             writer.write("# Maximum damage at point-blank range\n");

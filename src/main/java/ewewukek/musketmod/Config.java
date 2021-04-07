@@ -19,6 +19,8 @@ public class Config {
     public static final Path CONFIG_PATH = FMLPaths.CONFIGDIR.get().resolve("musketmod.txt");
     public static final Config INSTANCE = new Config();
 
+    public static final int VERSION = 1;
+
     public double bulletStdDev;
     public double bulletSpeed;
     public double bulletMaxDistance;
@@ -48,6 +50,7 @@ public class Config {
     }
 
     private void load() {
+        int version = 0;
         try (BufferedReader reader = Files.newBufferedReader(CONFIG_PATH)) {
             String line;
             int lineNumber = 0;
@@ -75,6 +78,9 @@ public class Config {
                     double value = s.nextDouble();
 
                     switch (key) {
+                    case "version":
+                        version = (int)value;
+                        break;
                     case "bulletStdDev":
                         bulletStdDev = value;
                         break;
@@ -101,10 +107,15 @@ public class Config {
         } catch (IOException e) {
             logger.warn("Could not read configuration file: ", e);
         }
+        if (version < VERSION) {
+            logger.info("Configuration file belongs to older version, updating");
+            save();
+        }
     }
 
     private void save() {
         try (BufferedWriter writer = Files.newBufferedWriter(CONFIG_PATH)) {
+            writer.write("version = "+VERSION+"\n");
             writer.write("# Standard deviation of bullet spread (in degrees)\n");
             writer.write("bulletStdDev = "+bulletStdDev+"\n");
             writer.write("# Muzzle velocity of bullet (in blocks per second)\n");

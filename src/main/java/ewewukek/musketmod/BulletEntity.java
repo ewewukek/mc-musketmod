@@ -2,7 +2,6 @@ package ewewukek.musketmod;
 
 import java.util.Optional;
 import java.util.Random;
-import java.util.function.Predicate;
 
 import javax.annotation.Nonnull;
 
@@ -176,13 +175,6 @@ public class BulletEntity extends Projectile implements IEntityAdditionalSpawnDa
         target.hurt(damagesource, energy * factor);
     }
 
-    private Predicate<Entity> getTargetPredicate() {
-        Entity shooter = getOwner();
-        return (entity) -> {
-            return !entity.isSpectator() && entity.isAlive() && entity.canBeCollidedWith() && entity != shooter;
-        };
-    }
-
     private Entity closestEntityOnPath(Vec3 start, Vec3 end) {
         Vec3 motion = getDeltaMovement();
 
@@ -190,7 +182,7 @@ public class BulletEntity extends Projectile implements IEntityAdditionalSpawnDa
         double result_dist = 0;
 
         AABB aabbSelection = getBoundingBox().expandTowards(motion).inflate(0.5);
-        for (Entity entity : level.getEntities(this, aabbSelection, getTargetPredicate())) {
+        for (Entity entity : level.getEntities(this, aabbSelection, this::canHitEntity)) {
             AABB aabb = entity.getBoundingBox();
             Optional<Vec3> optional = aabb.clip(start, end);
             if (optional.isPresent()) {

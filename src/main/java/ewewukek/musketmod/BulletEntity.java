@@ -71,10 +71,6 @@ public class BulletEntity extends Projectile implements IEntityAdditionalSpawnDa
             return;
         }
 
-        if (level.isClientSide && isFirstTick()) {
-            fireParticles();
-        }
-
         // for compatibility origin is not stored in world save
         if (origin == null) origin = position();
         double distanceTravelled = position().subtract(origin).length();
@@ -246,6 +242,7 @@ public class BulletEntity extends Projectile implements IEntityAdditionalSpawnDa
         ticksLeft = data.readShort();
         Vec3 motion = new Vec3(data.readFloat(), data.readFloat(), data.readFloat());
         setDeltaMovement(motion);
+        fireParticles();
     }
 // }
 }

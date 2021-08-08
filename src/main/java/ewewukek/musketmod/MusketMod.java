@@ -3,6 +3,8 @@ package ewewukek.musketmod;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Executor;
 
+import javax.annotation.Nullable;
+
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.packs.resources.PreparableReloadListener;
 import net.minecraft.server.packs.resources.ResourceManager;
@@ -13,6 +15,8 @@ import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.MobCategory;
 import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.crafting.RecipeType;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.event.AddReloadListenerEvent;
 import net.minecraftforge.event.RegistryEvent;
@@ -55,9 +59,15 @@ public class MusketMod {
     public static class RegistryEvents {
         @SubscribeEvent
         public static void onItemsRegistry(final RegistryEvent.Register<Item> event) {
+            Item stock = new Item(new Item.Properties().tab(CreativeModeTab.TAB_MATERIALS)) {
+                @Override
+                public int getBurnTime(ItemStack itemStack, @Nullable RecipeType<?> recipeType) {
+                    return 200;
+                }
+            };
             event.getRegistry().registerAll(
                     new Item(new Item.Properties().tab(CreativeModeTab.TAB_MATERIALS)).setRegistryName(MODID, "barrel"),
-                    new Item(new Item.Properties().tab(CreativeModeTab.TAB_MATERIALS)).setRegistryName(MODID, "stock"),
+                    stock.setRegistryName(MODID, "stock"),
                     new Item(new Item.Properties().tab(CreativeModeTab.TAB_COMBAT)).setRegistryName(MODID, "cartridge"),
                     new MusketItem(new Item.Properties().tab(CreativeModeTab.TAB_COMBAT)).setRegistryName(MODID, "musket")
             );

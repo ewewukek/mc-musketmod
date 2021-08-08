@@ -7,6 +7,7 @@ import net.minecraft.entity.EntityClassification;
 import net.minecraft.entity.EntityType;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemGroup;
+import net.minecraft.item.ItemStack;
 import net.minecraft.profiler.IProfiler;
 import net.minecraft.resources.IFutureReloadListener;
 import net.minecraft.resources.IResourceManager;
@@ -55,9 +56,15 @@ public class MusketMod {
     public static class RegistryEvents {
         @SubscribeEvent
         public static void onItemsRegistry(final RegistryEvent.Register<Item> event) {
+            Item stock = new Item(new Item.Properties().group(ItemGroup.MISC)) {
+                @Override
+                public int getBurnTime(ItemStack itemStack) {
+                    return 200;
+                }
+            };
             event.getRegistry().registerAll(
                     new Item(new Item.Properties().group(ItemGroup.MISC)).setRegistryName(MODID, "barrel"),
-                    new Item(new Item.Properties().group(ItemGroup.MISC)).setRegistryName(MODID, "stock"),
+                    stock.setRegistryName(MODID, "stock"),
                     new Item(new Item.Properties().group(ItemGroup.COMBAT)).setRegistryName(MODID, "cartridge"),
                     new MusketItem(new Item.Properties().group(ItemGroup.COMBAT)).setRegistryName(MODID, "musket")
             );

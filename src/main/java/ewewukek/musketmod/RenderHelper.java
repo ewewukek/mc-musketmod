@@ -1,16 +1,16 @@
 package ewewukek.musketmod;
 
-import com.mojang.blaze3d.matrix.MatrixStack;
+import com.mojang.blaze3d.vertex.PoseStack;
+import com.mojang.math.Vector3f;
 
-import net.minecraft.client.entity.player.AbstractClientPlayerEntity;
-import net.minecraft.client.renderer.FirstPersonRenderer;
-import net.minecraft.client.renderer.IRenderTypeBuffer;
-import net.minecraft.client.renderer.model.ItemCameraTransforms;
-import net.minecraft.item.ItemStack;
-import net.minecraft.util.Hand;
-import net.minecraft.util.HandSide;
-import net.minecraft.util.math.MathHelper;
-import net.minecraft.util.math.vector.Vector3f;
+import net.minecraft.client.player.AbstractClientPlayer;
+import net.minecraft.client.renderer.ItemInHandRenderer;
+import net.minecraft.client.renderer.MultiBufferSource;
+import net.minecraft.client.renderer.block.model.ItemTransforms;
+import net.minecraft.util.Mth;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.entity.HumanoidArm;
+import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 
@@ -19,39 +19,39 @@ public class RenderHelper {
     private static int previousSlot = -1;
     public static boolean equipCycleCompleted;
 
-    public static void renderSpecificFirstPersonHand(FirstPersonRenderer renderer, AbstractClientPlayerEntity player, Hand hand, float partialTicks, float interpolatedPitch, float swingProgress, float equipProgress, ItemStack stack, MatrixStack matrixStack, IRenderTypeBuffer render, int packedLight) {
-        HandSide handside = hand == Hand.MAIN_HAND ? player.getPrimaryHand() : player.getPrimaryHand().opposite();
-        boolean isRightHand = handside == HandSide.RIGHT;
+    public static void renderSpecificFirstPersonHand(ItemInHandRenderer renderer, AbstractClientPlayer player, InteractionHand hand, float partialTicks, float interpolatedPitch, float swingProgress, float equipProgress, ItemStack stack, PoseStack matrixStack, MultiBufferSource render, int packedLight) {
+        HumanoidArm handside = hand == InteractionHand.MAIN_HAND ? player.getMainArm() : player.getMainArm().getOpposite();
+        boolean isRightHand = handside == HumanoidArm.RIGHT;
         float sign = isRightHand ? 1 : -1;
 
-        int slot = player.inventory.currentItem;
+        int slot = player.getInventory().selected;
         boolean slotChanged = slot != previousSlot;
-        ItemStack clientStack = hand == Hand.MAIN_HAND ? player.getHeldItemMainhand() : player.getHeldItemOffhand();
+        ItemStack clientStack = hand == InteractionHand.MAIN_HAND ? player.getMainHandItem() : player.getOffhandItem();
         if (slotChanged || clientStack.isEmpty() || clientStack.getItem() != MusketMod.MUSKET) equipCycleCompleted = false;
 
-        matrixStack.push();
+        matrixStack.pushPose();
 
         if (swingProgress > 0) {
-            float swingSharp = MathHelper.sin(MathHelper.sqrt(swingProgress) * (float)Math.PI);
-            float swingNormal = MathHelper.sin(swingProgress * (float)Math.PI);
+            float swingSharp = Mth.sin(Mth.sqrt(swingProgress) * (float)Math.PI);
+            float swingNormal = Mth.sin(swingProgress * (float)Math.PI);
             matrixStack.translate(sign * (0.2f - 0.05f * swingNormal), -0.2f - 0.05f * swingNormal, -0.3f - 0.4f * swingSharp);
-            matrixStack.rotate(Vector3f.XP.rotationDegrees(180 + sign * (20 - 20 * swingSharp)));
+            matrixStack.mulPose(Vector3f.XP.rotationDegrees(180 + sign * (20 - 20 * swingSharp)));
 
         } else {
-            float usingDuration = stack.getUseDuration() - (player.getItemInUseCount() - partialTicks + 1);
-            boolean isLoading = player.isHandActive() && player.getActiveHand() == hand && !MusketItem.isLoaded(stack)
+            float usingDuration = stack.getUseDuration() - (player.getUseItemRemainingTicks() - partialTicks + 1);
+            boolean isLoading = player.isUsingItem() && player.getUsedItemHand() == hand && !MusketItem.isLoaded(stack)
                                 && usingDuration > 0 && usingDuration < MusketItem.RELOAD_DURATION;
             if (isLoading) {
                 matrixStack.translate(sign * 0.15f, -0.55f, -0.3f);
-                matrixStack.rotate(Vector3f.XP.rotationDegrees(60));
-                matrixStack.rotate(Vector3f.ZP.rotationDegrees(10));
+                matrixStack.mulPose(Vector3f.XP.rotationDegrees(60));
+                matrixStack.mulPose(Vector3f.ZP.rotationDegrees(10));
 
                 if (usingDuration >= 8 && usingDuration <= 14 || usingDuration >= 18 && usingDuration <= 24) {
                     if (usingDuration >= 18) usingDuration -= 10;
                     float t;
                     if (usingDuration < 10) {
                         t = (usingDuration - 8) / 2;
-                        t = MathHelper.sin((float)Math.PI / 2 * MathHelper.sqrt(t));
+                        t = Mth.sin((float)Math.PI / 2 * Mth.sqrt(t));
                     } else {
                         t = (14 - usingDuration) / 4;
                     }
@@ -76,10 +76,10 @@ public class RenderHelper {
 
         // compensate rotated model
         matrixStack.translate(0, 0.085f, 0);
-        matrixStack.rotate(Vector3f.XP.rotationDegrees(-70));
+        matrixStack.mulPose(Vector3f.XP.rotationDegrees(-70));
 
-        renderer.renderItemSide(player, stack, isRightHand ? ItemCameraTransforms.TransformType.FIRST_PERSON_RIGHT_HAND : ItemCameraTransforms.TransformType.FIRST_PERSON_LEFT_HAND, !isRightHand, matrixStack, render, packedLight);
+        renderer.renderItem(player, stack, isRightHand ? ItemTransforms.TransformType.FIRST_PERSON_RIGHT_HAND : ItemTransforms.TransformType.FIRST_PERSON_LEFT_HAND, !isRightHand, matrixStack, render, packedLight);
 
-        matrixStack.pop();
+        matrixStack.popPose();
     }
 }

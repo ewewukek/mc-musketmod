@@ -1,19 +1,20 @@
 package ewewukek.musketmod;
 
-import net.minecraft.block.BlockState;
-import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.core.BlockPos;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.sounds.SoundSource;
 import net.minecraft.tags.FluidTags;
-import net.minecraft.util.ActionResult;
-import net.minecraft.util.Hand;
-import net.minecraft.util.SoundCategory;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.MathHelper;
-import net.minecraft.util.math.vector.Vector3d;
-import net.minecraft.world.World;
+import net.minecraft.util.Mth;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.InteractionResultHolder;
+import net.minecraft.world.entity.EquipmentSlot;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.phys.Vec3;
 
 public class MusketItem extends Item {
     public static final int DURABILITY = 250;
@@ -26,25 +27,25 @@ public class MusketItem extends Item {
     public static double bulletSpeed;
 
     public MusketItem(Item.Properties properties) {
-        super(properties.defaultMaxDamage(DURABILITY));
+        super(properties.defaultDurability(DURABILITY));
     }
 
     @Override
-    public ActionResult<ItemStack> onItemRightClick(World worldIn, PlayerEntity player, Hand hand) {
-        if (hand != Hand.MAIN_HAND) return super.onItemRightClick(worldIn, player, hand);
+    public InteractionResultHolder<ItemStack> use(Level worldIn, Player player, InteractionHand hand) {
+        if (hand != InteractionHand.MAIN_HAND) return super.use(worldIn, player, hand);
 
-        ItemStack stack = player.getHeldItem(hand);
-        boolean creative = player.abilities.isCreativeMode;
+        ItemStack stack = player.getItemInHand(hand);
+        boolean creative = player.getAbilities().instabuild;
 
-        if (player.areEyesInFluid(FluidTags.WATER) && !creative) {
-            return ActionResult.resultFail(stack);
+        if (player.isEyeInFluid(FluidTags.WATER) && !creative) {
+            return InteractionResultHolder.fail(stack);
         }
 
         boolean haveAmmo = !findAmmo(player).isEmpty() || creative;
         boolean loaded = isLoaded(stack);
 
         if (loaded && isReady(stack)) {
-            if (!worldIn.isRemote) {
+            if (!worldIn.isClientSide) {
                 fireBullet(worldIn, player);
             }
             player.playSound(MusketMod.SOUND_MUSKET_FIRE, 1.5f, 1);
@@ -53,75 +54,75 @@ public class MusketItem extends Item {
             setReady(stack, false);
             setLoaded(stack, false);
 
-            return ActionResult.resultConsume(stack);
+            return InteractionResultHolder.consume(stack);
 
         } else if (loaded || haveAmmo) {
             if (!loaded) {
                 setLoadingStage(stack, 0);
             }
-            player.setActiveHand(hand);
-            return ActionResult.resultConsume(stack);
+            player.startUsingItem(hand);
+            return InteractionResultHolder.consume(stack);
 
         } else {
-            return ActionResult.resultFail(stack);
+            return InteractionResultHolder.fail(stack);
         }
     }
 
     @Override
-    public void onPlayerStoppedUsing(ItemStack stack, World worldIn, LivingEntity entityLiving, int timeLeft) {
+    public void releaseUsing(ItemStack stack, Level worldIn, LivingEntity entityLiving, int timeLeft) {
         if (isLoaded(stack)) setReady(stack, true);
     }
 
     @Override
-    public void onUse(World world, LivingEntity entity, ItemStack stack, int timeLeft) {
-        if (world.isRemote || !(entity instanceof PlayerEntity)) return;
+    public void onUseTick(Level world, LivingEntity entity, ItemStack stack, int timeLeft) {
+        if (world.isClientSide || !(entity instanceof Player)) return;
 
-        PlayerEntity player = (PlayerEntity) entity;
+        Player player = (Player) entity;
         int usingDuration = getUseDuration(stack) - timeLeft;
         int loadingStage = getLoadingStage(stack);
 
-        double posX = player.getPosX();
-        double posY = player.getPosY();
-        double posZ = player.getPosZ();
+        double posX = player.getX();
+        double posY = player.getY();
+        double posZ = player.getZ();
 
         if (loadingStage == 0 && usingDuration >= LOADING_STAGE_1) {
-            world.playSound(null, posX, posY, posZ, MusketMod.SOUND_MUSKET_LOAD_0, SoundCategory.PLAYERS, 0.5F, 1.0F);
+            world.playSound(null, posX, posY, posZ, MusketMod.SOUND_MUSKET_LOAD_0, SoundSource.PLAYERS, 0.5F, 1.0F);
             setLoadingStage(stack, 1);
 
         } else if (loadingStage == 1 && usingDuration >= LOADING_STAGE_2) {
-            world.playSound(null, posX, posY, posZ, MusketMod.SOUND_MUSKET_LOAD_1, SoundCategory.PLAYERS, 0.5F, 1.0F);
+            world.playSound(null, posX, posY, posZ, MusketMod.SOUND_MUSKET_LOAD_1, SoundSource.PLAYERS, 0.5F, 1.0F);
             setLoadingStage(stack, 2);
 
         } else if (loadingStage == 2 && usingDuration >= LOADING_STAGE_3) {
-            world.playSound(null, posX, posY, posZ, MusketMod.SOUND_MUSKET_LOAD_2, SoundCategory.PLAYERS, 0.5F, 1.0F);
+            world.playSound(null, posX, posY, posZ, MusketMod.SOUND_MUSKET_LOAD_2, SoundSource.PLAYERS, 0.5F, 1.0F);
             setLoadingStage(stack, 3);
         }
 
         if (usingDuration >= RELOAD_DURATION && !isLoaded(stack)) {
-            if (!player.abilities.isCreativeMode) {
+            if (!player.getAbilities().instabuild) {
                 ItemStack ammoStack = findAmmo(player);
                 if (ammoStack.isEmpty()) return;
 
                 ammoStack.shrink(1);
-                if (ammoStack.isEmpty()) player.inventory.deleteStack(ammoStack);
+                if (ammoStack.isEmpty()) player.getInventory().removeItem(ammoStack);
             }
 
-            world.playSound(null, posX, posY, posZ, MusketMod.SOUND_MUSKET_READY, SoundCategory.PLAYERS, 0.5F, 1.0F);
+            world.playSound(null, posX, posY, posZ, MusketMod.SOUND_MUSKET_READY, SoundSource.PLAYERS, 0.5F, 1.0F);
             setLoaded(stack, true);
         }
     }
 
     @Override
-    public boolean onBlockDestroyed(ItemStack stack, World worldIn, BlockState state, BlockPos pos, LivingEntity entityLiving) {
-        if (!worldIn.isRemote && entityLiving instanceof PlayerEntity && state.getBlockHardness(worldIn, pos) != 0.0f) {
-            damageItem(stack, (PlayerEntity) entityLiving);
+    public boolean mineBlock(ItemStack stack, Level worldIn, BlockState state, BlockPos pos, LivingEntity entityLiving) {
+        if (!worldIn.isClientSide && entityLiving instanceof Player && state.getDestroySpeed(worldIn, pos) != 0.0f) {
+            damageItem(stack, (Player) entityLiving);
         }
         return false;
     }
 
-    public static void damageItem(ItemStack stack, PlayerEntity player) {
-        stack.damageItem(1, player, (entity) -> {
-            entity.sendBreakAnimation(player.getActiveHand());
+    public static void damageItem(ItemStack stack, Player player) {
+        stack.hurtAndBreak(1, player, (entity) -> {
+            entity.broadcastBreakEvent(player.getUsedItemHand());
         });
     }
 
@@ -131,12 +132,12 @@ public class MusketItem extends Item {
     }
 
     public static boolean isLoaded(ItemStack stack) {
-        CompoundNBT tag = stack.getTag();
+        CompoundTag tag = stack.getTag();
         return tag != null && tag.getByte("loaded") == 1;
     }
 
     public static boolean isReady(ItemStack stack) {
-        CompoundNBT tag = stack.getTag();
+        CompoundTag tag = stack.getTag();
         return tag != null && tag.getByte("ready") == 1;
     }
 
@@ -144,16 +145,16 @@ public class MusketItem extends Item {
         return stack.getItem() == MusketMod.CARTRIDGE;
     }
 
-    private ItemStack findAmmo(PlayerEntity player) {
-        if (isAmmo(player.getHeldItem(Hand.OFF_HAND))) {
-            return player.getHeldItem(Hand.OFF_HAND);
+    private ItemStack findAmmo(Player player) {
+        if (isAmmo(player.getItemBySlot(EquipmentSlot.OFFHAND))) {
+            return player.getItemBySlot(EquipmentSlot.OFFHAND);
 
-        } else if (isAmmo(player.getHeldItem(Hand.MAIN_HAND))) {
-            return player.getHeldItem(Hand.MAIN_HAND);
+        } else if (isAmmo(player.getItemBySlot(EquipmentSlot.MAINHAND))) {
+            return player.getItemBySlot(EquipmentSlot.MAINHAND);
 
         } else {
-            for (int i = 0; i != player.inventory.mainInventory.size(); ++i) {
-                ItemStack itemstack = player.inventory.mainInventory.get(i);
+            for (int i = 0; i != player.getInventory().getContainerSize(); ++i) {
+                ItemStack itemstack = player.getInventory().getItem(i);
                 if (isAmmo(itemstack)) return itemstack;
             }
 
@@ -161,29 +162,29 @@ public class MusketItem extends Item {
         }
     }
 
-    private void fireBullet(World worldIn, PlayerEntity player) {
+    private void fireBullet(Level worldIn, Player player) {
         final float deg2rad = 0.017453292f;
-        Vector3d front = new Vector3d(0, 0, 1).rotatePitch(-deg2rad * player.rotationPitch).rotateYaw(-deg2rad * player.rotationYaw);
-        Vector3d pos = new Vector3d(player.getPosX(), player.getPosY() + player.getEyeHeight(), player.getPosZ());
+        Vec3 front = new Vec3(0, 0, 1).xRot(-deg2rad * player.getXRot()).yRot(-deg2rad * player.getYRot());
+        Vec3 pos = new Vec3(player.getX(), player.getY() + player.getEyeHeight(), player.getZ());
 
-        float angle = (float) Math.PI * 2 * random.nextFloat();
-        float gaussian = Math.abs((float) random.nextGaussian());
+        float angle = (float) Math.PI * 2 * worldIn.getRandom().nextFloat();
+        float gaussian = Math.abs((float) worldIn.getRandom().nextGaussian());
         if (gaussian > 4) gaussian = 4;
 
-        front = front.rotatePitch(bulletStdDev * gaussian * MathHelper.sin(angle))
-                .rotateYaw(bulletStdDev * gaussian * MathHelper.cos(angle));
+        front = front.xRot(bulletStdDev * gaussian * Mth.sin(angle))
+                .yRot(bulletStdDev * gaussian * Mth.cos(angle));
 
-        Vector3d motion = front.scale(bulletSpeed);
+        Vec3 motion = front.scale(bulletSpeed);
 
-        Vector3d playerMotion = player.getMotion();
+        Vec3 playerMotion = player.getDeltaMovement();
         motion.add(playerMotion.x, player.isOnGround() ? 0 : playerMotion.y, playerMotion.z);
 
         BulletEntity bullet = new BulletEntity(worldIn);
-        bullet.setShooter(player);
-        bullet.setPosition(pos.x, pos.y, pos.z);
-        bullet.setMotion(motion);
+        bullet.setOwner(player);
+        bullet.setPos(pos.x, pos.y, pos.z);
+        bullet.setDeltaMovement(motion);
 
-        worldIn.addEntity(bullet);
+        worldIn.addFreshEntity(bullet);
     }
 
     private void setLoaded(ItemStack stack, boolean loaded) {

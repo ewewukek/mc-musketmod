@@ -3,16 +3,16 @@ package ewewukek.musketmod;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Executor;
 
-import net.minecraft.entity.EntityClassification;
-import net.minecraft.entity.EntityType;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemGroup;
-import net.minecraft.profiler.IProfiler;
-import net.minecraft.resources.IFutureReloadListener;
-import net.minecraft.resources.IResourceManager;
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.SoundEvent;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.packs.resources.PreparableReloadListener;
+import net.minecraft.server.packs.resources.ResourceManager;
+import net.minecraft.sounds.SoundEvent;
 import net.minecraft.util.Unit;
+import net.minecraft.util.profiling.ProfilerFiller;
+import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.MobCategory;
+import net.minecraft.world.item.CreativeModeTab;
+import net.minecraft.world.item.Item;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.event.AddReloadListenerEvent;
 import net.minecraftforge.event.RegistryEvent;
@@ -56,18 +56,18 @@ public class MusketMod {
         @SubscribeEvent
         public static void onItemsRegistry(final RegistryEvent.Register<Item> event) {
             event.getRegistry().registerAll(
-                    new Item(new Item.Properties().group(ItemGroup.MISC)).setRegistryName(MODID, "barrel"),
-                    new Item(new Item.Properties().group(ItemGroup.MISC)).setRegistryName(MODID, "stock"),
-                    new Item(new Item.Properties().group(ItemGroup.COMBAT)).setRegistryName(MODID, "cartridge"),
-                    new MusketItem(new Item.Properties().group(ItemGroup.COMBAT)).setRegistryName(MODID, "musket")
+                    new Item(new Item.Properties().tab(CreativeModeTab.TAB_MATERIALS)).setRegistryName(MODID, "barrel"),
+                    new Item(new Item.Properties().tab(CreativeModeTab.TAB_MATERIALS)).setRegistryName(MODID, "stock"),
+                    new Item(new Item.Properties().tab(CreativeModeTab.TAB_COMBAT)).setRegistryName(MODID, "cartridge"),
+                    new MusketItem(new Item.Properties().tab(CreativeModeTab.TAB_COMBAT)).setRegistryName(MODID, "musket")
             );
         }
 
         @SubscribeEvent
         public static void onEntityRegistry(final RegistryEvent.Register<EntityType<?>> event) {
             event.getRegistry().register(
-                    EntityType.Builder.<BulletEntity>create(EntityClassification.MISC)
-                            .setCustomClientFactory(BulletEntity::new).size(0.5f, 0.5f)
+                    EntityType.Builder.<BulletEntity>createNothing(MobCategory.MISC)
+                            .setCustomClientFactory(BulletEntity::new).sized(0.5f, 0.5f)
                             .setTrackingRange(64).setUpdateInterval(5).setShouldReceiveVelocityUpdates(false)
                             .build(MODID + ":bullet").setRegistryName(MODID, "bullet")
             );
@@ -90,13 +90,13 @@ public class MusketMod {
     public static class ServerEvents {
         @SubscribeEvent
         public static void onAddReloadListenerEvent(final AddReloadListenerEvent event) {
-            event.addListener(new IFutureReloadListener() {
+            event.addListener(new PreparableReloadListener() {
                 @Override
-                public CompletableFuture<Void> reload(IStage stage, IResourceManager resourceManager,
-                    IProfiler preparationsProfiler, IProfiler reloadProfiler, Executor backgroundExecutor,
+                public CompletableFuture<Void> reload(PreparationBarrier stage, ResourceManager resourceManager,
+                    ProfilerFiller preparationsProfiler, ProfilerFiller reloadProfiler, Executor backgroundExecutor,
                     Executor gameExecutor) {
 
-                    return stage.markCompleteAwaitingOthers(Unit.INSTANCE).thenRunAsync(() -> {
+                    return stage.wait(Unit.INSTANCE).thenRunAsync(() -> {
                         Config.reload();
                     }, gameExecutor);
                 }

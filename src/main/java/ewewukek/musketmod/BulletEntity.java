@@ -181,6 +181,14 @@ public class BulletEntity extends Projectile implements IEntityAdditionalSpawnDa
         for (Entity entity : level.getEntities(this, aabbSelection, this::canHitEntity)) {
             AABB aabb = entity.getBoundingBox();
             Optional<Vec3> optional = aabb.clip(start, end);
+            if (!optional.isPresent()) {
+                aabb = aabb.move( // previous tick position
+                    entity.xOld - entity.getX(),
+                    entity.yOld - entity.getY(),
+                    entity.zOld - entity.getZ()
+                );
+                optional = aabb.clip(start, end);
+            }
             if (optional.isPresent()) {
                 double dist = start.distanceToSqr(optional.get());
                 if (dist < result_dist || result == null) {

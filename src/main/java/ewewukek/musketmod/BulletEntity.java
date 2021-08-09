@@ -14,7 +14,6 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.damagesource.IndirectEntityDamageSource;
 import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.projectile.Projectile;
 import net.minecraft.world.level.ClipContext;
@@ -39,15 +38,10 @@ public class BulletEntity extends Projectile implements IEntityAdditionalSpawnDa
     public static double maxDistance;
 
     private float distanceTravelled;
-    private short ticksLeft;
-
-    public BulletEntity(EntityType<BulletEntity> type, Level world) {
-        super(type, world);
-        ticksLeft = LIFETIME;
-    }
+    private short tickCounter;
 
     public BulletEntity(Level world) {
-        this(MusketMod.BULLET_ENTITY_TYPE, world);
+        super(MusketMod.BULLET_ENTITY_TYPE, world);
     }
 
     public BulletEntity(net.minecraftforge.fmllegacy.network.FMLPlayMessages.SpawnEntity packet, Level world) {
@@ -55,7 +49,7 @@ public class BulletEntity extends Projectile implements IEntityAdditionalSpawnDa
     }
 
     public boolean isFirstTick() {
-        return ticksLeft == LIFETIME;
+        return tickCounter == 0;
     }
 
     public net.minecraft.world.damagesource.DamageSource causeMusketDamage(BulletEntity bullet, Entity attacker) {
@@ -69,7 +63,7 @@ public class BulletEntity extends Projectile implements IEntityAdditionalSpawnDa
             return;
         }
 
-        if (--ticksLeft <= 0 || distanceTravelled > maxDistance) {
+        if (++tickCounter >= LIFETIME || distanceTravelled > maxDistance) {
             discard();
             return;
         }

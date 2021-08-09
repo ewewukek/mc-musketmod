@@ -208,14 +208,12 @@ public class BulletEntity extends Projectile implements IEntityAdditionalSpawnDa
     @Override
     protected void readAdditionalSaveData(CompoundTag compound) {
         super.readAdditionalSaveData(compound);
-        ticksLeft = compound.getShort("ticksLeft");
         distanceTravelled = compound.getFloat("distanceTravelled");
     }
 
     @Override
     protected void addAdditionalSaveData(CompoundTag compound) {
         super.addAdditionalSaveData(compound);
-        compound.putShort("ticksLeft", ticksLeft);
         compound.putFloat("distanceTravelled", distanceTravelled);
     }
 
@@ -228,7 +226,6 @@ public class BulletEntity extends Projectile implements IEntityAdditionalSpawnDa
 
     @Override
     public void writeSpawnData(FriendlyByteBuf data) {
-        data.writeShort(ticksLeft);
         Vec3 motion = getDeltaMovement();
         data.writeFloat((float)motion.x);
         data.writeFloat((float)motion.y);
@@ -237,7 +234,6 @@ public class BulletEntity extends Projectile implements IEntityAdditionalSpawnDa
 
     @Override
     public void readSpawnData(FriendlyByteBuf data) {
-        ticksLeft = data.readShort();
         Vec3 motion = new Vec3(data.readFloat(), data.readFloat(), data.readFloat());
         setDeltaMovement(motion);
         fireParticles();

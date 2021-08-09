@@ -197,6 +197,14 @@ public class BulletEntity extends ThrowableEntity implements IEntityAdditionalSp
         for (Entity entity : world.getEntitiesInAABBexcluding(this, aabbSelection, getTargetPredicate())) {
             AxisAlignedBB aabb = entity.getBoundingBox();
             Optional<Vector3d> optional = aabb.rayTrace(start, end);
+            if (!optional.isPresent()) {
+                aabb = aabb.offset( // previous tick position
+                    entity.lastTickPosX - entity.getPosX(),
+                    entity.lastTickPosY - entity.getPosY(),
+                    entity.lastTickPosZ - entity.getPosZ()
+                );
+                optional = aabb.rayTrace(start, end);
+            }
             if (optional.isPresent()) {
                 double dist = start.squareDistanceTo(optional.get());
                 if (dist < result_dist || result == null) {

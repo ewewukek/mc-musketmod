@@ -2,9 +2,6 @@
   "type": "minecraft:blasting",
   "ingredient": [
     {
-      "item": "musketmod:barrel"
-    },
-    {
       "item": "musketmod:musket"
     }
   ],

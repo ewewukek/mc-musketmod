@@ -2,9 +2,6 @@
   "type": "minecraft:smelting",
   "ingredient": [
     {
-      "item": "musketmod:barrel"
-    },
-    {
       "item": "musketmod:musket"
     }
   ],

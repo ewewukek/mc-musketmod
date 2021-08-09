@@ -1,15 +1,22 @@
 {
   "type": "crafting_shaped",
   "pattern": [
-    "B",
-    "S"
+    "I  ",
+    " IF",
+    " iP"
   ],
   "key": {
-    "B": {
-      "item": "musketmod:barrel"
+    "I": {
+      "item": "minecraft:iron_ingot"
     },
-    "S": {
-      "item": "musketmod:stock"
+    "i": {
+      "item": "minecraft:iron_nugget"
+    },
+    "F": {
+      "item": "minecraft:flint_and_steel"
+    },
+    "P": {
+      "tag": "minecraft:planks"
     }
   },
   "result": {

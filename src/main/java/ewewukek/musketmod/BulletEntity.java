@@ -34,13 +34,12 @@ public class BulletEntity extends Projectile implements IEntityAdditionalSpawnDa
     static final double WATER_FRICTION = 0.6;
     static final short LIFETIME = 50;
 
-    private Vec3 origin;
-
     public static float damageFactorMin;
     public static float damageFactorMax;
     public static double maxDistance;
 
-    public short ticksLeft;
+    private float distanceTravelled;
+    private short ticksLeft;
 
     public BulletEntity(EntityType<BulletEntity> type, Level world) {
         super(type, world);
@@ -70,10 +69,6 @@ public class BulletEntity extends Projectile implements IEntityAdditionalSpawnDa
             return;
         }
 
-        // for compatibility origin is not stored in world save
-        if (origin == null) origin = position();
-        double distanceTravelled = position().subtract(origin).length();
-
         if (--ticksLeft <= 0 || distanceTravelled > maxDistance) {
             discard();
             return;
@@ -83,6 +78,7 @@ public class BulletEntity extends Projectile implements IEntityAdditionalSpawnDa
         double posX = getX() + motion.x;
         double posY = getY() + motion.y;
         double posZ = getZ() + motion.z;
+        distanceTravelled += motion.length();
 
         motion = motion.subtract(0, GRAVITY, 0);
 
@@ -205,12 +201,14 @@ public class BulletEntity extends Projectile implements IEntityAdditionalSpawnDa
     protected void readAdditionalSaveData(CompoundTag compound) {
         super.readAdditionalSaveData(compound);
         ticksLeft = compound.getShort("ticksLeft");
+        distanceTravelled = compound.getFloat("distanceTravelled");
     }
 
     @Override
     protected void addAdditionalSaveData(CompoundTag compound) {
         super.addAdditionalSaveData(compound);
         compound.putShort("ticksLeft", ticksLeft);
+        compound.putFloat("distanceTravelled", distanceTravelled);
     }
 
 // Forge {

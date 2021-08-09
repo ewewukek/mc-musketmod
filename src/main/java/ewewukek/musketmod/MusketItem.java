@@ -86,15 +86,15 @@ public class MusketItem extends Item {
         double posZ = player.getZ();
 
         if (loadingStage == 0 && usingDuration >= LOADING_STAGE_1) {
-            world.playSound(null, posX, posY, posZ, MusketMod.SOUND_MUSKET_LOAD_0, SoundSource.PLAYERS, 0.8f, 1.0F);
+            world.playSound(null, posX, posY, posZ, MusketMod.SOUND_MUSKET_LOAD_0, SoundSource.PLAYERS, 0.8f, 1);
             setLoadingStage(stack, 1);
 
         } else if (loadingStage == 1 && usingDuration >= LOADING_STAGE_2) {
-            world.playSound(null, posX, posY, posZ, MusketMod.SOUND_MUSKET_LOAD_1, SoundSource.PLAYERS, 0.8f, 1.0F);
+            world.playSound(null, posX, posY, posZ, MusketMod.SOUND_MUSKET_LOAD_1, SoundSource.PLAYERS, 0.8f, 1);
             setLoadingStage(stack, 2);
 
         } else if (loadingStage == 2 && usingDuration >= LOADING_STAGE_3) {
-            world.playSound(null, posX, posY, posZ, MusketMod.SOUND_MUSKET_LOAD_2, SoundSource.PLAYERS, 0.8f, 1.0F);
+            world.playSound(null, posX, posY, posZ, MusketMod.SOUND_MUSKET_LOAD_2, SoundSource.PLAYERS, 0.8f, 1);
             setLoadingStage(stack, 3);
         }
 
@@ -107,14 +107,14 @@ public class MusketItem extends Item {
                 if (ammoStack.isEmpty()) player.getInventory().removeItem(ammoStack);
             }
 
-            world.playSound(null, posX, posY, posZ, MusketMod.SOUND_MUSKET_READY, SoundSource.PLAYERS, 0.8f, 1.0f);
+            world.playSound(null, posX, posY, posZ, MusketMod.SOUND_MUSKET_READY, SoundSource.PLAYERS, 0.8f, 1);
             setLoaded(stack, true);
         }
     }
 
     @Override
     public boolean mineBlock(ItemStack stack, Level worldIn, BlockState state, BlockPos pos, LivingEntity entityLiving) {
-        if (!worldIn.isClientSide && entityLiving instanceof Player && state.getDestroySpeed(worldIn, pos) != 0.0f) {
+        if (!worldIn.isClientSide && entityLiving instanceof Player && state.getDestroySpeed(worldIn, pos) != 0) {
             damageItem(stack, (Player) entityLiving);
         }
         return false;

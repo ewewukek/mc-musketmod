@@ -67,7 +67,7 @@ public class RenderHelper {
                     if (slotChanged) {
                         if (equipProgress > 0.1) previousSlot = slot;
                     } else {
-                        if (equipProgress == 0f) equipCycleCompleted = true;
+                        if (equipProgress == 0) equipCycleCompleted = true;
                     }
                 }
                 matrixStack.translate(sign * 0.15f, -0.27f + equipProgress * -0.6f, -0.37f);

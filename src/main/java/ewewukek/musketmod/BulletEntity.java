@@ -15,7 +15,7 @@ import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.damagesource.IndirectEntityDamageSource;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.entity.projectile.Projectile;
+import net.minecraft.world.entity.projectile.AbstractHurtingProjectile;
 import net.minecraft.world.level.ClipContext;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
@@ -26,7 +26,7 @@ import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.fmllegacy.common.registry.IEntityAdditionalSpawnData;
 import net.minecraftforge.fmllegacy.network.NetworkHooks;
 
-public class BulletEntity extends Projectile implements IEntityAdditionalSpawnData {
+public class BulletEntity extends AbstractHurtingProjectile implements IEntityAdditionalSpawnData {
     private static final Random random = new Random();
     static final double GRAVITY = 0.05;
     static final double AIR_FRICTION = 0.99;
@@ -200,13 +200,13 @@ public class BulletEntity extends Projectile implements IEntityAdditionalSpawnDa
     }
 
     @Override
-    protected void readAdditionalSaveData(CompoundTag compound) {
+    public void readAdditionalSaveData(CompoundTag compound) {
         super.readAdditionalSaveData(compound);
         distanceTravelled = compound.getFloat("distanceTravelled");
     }
 
     @Override
-    protected void addAdditionalSaveData(CompoundTag compound) {
+    public void addAdditionalSaveData(CompoundTag compound) {
         super.addAdditionalSaveData(compound);
         compound.putFloat("distanceTravelled", distanceTravelled);
     }

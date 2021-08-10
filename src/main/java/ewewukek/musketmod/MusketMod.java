@@ -20,30 +20,25 @@ import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.DistExecutor;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
-import net.minecraftforge.registries.ObjectHolder;
 
 @Mod(MusketMod.MODID)
 public class MusketMod {
     public static final String MODID = "musketmod";
 
-    @ObjectHolder(MusketMod.MODID + ":musket")
-    public static Item MUSKET;
-    @ObjectHolder(MusketMod.MODID + ":cartridge")
-    public static Item CARTRIDGE;
+    public static final Item CARTRIDGE = new Item(new Item.Properties().tab(CreativeModeTab.TAB_COMBAT));
+    public static final Item MUSKET = new MusketItem(new Item.Properties().tab(CreativeModeTab.TAB_COMBAT));
 
-    @ObjectHolder(MusketMod.MODID + ":musket_load0")
-    public static SoundEvent SOUND_MUSKET_LOAD_0;
-    @ObjectHolder(MusketMod.MODID + ":musket_load1")
-    public static SoundEvent SOUND_MUSKET_LOAD_1;
-    @ObjectHolder(MusketMod.MODID + ":musket_load2")
-    public static SoundEvent SOUND_MUSKET_LOAD_2;
-    @ObjectHolder(MusketMod.MODID + ":musket_ready")
-    public static SoundEvent SOUND_MUSKET_READY;
-    @ObjectHolder(MusketMod.MODID + ":musket_fire")
-    public static SoundEvent SOUND_MUSKET_FIRE;
+    public static final SoundEvent SOUND_MUSKET_LOAD_0 = new SoundEvent(new ResourceLocation(MODID, "musket_load0"));
+    public static final SoundEvent SOUND_MUSKET_LOAD_1 = new SoundEvent(new ResourceLocation(MODID, "musket_load1"));
+    public static final SoundEvent SOUND_MUSKET_LOAD_2 = new SoundEvent(new ResourceLocation(MODID, "musket_load2"));
+    public static final SoundEvent SOUND_MUSKET_READY = new SoundEvent(new ResourceLocation(MODID, "musket_ready"));
+    public static final SoundEvent SOUND_MUSKET_FIRE = new SoundEvent(new ResourceLocation(MODID, "musket_fire"));
 
-    @ObjectHolder(MusketMod.MODID + ":bullet")
-    public static EntityType<BulletEntity> BULLET_ENTITY_TYPE;
+    public static final EntityType<BulletEntity> BULLET_ENTITY_TYPE = EntityType.Builder.<BulletEntity>of(BulletEntity::new, MobCategory.MISC)
+            .sized(0.5f, 0.5f)
+            .setTrackingRange(64).setUpdateInterval(5)
+            .setShouldReceiveVelocityUpdates(false)
+            .build(MODID + ":bullet");
 
     public MusketMod() {
         DistExecutor.runWhenOn(Dist.CLIENT, () -> () -> {
@@ -56,33 +51,28 @@ public class MusketMod {
         @SubscribeEvent
         public static void onItemsRegistry(final RegistryEvent.Register<Item> event) {
             event.getRegistry().registerAll(
-                new Item(new Item.Properties().tab(CreativeModeTab.TAB_COMBAT)).setRegistryName(MODID, "cartridge"),
-                new MusketItem(new Item.Properties().tab(CreativeModeTab.TAB_COMBAT)).setRegistryName(MODID, "musket")
+                CARTRIDGE.setRegistryName(MODID, "cartridge"),
+                MUSKET.setRegistryName(MODID, "musket")
             );
         }
 
         @SubscribeEvent
         public static void onEntityRegistry(final RegistryEvent.Register<EntityType<?>> event) {
             event.getRegistry().register(
-                    EntityType.Builder.<BulletEntity>of(BulletEntity::new, MobCategory.MISC)
-                            .sized(0.5f, 0.5f)
-                            .setTrackingRange(64).setUpdateInterval(5)
-                            .setShouldReceiveVelocityUpdates(false)
-                            .build(MODID + ":bullet").setRegistryName(MODID, "bullet")
+                BULLET_ENTITY_TYPE.setRegistryName(MODID, "bullet")
             );
         }
 
         @SubscribeEvent
         public static void onSoundRegistry(final RegistryEvent.Register<SoundEvent> event) {
             event.getRegistry().registerAll(
-                    new SoundEvent(new ResourceLocation(MODID, "musket_load0")).setRegistryName(MODID, "musket_load0"),
-                    new SoundEvent(new ResourceLocation(MODID, "musket_load1")).setRegistryName(MODID, "musket_load1"),
-                    new SoundEvent(new ResourceLocation(MODID, "musket_load2")).setRegistryName(MODID, "musket_load2"),
-                    new SoundEvent(new ResourceLocation(MODID, "musket_ready")).setRegistryName(MODID, "musket_ready"),
-                    new SoundEvent(new ResourceLocation(MODID, "musket_fire")).setRegistryName(MODID, "musket_fire")
+                SOUND_MUSKET_LOAD_0.setRegistryName(MODID, "musket_load0"),
+                SOUND_MUSKET_LOAD_1.setRegistryName(MODID, "musket_load1"),
+                SOUND_MUSKET_LOAD_2.setRegistryName(MODID, "musket_load2"),
+                SOUND_MUSKET_READY.setRegistryName(MODID, "musket_ready"),
+                SOUND_MUSKET_FIRE.setRegistryName(MODID, "musket_fire")
             );
         }
-
     }
 
     @Mod.EventBusSubscriber(bus = Mod.EventBusSubscriber.Bus.FORGE)

@@ -3,13 +3,11 @@ package ewewukek.musketmod;
 import java.util.Optional;
 import java.util.Random;
 
-import javax.annotation.Nonnull;
-
 import net.minecraft.core.particles.BlockParticleOption;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.protocol.Packet;
+import net.minecraft.network.protocol.game.ClientboundAddEntityPacket;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.damagesource.IndirectEntityDamageSource;
@@ -24,10 +22,8 @@ import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
-import net.minecraftforge.fmllegacy.common.registry.IEntityAdditionalSpawnData;
-import net.minecraftforge.fmllegacy.network.NetworkHooks;
 
-public class BulletEntity extends AbstractHurtingProjectile implements IEntityAdditionalSpawnData {
+public class BulletEntity extends AbstractHurtingProjectile {
     private static final Random random = new Random();
     static final double GRAVITY = 0.05;
     static final double AIR_FRICTION = 0.99;
@@ -47,10 +43,6 @@ public class BulletEntity extends AbstractHurtingProjectile implements IEntityAd
 
     public BulletEntity(Level world) {
         this(MusketMod.BULLET_ENTITY_TYPE, world);
-    }
-
-    public BulletEntity(net.minecraftforge.fmllegacy.network.FMLPlayMessages.SpawnEntity packet, Level world) {
-        this(world);
     }
 
     public boolean isFirstTick() {
@@ -216,26 +208,24 @@ public class BulletEntity extends AbstractHurtingProjectile implements IEntityAd
         compound.putFloat("distanceTravelled", distanceTravelled);
     }
 
-// Forge {
+    // workaround for ClientboundAddEntityPacket.LIMIT
     @Override
-    @Nonnull
     public Packet<?> getAddEntityPacket() {
-        return NetworkHooks.getEntitySpawningPacket(this);
+        Entity owner = getOwner();
+        return new ClientboundAddEntityPacket(
+            getId(), getUUID(),
+            getX(), getY(), getZ(),
+            getXRot(), getYRot(),
+            getType(), owner != null ? owner.getId() : 0,
+            getDeltaMovement().scale(ClientboundAddEntityPacket.LIMIT / MusketItem.bulletSpeed)
+        );
     }
 
     @Override
-    public void writeSpawnData(FriendlyByteBuf data) {
-        Vec3 motion = getDeltaMovement();
-        data.writeFloat((float)motion.x);
-        data.writeFloat((float)motion.y);
-        data.writeFloat((float)motion.z);
-    }
-
-    @Override
-    public void readSpawnData(FriendlyByteBuf data) {
-        Vec3 motion = new Vec3(data.readFloat(), data.readFloat(), data.readFloat());
-        setDeltaMovement(motion);
+    public void recreateFromPacket(ClientboundAddEntityPacket packet) {
+        super.recreateFromPacket(packet);
+        Vec3 packet_velocity = new Vec3(packet.getXa(), packet.getYa(), packet.getZa());
+        setDeltaMovement(packet_velocity.scale(MusketItem.bulletSpeed / ClientboundAddEntityPacket.LIMIT));
         fireParticles();
     }
-// }
 }

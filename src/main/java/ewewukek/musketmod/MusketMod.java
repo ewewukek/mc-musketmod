@@ -13,7 +13,6 @@ import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.MobCategory;
 import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.Item;
-import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.event.AddReloadListenerEvent;
 import net.minecraftforge.event.RegistryEvent;
@@ -65,9 +64,10 @@ public class MusketMod {
         @SubscribeEvent
         public static void onEntityRegistry(final RegistryEvent.Register<EntityType<?>> event) {
             event.getRegistry().register(
-                    EntityType.Builder.<BulletEntity>createNothing(MobCategory.MISC)
-                            .setCustomClientFactory(BulletEntity::new).sized(0.5f, 0.5f)
-                            .setTrackingRange(64).setUpdateInterval(5).setShouldReceiveVelocityUpdates(false)
+                    EntityType.Builder.<BulletEntity>of(BulletEntity::new, MobCategory.MISC)
+                            .sized(0.5f, 0.5f)
+                            .setTrackingRange(64).setUpdateInterval(5)
+                            .setShouldReceiveVelocityUpdates(false)
                             .build(MODID + ":bullet").setRegistryName(MODID, "bullet")
             );
         }

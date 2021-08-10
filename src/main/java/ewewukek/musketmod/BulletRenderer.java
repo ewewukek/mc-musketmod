@@ -19,8 +19,8 @@ import net.minecraftforge.api.distmarker.OnlyIn;
 public class BulletRenderer extends EntityRenderer<BulletEntity> {
     public static final ResourceLocation TEXTURE = new ResourceLocation(MusketMod.MODID + ":textures/entity/bullet.png");
 
-    public BulletRenderer(EntityRendererProvider.Context manager) {
-        super(manager);
+    public BulletRenderer(EntityRendererProvider.Context ctx) {
+        super(ctx);
     }
 
     @Override

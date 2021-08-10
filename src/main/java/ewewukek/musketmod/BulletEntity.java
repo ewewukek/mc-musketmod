@@ -14,6 +14,7 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.damagesource.IndirectEntityDamageSource;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.projectile.AbstractHurtingProjectile;
 import net.minecraft.world.level.ClipContext;
@@ -40,8 +41,12 @@ public class BulletEntity extends AbstractHurtingProjectile implements IEntityAd
     private float distanceTravelled;
     private short tickCounter;
 
+    public BulletEntity(EntityType<BulletEntity>entityType, Level world) {
+        super(entityType, world);
+    }
+
     public BulletEntity(Level world) {
-        super(MusketMod.BULLET_ENTITY_TYPE, world);
+        this(MusketMod.BULLET_ENTITY_TYPE, world);
     }
 
     public BulletEntity(net.minecraftforge.fmllegacy.network.FMLPlayMessages.SpawnEntity packet, Level world) {
@@ -52,7 +57,7 @@ public class BulletEntity extends AbstractHurtingProjectile implements IEntityAd
         return tickCounter == 0;
     }
 
-    public net.minecraft.world.damagesource.DamageSource causeMusketDamage(BulletEntity bullet, Entity attacker) {
+    public DamageSource causeMusketDamage(BulletEntity bullet, Entity attacker) {
         return (new IndirectEntityDamageSource("musket", bullet, attacker)).setProjectile();
     }
 
@@ -107,7 +112,7 @@ public class BulletEntity extends AbstractHurtingProjectile implements IEntityAd
             double t = Math.pow(random.nextFloat(), 1.5);
             Vec3 p = pos.add(front.scale(1.25 + t));
             p = p.add(new Vec3(random.nextFloat() - 0.5, random.nextFloat() - 0.5, random.nextFloat() - 0.5).scale(0.1));
-            Vec3 v = front.scale(0.1).scale(1 - t);
+            Vec3 v = front.scale(0.1 * (1 - t));
             level.addParticle(ParticleTypes.POOF, p.x, p.y, p.z, v.x, v.y, v.z);
         }
     }

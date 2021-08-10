@@ -165,7 +165,7 @@ public class MusketItem extends Item {
     private void fireBullet(Level worldIn, Player player) {
         final float deg2rad = 0.017453292f;
         Vec3 front = new Vec3(0, 0, 1).xRot(-deg2rad * player.getXRot()).yRot(-deg2rad * player.getYRot());
-        Vec3 pos = new Vec3(player.getX(), player.getY() + player.getEyeHeight(), player.getZ());
+        Vec3 pos = new Vec3(player.getX(), player.getEyeY(), player.getZ());
 
         float angle = (float) Math.PI * 2 * worldIn.getRandom().nextFloat();
         float gaussian = Math.abs((float) worldIn.getRandom().nextGaussian());

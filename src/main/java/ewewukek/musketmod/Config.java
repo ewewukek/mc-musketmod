@@ -5,21 +5,15 @@ import java.io.BufferedWriter;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.NoSuchFileException;
-import java.nio.file.Path;
 import java.util.Locale;
 import java.util.Scanner;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import net.minecraftforge.fml.loading.FMLPaths;
-
 public class Config {
     private static final Logger logger = LogManager.getLogger(MusketMod.class);
-
-    public static final Path CONFIG_PATH = FMLPaths.CONFIGDIR.get().resolve("musketmod.txt");
     public static final Config INSTANCE = new Config();
-
     public static final int VERSION = 1;
 
     public double bulletStdDev;
@@ -52,7 +46,7 @@ public class Config {
 
     private void load() {
         int version = 0;
-        try (BufferedReader reader = Files.newBufferedReader(CONFIG_PATH)) {
+        try (BufferedReader reader = Files.newBufferedReader(MusketMod.CONFIG_PATH)) {
             String line;
             int lineNumber = 0;
             while ((line = reader.readLine()) != null) {
@@ -63,7 +57,7 @@ public class Config {
                 line.trim();
                 if (line.length() == 0) continue;
 
-                String errorPrefix = CONFIG_PATH+": line "+lineNumber+": ";
+                String errorPrefix = MusketMod.CONFIG_PATH+": line "+lineNumber+": ";
                 try (Scanner s = new Scanner(line)) {
                     s.useLocale(Locale.US);
                     s.useDelimiter("\\s*=\\s*");
@@ -118,7 +112,7 @@ public class Config {
     }
 
     private void save() {
-        try (BufferedWriter writer = Files.newBufferedWriter(CONFIG_PATH)) {
+        try (BufferedWriter writer = Files.newBufferedWriter(MusketMod.CONFIG_PATH)) {
             writer.write("version = "+VERSION+"\n");
             writer.write("# Standard deviation of bullet spread (in degrees)\n");
             writer.write("bulletStdDev = "+bulletStdDev+"\n");

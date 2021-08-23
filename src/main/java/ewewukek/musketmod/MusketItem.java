@@ -43,22 +43,19 @@ public class MusketItem extends Item {
         boolean haveAmmo = !findAmmo(player).isEmpty() || creative;
         boolean loaded = isLoaded(stack);
 
-        if (loaded && isReady(stack)) {
+        if (loaded) {
             if (!worldIn.isClientSide) {
                 fireBullet(worldIn, player);
             }
             player.playSound(MusketMod.SOUND_MUSKET_FIRE, 3.5f, 1);
 
             damageItem(stack, player);
-            setReady(stack, false);
             setLoaded(stack, false);
 
             return InteractionResultHolder.consume(stack);
 
-        } else if (loaded || haveAmmo) {
-            if (!loaded) {
-                setLoadingStage(stack, 1);
-            }
+        } else if (haveAmmo) {
+            setLoadingStage(stack, 1);
             player.startUsingItem(hand);
             return InteractionResultHolder.consume(stack);
 
@@ -69,9 +66,7 @@ public class MusketItem extends Item {
 
     @Override
     public void releaseUsing(ItemStack stack, Level worldIn, LivingEntity entityLiving, int timeLeft) {
-        if (isLoaded(stack)) {
-            setReady(stack, true);
-        } else {
+        if (!isLoaded(stack)) {
             setLoadingStage(stack, 0);
         }
     }
@@ -189,18 +184,6 @@ public class MusketItem extends Item {
             stack.getOrCreateTag().putByte("loaded", (byte)1);
         } else {
             stack.getOrCreateTag().remove("loaded");
-        }
-    }
-
-    public static boolean isReady(ItemStack stack) {
-        return stack.getOrCreateTag().getByte("ready") != 0;
-    }
-
-    private void setReady(ItemStack stack, boolean ready) {
-        if (ready) {
-            stack.getOrCreateTag().putByte("ready", (byte)1);
-        } else {
-            stack.getOrCreateTag().remove("ready");
         }
     }
 

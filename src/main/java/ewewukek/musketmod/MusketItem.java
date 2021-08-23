@@ -151,21 +151,31 @@ public class MusketItem extends Item {
     }
 
     private void fireBullet(Level worldIn, Player player) {
-        final float deg2rad = 0.017453292f;
-        Vec3 front = new Vec3(0, 0, 1).xRot(-deg2rad * player.getXRot()).yRot(-deg2rad * player.getYRot());
+        final float deg2rad = (float)Math.PI / 180;
+        Vec3 direction = new Vec3(0, 0, 1).xRot(-deg2rad * player.getXRot()).yRot(-deg2rad * player.getYRot());
         Vec3 pos = new Vec3(player.getX(), player.getEyeY(), player.getZ());
 
         float angle = (float) Math.PI * 2 * worldIn.getRandom().nextFloat();
         float gaussian = Math.abs((float) worldIn.getRandom().nextGaussian());
         if (gaussian > 4) gaussian = 4;
 
-        front = front.xRot(bulletStdDev * gaussian * Mth.sin(angle))
-                .yRot(bulletStdDev * gaussian * Mth.cos(angle));
+        float spread = bulletStdDev * gaussian;
 
-        Vec3 motion = front.scale(bulletSpeed);
+        // a plane perpendicular to direction
+        Vec3 n1;
+        Vec3 n2;
+        if (Math.abs(direction.x) < 1e-5 && Math.abs(direction.z) < 1e-5) {
+            n1 = new Vec3(1, 0, 0);
+            n2 = new Vec3(0, 0, 1);
+        } else {
+            n1 = new Vec3(-direction.z, 0, direction.x).normalize();
+            n2 = direction.cross(n1);
+        }
 
-        Vec3 playerMotion = player.getDeltaMovement();
-        motion.add(playerMotion.x, player.isOnGround() ? 0 : playerMotion.y, playerMotion.z);
+        Vec3 motion = direction.scale(Mth.cos(spread))
+            .add(n1.scale(Mth.sin(spread) * Mth.sin(angle))) // signs are not important for random angle
+            .add(n2.scale(Mth.sin(spread) * Mth.cos(angle)))
+            .scale(bulletSpeed);
 
         BulletEntity bullet = new BulletEntity(worldIn);
         bullet.setOwner(player);

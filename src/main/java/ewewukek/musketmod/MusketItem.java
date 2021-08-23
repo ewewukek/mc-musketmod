@@ -57,7 +57,7 @@ public class MusketItem extends Item {
 
         } else if (loaded || haveAmmo) {
             if (!loaded) {
-                setLoadingStage(stack, 0);
+                setLoadingStage(stack, 1);
             }
             player.startUsingItem(hand);
             return InteractionResultHolder.consume(stack);
@@ -69,7 +69,11 @@ public class MusketItem extends Item {
 
     @Override
     public void releaseUsing(ItemStack stack, Level worldIn, LivingEntity entityLiving, int timeLeft) {
-        if (isLoaded(stack)) setReady(stack, true);
+        if (isLoaded(stack)) {
+            setReady(stack, true);
+        } else {
+            setLoadingStage(stack, 0);
+        }
     }
 
     @Override
@@ -84,17 +88,17 @@ public class MusketItem extends Item {
         double posY = player.getY();
         double posZ = player.getZ();
 
-        if (loadingStage == 0 && usingDuration >= LOADING_STAGE_1) {
+        if (loadingStage == 1 && usingDuration >= LOADING_STAGE_1) {
             world.playSound(null, posX, posY, posZ, MusketMod.SOUND_MUSKET_LOAD_0, SoundSource.PLAYERS, 0.8f, 1);
-            setLoadingStage(stack, 1);
-
-        } else if (loadingStage == 1 && usingDuration >= LOADING_STAGE_2) {
-            world.playSound(null, posX, posY, posZ, MusketMod.SOUND_MUSKET_LOAD_1, SoundSource.PLAYERS, 0.8f, 1);
             setLoadingStage(stack, 2);
 
-        } else if (loadingStage == 2 && usingDuration >= LOADING_STAGE_3) {
-            world.playSound(null, posX, posY, posZ, MusketMod.SOUND_MUSKET_LOAD_2, SoundSource.PLAYERS, 0.8f, 1);
+        } else if (loadingStage == 2 && usingDuration >= LOADING_STAGE_2) {
+            world.playSound(null, posX, posY, posZ, MusketMod.SOUND_MUSKET_LOAD_1, SoundSource.PLAYERS, 0.8f, 1);
             setLoadingStage(stack, 3);
+
+        } else if (loadingStage == 3 && usingDuration >= LOADING_STAGE_3) {
+            world.playSound(null, posX, posY, posZ, MusketMod.SOUND_MUSKET_LOAD_2, SoundSource.PLAYERS, 0.8f, 1);
+            setLoadingStage(stack, 0);
         }
 
         if (usingDuration >= RELOAD_DURATION && !isLoaded(stack)) {

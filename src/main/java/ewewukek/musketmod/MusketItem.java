@@ -1,7 +1,6 @@
 package ewewukek.musketmod;
 
 import net.minecraft.core.BlockPos;
-import net.minecraft.nbt.CompoundTag;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.tags.FluidTags;
 import net.minecraft.util.Mth;
@@ -131,16 +130,6 @@ public class MusketItem extends Item {
         return 72000;
     }
 
-    public static boolean isLoaded(ItemStack stack) {
-        CompoundTag tag = stack.getTag();
-        return tag != null && tag.getByte("loaded") == 1;
-    }
-
-    public static boolean isReady(ItemStack stack) {
-        CompoundTag tag = stack.getTag();
-        return tag != null && tag.getByte("ready") == 1;
-    }
-
     private boolean isAmmo(ItemStack stack) {
         return stack.getItem() == MusketMod.CARTRIDGE;
     }
@@ -187,19 +176,39 @@ public class MusketItem extends Item {
         worldIn.addFreshEntity(bullet);
     }
 
+    public static boolean isLoaded(ItemStack stack) {
+        return stack.getOrCreateTag().getByte("loaded") != 0;
+    }
+
     private void setLoaded(ItemStack stack, boolean loaded) {
-        stack.getOrCreateTag().putByte("loaded", (byte) (loaded ? 1 : 0));
+        if (loaded) {
+            stack.getOrCreateTag().putByte("loaded", (byte)1);
+        } else {
+            stack.getOrCreateTag().remove("loaded");
+        }
+    }
+
+    public static boolean isReady(ItemStack stack) {
+        return stack.getOrCreateTag().getByte("ready") != 0;
     }
 
     private void setReady(ItemStack stack, boolean ready) {
-        stack.getOrCreateTag().putByte("ready", (byte) (ready ? 1 : 0));
-    }
-
-    private void setLoadingStage(ItemStack stack, int loadingStage) {
-        stack.getOrCreateTag().putInt("loadingStage", loadingStage);
+        if (ready) {
+            stack.getOrCreateTag().putByte("ready", (byte)1);
+        } else {
+            stack.getOrCreateTag().remove("ready");
+        }
     }
 
     private int getLoadingStage(ItemStack stack) {
         return stack.getOrCreateTag().getInt("loadingStage");
+    }
+
+    private void setLoadingStage(ItemStack stack, int loadingStage) {
+        if (loadingStage != 0) {
+            stack.getOrCreateTag().putInt("loadingStage", loadingStage);
+        } else {
+            stack.getOrCreateTag().remove("loadingStage");
+        }
     }
 }

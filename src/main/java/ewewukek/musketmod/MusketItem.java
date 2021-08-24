@@ -55,8 +55,10 @@ public class MusketItem extends Item {
             }
             player.playSound(MusketMod.SOUND_MUSKET_FIRE, 3.5f, 1);
 
-            damageItem(stack, player);
             setLoaded(stack, false);
+            stack.hurtAndBreak(1, player, (entity) -> {
+                entity.broadcastBreakEvent(hand);
+            });
 
             return InteractionResultHolder.consume(stack);
 
@@ -117,25 +119,21 @@ public class MusketItem extends Item {
     }
 
     @Override
-    public boolean hurtEnemy(ItemStack stack, LivingEntity enemy, LivingEntity entity) {
-        if (entity instanceof Player) {
-            damageItem(stack, (Player)entity);
-        }
+    public boolean hurtEnemy(ItemStack stack, LivingEntity enemy, LivingEntity entityIn) {
+        stack.hurtAndBreak(1, entityIn, (entity) -> {
+            entity.broadcastBreakEvent(EquipmentSlot.MAINHAND);
+        });
         return false;
     }
 
     @Override
-    public boolean mineBlock(ItemStack stack, Level worldIn, BlockState state, BlockPos pos, LivingEntity entityLiving) {
-        if (entityLiving instanceof Player && state.getDestroySpeed(worldIn, pos) != 0) {
-            damageItem(stack, (Player) entityLiving);
+    public boolean mineBlock(ItemStack stack, Level worldIn, BlockState state, BlockPos pos, LivingEntity entityIn) {
+        if (state.getDestroySpeed(worldIn, pos) != 0) {
+            stack.hurtAndBreak(1, entityIn, (entity) -> {
+                entity.broadcastBreakEvent(EquipmentSlot.MAINHAND);
+            });
         }
         return false;
-    }
-
-    public static void damageItem(ItemStack stack, Player player) {
-        stack.hurtAndBreak(1, player, (entity) -> {
-            entity.broadcastBreakEvent(player.getUsedItemHand());
-        });
     }
 
     @Override

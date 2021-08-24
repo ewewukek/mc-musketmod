@@ -27,19 +27,18 @@ public class RenderHelper {
         if (slotChanged || clientStack.isEmpty() || clientStack.getItem() != MusketMod.MUSKET) equipCycleCompleted = false;
 
         matrixStack.pushPose();
+        matrixStack.translate(sign * 0.15, -0.25, -0.35);
 
         if (swingProgress > 0) {
             float swingSharp = Mth.sin(Mth.sqrt(swingProgress) * (float)Math.PI);
             float swingNormal = Mth.sin(swingProgress * (float)Math.PI);
-            matrixStack.translate(sign * (0.2f - 0.05f * swingNormal), -0.2f - 0.05f * swingNormal, -0.3f - 0.4f * swingSharp);
-            matrixStack.mulPose(Vector3f.XP.rotationDegrees(180 + sign * (20 - 20 * swingSharp)));
+            matrixStack.translate(sign * 0.05 * (1 - swingNormal), 0.05 * (1 - swingNormal), 0.05 - 0.4 * swingSharp);
+            matrixStack.mulPose(Vector3f.XP.rotationDegrees(180 + sign * 20 * (1 - swingSharp)));
 
-        } else {
+        } else if (player.isUsingItem() && player.getUsedItemHand() == hand) {
             float usingDuration = stack.getUseDuration() - (player.getUseItemRemainingTicks() - partialTicks + 1);
-            boolean isLoading = player.isUsingItem() && player.getUsedItemHand() == hand && !MusketItem.isLoaded(stack)
-                                && usingDuration > 0 && usingDuration < MusketItem.RELOAD_DURATION;
-            if (isLoading) {
-                matrixStack.translate(sign * 0.15f, -0.55f, -0.3f);
+            if (usingDuration > 0 && usingDuration < MusketItem.RELOAD_DURATION) {
+                matrixStack.translate(0, -0.3, 0.05);
                 matrixStack.mulPose(Vector3f.XP.rotationDegrees(60));
                 matrixStack.mulPose(Vector3f.ZP.rotationDegrees(10));
 
@@ -52,27 +51,26 @@ public class RenderHelper {
                     } else {
                         t = (14 - usingDuration) / 4;
                     }
-                    matrixStack.translate(0, 0, 0.02f * t);
+                    matrixStack.translate(0, 0, 0.025 * t);
                 }
-
-            } else {
-                if (equipCycleCompleted) {
-                    equipProgress = 0;
-                } else {
-                    // postpone updating previousSlot because slot changing animation
-                    // sometimes begins with equipProgress == 0
-                    if (slotChanged) {
-                        if (equipProgress > 0.1) previousSlot = slot;
-                    } else {
-                        if (equipProgress == 0) equipCycleCompleted = true;
-                    }
-                }
-                matrixStack.translate(sign * 0.15f, -0.27f + equipProgress * -0.6f, -0.37f);
             }
+        } else {
+            if (equipCycleCompleted) {
+                equipProgress = 0;
+            } else {
+                // postpone updating previousSlot because slot changing animation
+                // sometimes begins with equipProgress == 0
+                if (slotChanged) {
+                    if (equipProgress > 0.1) previousSlot = slot;
+                } else {
+                    if (equipProgress == 0) equipCycleCompleted = true;
+                }
+            }
+            matrixStack.translate(0, -0.6 * equipProgress, 0);
         }
 
         // compensate rotated model
-        matrixStack.translate(0, 0.085f, 0);
+        matrixStack.translate(0, 0.085, 0);
         matrixStack.mulPose(Vector3f.XP.rotationDegrees(-70));
 
         renderer.renderItem(player, stack, isRightHand ? ItemTransforms.TransformType.FIRST_PERSON_RIGHT_HAND : ItemTransforms.TransformType.FIRST_PERSON_LEFT_HAND, !isRightHand, matrixStack, render, packedLight);

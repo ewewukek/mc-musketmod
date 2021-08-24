@@ -65,9 +65,7 @@ public class MusketItem extends Item {
 
     @Override
     public void releaseUsing(ItemStack stack, Level worldIn, LivingEntity entityLiving, int timeLeft) {
-        if (!isLoaded(stack)) {
-            setLoadingStage(stack, 0);
-        }
+        setLoadingStage(stack, 0);
     }
 
     @Override
@@ -88,7 +86,7 @@ public class MusketItem extends Item {
 
         } else if (loadingStage == 3 && usingDuration >= LOADING_STAGE_3) {
             player.playSound(MusketMod.SOUND_MUSKET_LOAD_2, 0.8f, 1);
-            setLoadingStage(stack, 0);
+            setLoadingStage(stack, 4);
         }
 
         if (world.isClientSide) return;

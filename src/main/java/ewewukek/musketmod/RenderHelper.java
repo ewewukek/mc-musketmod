@@ -13,18 +13,16 @@ import net.minecraft.world.entity.HumanoidArm;
 import net.minecraft.world.item.ItemStack;
 
 public class RenderHelper {
-    private static int previousSlot = -1;
-    public static boolean equipCycleCompleted;
+    public static boolean disableEquipAnimation;
 
     public static void renderSpecificFirstPersonHand(ItemInHandRenderer renderer, AbstractClientPlayer player, InteractionHand hand, float partialTicks, float interpolatedPitch, float swingProgress, float equipProgress, ItemStack stack, PoseStack matrixStack, MultiBufferSource render, int packedLight) {
         HumanoidArm handside = hand == InteractionHand.MAIN_HAND ? player.getMainArm() : player.getMainArm().getOpposite();
         boolean isRightHand = handside == HumanoidArm.RIGHT;
         float sign = isRightHand ? 1 : -1;
 
-        int slot = player.getInventory().selected;
-        boolean slotChanged = slot != previousSlot;
-        ItemStack clientStack = hand == InteractionHand.MAIN_HAND ? player.getMainHandItem() : player.getOffhandItem();
-        if (slotChanged || clientStack.isEmpty() || clientStack.getItem() != MusketMod.MUSKET) equipCycleCompleted = false;
+        if (stack == MusketItem.activeStack) {
+            disableEquipAnimation = true;
+        }
 
         matrixStack.pushPose();
         matrixStack.translate(sign * 0.15, -0.25, -0.35);
@@ -55,18 +53,13 @@ public class RenderHelper {
                 }
             }
         } else {
-            if (equipCycleCompleted) {
-                equipProgress = 0;
-            } else {
-                // postpone updating previousSlot because slot changing animation
-                // sometimes begins with equipProgress == 0
-                if (slotChanged) {
-                    if (equipProgress > 0.1) previousSlot = slot;
-                } else {
-                    if (equipProgress == 0) equipCycleCompleted = true;
+            if (disableEquipAnimation) {
+                if (equipProgress == 0) {
+                    disableEquipAnimation = false;
                 }
+            } else {
+                matrixStack.translate(0, -0.6 * equipProgress, 0);
             }
-            matrixStack.translate(0, -0.6 * equipProgress, 0);
         }
 
         // compensate rotated model

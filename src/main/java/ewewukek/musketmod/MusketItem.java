@@ -24,6 +24,9 @@ public class MusketItem extends Item {
     public static float bulletStdDev;
     public static double bulletSpeed;
 
+    // for RenderHelper
+    public static ItemStack activeStack;
+
     public MusketItem(Item.Properties properties) {
         super(properties.defaultDurability(DURABILITY));
     }
@@ -37,6 +40,10 @@ public class MusketItem extends Item {
 
         if (player.isEyeInFluid(FluidTags.WATER) && !creative) {
             return InteractionResultHolder.fail(stack);
+        }
+
+        if (worldIn.isClientSide) {
+            activeStack = stack;
         }
 
         boolean haveAmmo = !findAmmo(player).isEmpty() || creative;
@@ -71,6 +78,10 @@ public class MusketItem extends Item {
     @Override
     public void onUseTick(Level world, LivingEntity entity, ItemStack stack, int timeLeft) {
         if (!(entity instanceof Player)) return;
+
+        if (world.isClientSide) {
+            activeStack = stack;
+        }
 
         Player player = (Player) entity;
         int usingDuration = getUseDuration(stack) - timeLeft;

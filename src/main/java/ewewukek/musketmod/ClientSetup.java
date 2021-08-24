@@ -30,7 +30,6 @@ public class ClientSetup {
 
     @SubscribeEvent(priority = EventPriority.LOW)
     public static void onRenderHandEvent(final RenderHandEvent event) {
-        if (event.getHand() != InteractionHand.MAIN_HAND) return;
         ItemStack stack = event.getItemStack();
         if (!stack.isEmpty() && stack.getItem() == MUSKET) {
             Minecraft mc = Minecraft.getInstance();

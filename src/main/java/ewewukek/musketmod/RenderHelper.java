@@ -20,6 +20,15 @@ public class RenderHelper {
         boolean isRightHand = handside == HumanoidArm.RIGHT;
         float sign = isRightHand ? 1 : -1;
 
+        if (hand == InteractionHand.OFF_HAND) {
+            matrixStack.pushPose();
+            matrixStack.translate(sign * 0.5, -0.5 - 0.6 * equipProgress, -0.7);
+            matrixStack.mulPose(Vector3f.XP.rotationDegrees(70));
+            renderer.renderItem(player, stack, isRightHand ? ItemTransforms.TransformType.FIRST_PERSON_RIGHT_HAND : ItemTransforms.TransformType.FIRST_PERSON_LEFT_HAND, !isRightHand, matrixStack, render, packedLight);
+            matrixStack.popPose();
+            return;
+        }
+
         if (stack == MusketItem.activeStack) {
             disableEquipAnimation = true;
         }
@@ -62,12 +71,7 @@ public class RenderHelper {
             }
         }
 
-        // compensate rotated model
-        matrixStack.translate(0, 0.085, 0);
-        matrixStack.mulPose(Vector3f.XP.rotationDegrees(-70));
-
         renderer.renderItem(player, stack, isRightHand ? ItemTransforms.TransformType.FIRST_PERSON_RIGHT_HAND : ItemTransforms.TransformType.FIRST_PERSON_LEFT_HAND, !isRightHand, matrixStack, render, packedLight);
-
         matrixStack.popPose();
     }
 }

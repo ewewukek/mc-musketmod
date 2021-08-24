@@ -1,7 +1,6 @@
 package ewewukek.musketmod;
 
 import net.minecraft.core.BlockPos;
-import net.minecraft.sounds.SoundSource;
 import net.minecraft.tags.FluidTags;
 import net.minecraft.util.Mth;
 import net.minecraft.world.InteractionHand;
@@ -73,28 +72,26 @@ public class MusketItem extends Item {
 
     @Override
     public void onUseTick(Level world, LivingEntity entity, ItemStack stack, int timeLeft) {
-        if (world.isClientSide || !(entity instanceof Player)) return;
+        if (!(entity instanceof Player)) return;
 
         Player player = (Player) entity;
         int usingDuration = getUseDuration(stack) - timeLeft;
         int loadingStage = getLoadingStage(stack);
 
-        double posX = player.getX();
-        double posY = player.getY();
-        double posZ = player.getZ();
-
         if (loadingStage == 1 && usingDuration >= LOADING_STAGE_1) {
-            world.playSound(null, posX, posY, posZ, MusketMod.SOUND_MUSKET_LOAD_0, SoundSource.PLAYERS, 0.8f, 1);
+            player.playSound(MusketMod.SOUND_MUSKET_LOAD_0, 0.8f, 1);
             setLoadingStage(stack, 2);
 
         } else if (loadingStage == 2 && usingDuration >= LOADING_STAGE_2) {
-            world.playSound(null, posX, posY, posZ, MusketMod.SOUND_MUSKET_LOAD_1, SoundSource.PLAYERS, 0.8f, 1);
+            player.playSound(MusketMod.SOUND_MUSKET_LOAD_1, 0.8f, 1);
             setLoadingStage(stack, 3);
 
         } else if (loadingStage == 3 && usingDuration >= LOADING_STAGE_3) {
-            world.playSound(null, posX, posY, posZ, MusketMod.SOUND_MUSKET_LOAD_2, SoundSource.PLAYERS, 0.8f, 1);
+            player.playSound(MusketMod.SOUND_MUSKET_LOAD_2, 0.8f, 1);
             setLoadingStage(stack, 0);
         }
+
+        if (world.isClientSide) return;
 
         if (usingDuration >= RELOAD_DURATION && !isLoaded(stack)) {
             if (!player.getAbilities().instabuild) {
@@ -105,7 +102,7 @@ public class MusketItem extends Item {
                 if (ammoStack.isEmpty()) player.getInventory().removeItem(ammoStack);
             }
 
-            world.playSound(null, posX, posY, posZ, MusketMod.SOUND_MUSKET_READY, SoundSource.PLAYERS, 0.8f, 1);
+            world.playSound(null, player.getX(), player.getY(), player.getZ(), MusketMod.SOUND_MUSKET_READY, player.getSoundSource(), 0.8f, 1);
             setLoaded(stack, true);
         }
     }

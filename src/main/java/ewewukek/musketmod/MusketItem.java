@@ -117,6 +117,14 @@ public class MusketItem extends Item {
     }
 
     @Override
+    public boolean hurtEnemy(ItemStack stack, LivingEntity enemy, LivingEntity entity) {
+        if (entity instanceof Player) {
+            damageItem(stack, (Player)entity);
+        }
+        return false;
+    }
+
+    @Override
     public boolean mineBlock(ItemStack stack, Level worldIn, BlockState state, BlockPos pos, LivingEntity entityLiving) {
         if (entityLiving instanceof Player && state.getDestroySpeed(worldIn, pos) != 0) {
             damageItem(stack, (Player) entityLiving);

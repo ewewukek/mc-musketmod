@@ -39,8 +39,14 @@ public class RenderHelper {
         if (swingProgress > 0) {
             float swingSharp = Mth.sin(Mth.sqrt(swingProgress) * (float)Math.PI);
             float swingNormal = Mth.sin(swingProgress * (float)Math.PI);
-            matrixStack.translate(sign * 0.05 * (1 - swingNormal), 0.05 * (1 - swingNormal), 0.05 - 0.4 * swingSharp);
-            matrixStack.mulPose(Vector3f.XP.rotationDegrees(180 + sign * 20 * (1 - swingSharp)));
+
+            if (stack.getItem() == MusketMod.MUSKET_WITH_BAYONET) {
+                matrixStack.translate(sign * -0.05 * swingNormal, 0, 0.05 - 0.3 * swingSharp);
+                matrixStack.mulPose(Vector3f.YP.rotationDegrees(5 * swingSharp));
+            } else {
+                matrixStack.translate(sign * 0.05 * (1 - swingNormal), 0.05 * (1 - swingNormal), 0.05 - 0.4 * swingSharp);
+                matrixStack.mulPose(Vector3f.XP.rotationDegrees(180 + sign * 20 * (1 - swingSharp)));
+            }
 
         } else if (player.isUsingItem() && player.getUsedItemHand() == hand) {
             float usingDuration = stack.getUseDuration() - (player.getUseItemRemainingTicks() - partialTicks + 1);

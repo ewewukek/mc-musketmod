@@ -58,9 +58,8 @@ public class MusketMod {
         PROTOCOL_VERSION::equals, PROTOCOL_VERSION::equals);
 
     public MusketMod() {
-        DistExecutor.runWhenOn(Dist.CLIENT, () -> () -> {
-            FMLJavaModLoadingContext.get().getModEventBus().addListener(ClientSetup::init);
-        });
+        DistExecutor.unsafeRunWhenOn(Dist.CLIENT, () -> () ->
+            FMLJavaModLoadingContext.get().getModEventBus().addListener(ClientSetup::init));
         NETWORK_CHANNEL.registerMessage(1, SmokeEffectPacket.class,
             SmokeEffectPacket::encode, SmokeEffectPacket::new, SmokeEffectPacket::handle);
     }

@@ -41,7 +41,7 @@ public class Config {
         bulletSpeed = 180;
         bulletMaxDistance = 256;
         damageMin = 20.5;
-        damageMax = 21.5;
+        damageMax = 21;
     }
 
     private void load() {

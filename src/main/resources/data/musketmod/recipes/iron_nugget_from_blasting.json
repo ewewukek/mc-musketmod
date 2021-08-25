@@ -3,6 +3,9 @@
   "ingredient": [
     {
       "item": "musketmod:musket"
+    },
+    {
+      "item": "musketmod:musket_with_bayonet"
     }
   ],
   "result": "minecraft:iron_nugget",

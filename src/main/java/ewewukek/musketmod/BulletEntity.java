@@ -96,19 +96,6 @@ public class BulletEntity extends AbstractHurtingProjectile {
         checkInsideBlocks();
     }
 
-    private void fireParticles() {
-        Vec3 pos = position();
-        Vec3 front = getDeltaMovement().normalize();
-
-        for (int i = 0; i != 10; ++i) {
-            double t = Math.pow(random.nextFloat(), 1.5);
-            Vec3 p = pos.add(front.scale(1.25 + t));
-            p = p.add(new Vec3(random.nextFloat() - 0.5, random.nextFloat() - 0.5, random.nextFloat() - 0.5).scale(0.1));
-            Vec3 v = front.scale(0.1 * (1 - t));
-            level.addParticle(ParticleTypes.POOF, p.x, p.y, p.z, v.x, v.y, v.z);
-        }
-    }
-
     private boolean processCollision() {
         Vec3 from = position();
         Vec3 to = from.add(getDeltaMovement());
@@ -226,6 +213,5 @@ public class BulletEntity extends AbstractHurtingProjectile {
         super.recreateFromPacket(packet);
         Vec3 packet_velocity = new Vec3(packet.getXa(), packet.getYa(), packet.getZa());
         setDeltaMovement(packet_velocity.scale(MusketItem.bulletSpeed / ClientboundAddEntityPacket.LIMIT));
-        fireParticles();
     }
 }

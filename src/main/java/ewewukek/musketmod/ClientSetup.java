@@ -1,10 +1,14 @@
 package ewewukek.musketmod;
 
+import java.util.function.Supplier;
+
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.model.HumanoidModel;
 import net.minecraft.client.model.PlayerModel;
+import net.minecraft.client.multiplayer.ClientPacketListener;
 import net.minecraft.client.renderer.item.ItemProperties;
 import net.minecraft.client.renderer.item.ItemPropertyFunction;
+import net.minecraft.network.PacketListener;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.HumanoidArm;
 import net.minecraft.world.entity.player.Player;
@@ -17,6 +21,7 @@ import net.minecraftforge.eventbus.api.EventPriority;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
+import net.minecraftforge.fmllegacy.network.NetworkEvent;
 
 @Mod.EventBusSubscriber(Dist.CLIENT)
 public class ClientSetup {
@@ -55,6 +60,13 @@ public class ClientSetup {
             } else {
                 model.leftArmPose = HumanoidModel.ArmPose.CROSSBOW_HOLD;
             }
+        }
+    }
+
+    public static void handleSmokeEffectPacket(MusketMod.SmokeEffectPacket packet, Supplier<NetworkEvent.Context> ctx) {
+        PacketListener listener = ctx.get().getNetworkManager().getPacketListener();
+        if (listener instanceof ClientPacketListener) {
+            MusketItem.fireParticles(((ClientPacketListener)listener).getLevel(), packet.origin, packet.direction);
         }
     }
 

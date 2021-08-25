@@ -1,10 +1,13 @@
 package ewewukek.musketmod;
 
+import java.util.Random;
+
 import com.google.common.collect.ImmutableMultimap;
 import com.google.common.collect.ImmutableMultimap.Builder;
 import com.google.common.collect.Multimap;
 
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.tags.FluidTags;
 import net.minecraft.util.Mth;
 import net.minecraft.world.InteractionHand;
@@ -221,6 +224,19 @@ public class MusketItem extends Item {
         bullet.setDeltaMovement(motion);
 
         worldIn.addFreshEntity(bullet);
+        MusketMod.sendSmokeEffect(player, pos, direction);
+    }
+
+    public static void fireParticles(Level world, Vec3 origin, Vec3 direction) {
+        Random random = world.getRandom();
+
+        for (int i = 0; i != 10; ++i) {
+            double t = Math.pow(random.nextFloat(), 1.5);
+            Vec3 p = origin.add(direction.scale(1.25 + t));
+            p = p.add(new Vec3(random.nextFloat() - 0.5, random.nextFloat() - 0.5, random.nextFloat() - 0.5).scale(0.1));
+            Vec3 v = direction.scale(0.1 * (1 - t));
+            world.addParticle(ParticleTypes.POOF, p.x, p.y, p.z, v.x, v.y, v.z);
+        }
     }
 
     public static boolean isLoaded(ItemStack stack) {

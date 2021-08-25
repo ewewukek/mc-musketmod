@@ -1,0 +1,6 @@
+{
+  "parent": "musketmod:item/musket_with_bayonet",
+  "textures": {
+    "layer0": "musketmod:item/musket_with_bayonet_loaded"
+  }
+}

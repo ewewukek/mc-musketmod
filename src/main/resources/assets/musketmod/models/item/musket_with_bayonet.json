@@ -1,0 +1,44 @@
+{
+  "parent": "item/generated",
+  "textures": {
+    "layer0": "musketmod:item/musket_with_bayonet"
+  },
+  "display": {
+    "thirdperson_righthand": {
+      "rotation": [0, -105, 40],
+      "translation": [1.31, 1.44, -4.9],
+      "scale": [1.35, 1.35, 0.9]
+    },
+    "thirdperson_lefthand": {
+      "rotation": [0, 75, -40],
+      "translation": [1.31, 1.44, -4.9],
+      "scale": [1.35, 1.35, 0.9]
+    },
+    "firstperson_righthand": {
+      "rotation": [0, -90, 45],
+      "translation": [0, 0.48, -4.81],
+      "scale": [1.02, 1.02, 0.68]
+    },
+    "firstperson_lefthand": {
+      "rotation": [0, 90, -45],
+      "translation": [0, 0.48, -4.81],
+      "scale": [1.02, 1.02, 0.68]
+    },
+    "gui": {
+      "translation": [-4, 4, 0],
+      "scale": [1.5, 1.5, 1]
+    },
+    "ground": {
+      "translation": [-3, 3, 0],
+      "scale": [0.75, 0.75, 0.56]
+    }
+  },
+  "overrides": [
+    {
+      "predicate": {
+        "loaded": 1
+      },
+      "model": "musketmod:item/musket_with_bayonet_loaded"
+    }
+  ]
+}

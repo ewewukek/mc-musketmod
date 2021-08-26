@@ -38,9 +38,13 @@ public abstract class GunItem extends Item {
     public abstract float damageMultiplierMax();
     public abstract SoundEvent fireSound();
 
+    public boolean canUseFrom(Player player, InteractionHand hand) {
+        return hand == InteractionHand.MAIN_HAND;
+    }
+
     @Override
     public InteractionResultHolder<ItemStack> use(Level worldIn, Player player, InteractionHand hand) {
-        if (hand != InteractionHand.MAIN_HAND) return super.use(worldIn, player, hand);
+        if (!canUseFrom(player, hand)) return super.use(worldIn, player, hand);
 
         ItemStack stack = player.getItemInHand(hand);
         boolean creative = player.getAbilities().instabuild;

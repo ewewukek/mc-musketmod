@@ -20,7 +20,8 @@ public class RenderHelper {
         boolean isRightHand = handside == HumanoidArm.RIGHT;
         float sign = isRightHand ? 1 : -1;
 
-        if (hand == InteractionHand.OFF_HAND) {
+        GunItem gunItem = (GunItem)stack.getItem();
+        if (!gunItem.canUseFrom(player, hand)) {
             matrixStack.pushPose();
             matrixStack.translate(sign * 0.5, -0.5 - 0.6 * equipProgress, -0.7);
             matrixStack.mulPose(Vector3f.XP.rotationDegrees(70));
@@ -40,7 +41,7 @@ public class RenderHelper {
             float swingSharp = Mth.sin(Mth.sqrt(swingProgress) * (float)Math.PI);
             float swingNormal = Mth.sin(swingProgress * (float)Math.PI);
 
-            if (stack.getItem() == MusketMod.MUSKET_WITH_BAYONET) {
+            if (gunItem == MusketMod.MUSKET_WITH_BAYONET) {
                 matrixStack.translate(sign * -0.05 * swingNormal, 0, 0.05 - 0.3 * swingSharp);
                 matrixStack.mulPose(Vector3f.YP.rotationDegrees(5 * swingSharp));
             } else {
@@ -66,7 +67,7 @@ public class RenderHelper {
                     }
                     matrixStack.translate(0, 0, 0.025 * t);
                 }
-                if (stack.getItem() == MusketMod.PISTOL) {
+                if (gunItem == MusketMod.PISTOL) {
                     matrixStack.translate(0, 0, -0.12);
                 }
             }

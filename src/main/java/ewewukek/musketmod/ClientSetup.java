@@ -10,6 +10,7 @@ import net.minecraft.client.renderer.item.ItemProperties;
 import net.minecraft.client.renderer.item.ItemPropertyFunction;
 import net.minecraft.network.PacketListener;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.HumanoidArm;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
@@ -53,15 +54,29 @@ public class ClientSetup {
         if (!(event.getEntity() instanceof Player)) return;
         Player player = (Player)event.getEntity();
         if (player.swinging) return;
-        ItemStack stack = player.getMainHandItem();
-        if (!stack.isEmpty() && stack.getItem() instanceof GunItem && GunItem.isLoaded(stack)) {
-            PlayerModel<Player> model = event.getRenderer().getModel();
-            if (player.getMainArm() == HumanoidArm.RIGHT) {
-                model.rightArmPose = HumanoidModel.ArmPose.CROSSBOW_HOLD;
-            } else {
-                model.leftArmPose = HumanoidModel.ArmPose.CROSSBOW_HOLD;
+        HumanoidModel.ArmPose rightArmPose;
+        HumanoidModel.ArmPose leftArmPose;
+        if (player.getMainArm() == HumanoidArm.RIGHT) {
+            rightArmPose = getArmPose(player, InteractionHand.MAIN_HAND);
+            leftArmPose = getArmPose(player, InteractionHand.OFF_HAND);
+        } else {
+            rightArmPose = getArmPose(player, InteractionHand.OFF_HAND);
+            leftArmPose = getArmPose(player, InteractionHand.MAIN_HAND);
+        }
+        PlayerModel<Player> model = event.getRenderer().getModel();
+        if (rightArmPose != null) model.rightArmPose = rightArmPose;
+        if (leftArmPose != null) model.leftArmPose = leftArmPose;
+    }
+
+    public static HumanoidModel.ArmPose getArmPose(Player player, InteractionHand hand) {
+        ItemStack stack = player.getItemInHand(hand);
+        if (!stack.isEmpty() && stack.getItem() instanceof GunItem) {
+            GunItem gunItem = (GunItem)stack.getItem();
+            if (gunItem.canUseFrom(player, hand) && GunItem.isLoaded(stack)) {
+                return HumanoidModel.ArmPose.CROSSBOW_HOLD;
             }
         }
+        return null;
     }
 
     public static void handleSmokeEffectPacket(MusketMod.SmokeEffectPacket packet, Supplier<NetworkEvent.Context> ctx) {

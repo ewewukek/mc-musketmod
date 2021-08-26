@@ -66,6 +66,9 @@ public class RenderHelper {
                     }
                     matrixStack.translate(0, 0, 0.025 * t);
                 }
+                if (stack.getItem() == MusketMod.PISTOL) {
+                    matrixStack.translate(0, 0, -0.12);
+                }
             }
         } else {
             if (disableEquipAnimation) {

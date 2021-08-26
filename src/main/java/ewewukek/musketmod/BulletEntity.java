@@ -37,6 +37,7 @@ public class BulletEntity extends AbstractHurtingProjectile {
     public static float damageFactorMax;
     public static double maxDistance;
 
+    public float damageMultiplier;
     public float distanceTravelled;
     public short tickCounter;
 
@@ -148,8 +149,7 @@ public class BulletEntity extends AbstractHurtingProjectile {
         DamageSource damagesource = causeMusketDamage(this, shooter != null ? shooter : this);
 
         float energy = (float)getDeltaMovement().lengthSqr();
-        float factor = damageFactorMin + random.nextFloat() * (damageFactorMax - damageFactorMin);
-        target.hurt(damagesource, energy * factor);
+        target.hurt(damagesource, energy * damageMultiplier);
     }
 
     public Entity closestEntityOnPath(Vec3 start, Vec3 end) {
@@ -195,12 +195,14 @@ public class BulletEntity extends AbstractHurtingProjectile {
     @Override
     public void readAdditionalSaveData(CompoundTag compound) {
         super.readAdditionalSaveData(compound);
+        damageMultiplier = compound.getFloat("damageMultiplier");
         distanceTravelled = compound.getFloat("distanceTravelled");
     }
 
     @Override
     public void addAdditionalSaveData(CompoundTag compound) {
         super.addAdditionalSaveData(compound);
+        compound.putFloat("damageMultiplier", damageMultiplier);
         compound.putFloat("distanceTravelled", distanceTravelled);
     }
 

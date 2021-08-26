@@ -156,8 +156,9 @@ public abstract class GunItem extends Item {
     }
 
     public void fire(LivingEntity shooter, Vec3 direction, Vec3 smokeOriginOffset) {
-        float angle = (float) Math.PI * 2 * shooter.getRandom().nextFloat();
-        float gaussian = Math.abs((float) shooter.getRandom().nextGaussian());
+        Random random = shooter.getRandom();
+        float angle = (float) Math.PI * 2 * random.nextFloat();
+        float gaussian = Math.abs((float) random.nextGaussian());
         if (gaussian > 4) gaussian = 4;
 
         float spread = bulletStdDev() * gaussian;
@@ -185,6 +186,7 @@ public abstract class GunItem extends Item {
         bullet.setPos(origin);
         bullet.setInitialSpeed(bulletSpeed());
         bullet.setDeltaMovement(motion);
+        bullet.damageMultiplier = BulletEntity.damageFactorMin + random.nextFloat() * (BulletEntity.damageFactorMax - BulletEntity.damageFactorMin);
 
         shooter.level.addFreshEntity(bullet);
         MusketMod.sendSmokeEffect(shooter, origin.add(smokeOriginOffset), direction);

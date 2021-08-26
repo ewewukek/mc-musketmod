@@ -13,6 +13,7 @@ import net.minecraft.util.Mth;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResultHolder;
 import net.minecraft.world.entity.EquipmentSlot;
+import net.minecraft.world.entity.HumanoidArm;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ai.attributes.Attribute;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
@@ -74,7 +75,11 @@ public class MusketItem extends Item {
         if (loaded) {
             if (!worldIn.isClientSide) {
                 Vec3 front = Vec3.directionFromRotation(player.getXRot(), player.getYRot());
-                fire(player, front);
+                HumanoidArm arm = hand == InteractionHand.MAIN_HAND ? player.getMainArm() : player.getMainArm().getOpposite();
+                boolean isRightHand = arm == HumanoidArm.RIGHT;
+                Vec3 side = Vec3.directionFromRotation(0, player.getYRot() + (isRightHand ? 90 : -90));
+                Vec3 down = Vec3.directionFromRotation(player.getXRot() + 90, player.getYRot());
+                fire(player, front, side.add(down).scale(0.15));
             }
             player.playSound(MusketMod.SOUND_MUSKET_FIRE, 3.5f, 1);
 
@@ -193,6 +198,10 @@ public class MusketItem extends Item {
     }
 
     public static void fire(LivingEntity shooter, Vec3 direction) {
+        fire(shooter, direction, Vec3.ZERO);
+    }
+
+    public static void fire(LivingEntity shooter, Vec3 direction, Vec3 smokeOriginOffset) {
         float angle = (float) Math.PI * 2 * shooter.getRandom().nextFloat();
         float gaussian = Math.abs((float) shooter.getRandom().nextGaussian());
         if (gaussian > 4) gaussian = 4;
@@ -223,7 +232,7 @@ public class MusketItem extends Item {
         bullet.setDeltaMovement(motion);
 
         shooter.level.addFreshEntity(bullet);
-        MusketMod.sendSmokeEffect((Player)shooter, origin, direction);
+        MusketMod.sendSmokeEffect((Player)shooter, origin.add(smokeOriginOffset), direction);
     }
 
     public static void fireParticles(Level world, Vec3 origin, Vec3 direction) {

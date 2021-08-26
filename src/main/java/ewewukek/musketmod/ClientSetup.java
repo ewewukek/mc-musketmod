@@ -27,7 +27,7 @@ import net.minecraftforge.fmllegacy.network.NetworkEvent;
 public class ClientSetup {
     public static void init(final FMLClientSetupEvent event) {
         ItemPropertyFunction loaded = (stack, world, player, arg) -> {
-            return MusketItem.isLoaded(stack) ? 1 : 0;
+            return GunItem.isLoaded(stack) ? 1 : 0;
         };
         ItemProperties.register(MusketMod.MUSKET, new ResourceLocation("loaded"), loaded);
         ItemProperties.register(MusketMod.MUSKET_WITH_BAYONET, new ResourceLocation("loaded"), loaded);
@@ -36,7 +36,7 @@ public class ClientSetup {
     @SubscribeEvent(priority = EventPriority.LOW)
     public static void onRenderHandEvent(final RenderHandEvent event) {
         ItemStack stack = event.getItemStack();
-        if (!stack.isEmpty() && stack.getItem() instanceof MusketItem) {
+        if (!stack.isEmpty() && stack.getItem() instanceof GunItem) {
             Minecraft mc = Minecraft.getInstance();
             RenderHelper.renderSpecificFirstPersonHand(
                     mc.getItemInHandRenderer(), mc.player,
@@ -53,7 +53,7 @@ public class ClientSetup {
         Player player = (Player)event.getEntity();
         if (player.swinging) return;
         ItemStack stack = player.getMainHandItem();
-        if (!stack.isEmpty() && stack.getItem() instanceof MusketItem && MusketItem.isLoaded(stack)) {
+        if (!stack.isEmpty() && stack.getItem() instanceof GunItem && GunItem.isLoaded(stack)) {
             PlayerModel<Player> model = event.getRenderer().getModel();
             if (player.getMainArm() == HumanoidArm.RIGHT) {
                 model.rightArmPose = HumanoidModel.ArmPose.CROSSBOW_HOLD;
@@ -66,7 +66,7 @@ public class ClientSetup {
     public static void handleSmokeEffectPacket(MusketMod.SmokeEffectPacket packet, Supplier<NetworkEvent.Context> ctx) {
         PacketListener listener = ctx.get().getNetworkManager().getPacketListener();
         if (listener instanceof ClientPacketListener) {
-            MusketItem.fireParticles(((ClientPacketListener)listener).getLevel(), packet.origin, packet.direction);
+            GunItem.fireParticles(((ClientPacketListener)listener).getLevel(), packet.origin, packet.direction);
         }
     }
 

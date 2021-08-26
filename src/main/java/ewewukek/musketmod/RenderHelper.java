@@ -29,7 +29,7 @@ public class RenderHelper {
             return;
         }
 
-        if (stack == MusketItem.activeStack) {
+        if (stack == GunItem.activeStack) {
             disableEquipAnimation = true;
         }
 
@@ -50,7 +50,7 @@ public class RenderHelper {
 
         } else if (player.isUsingItem() && player.getUsedItemHand() == hand) {
             float usingDuration = stack.getUseDuration() - (player.getUseItemRemainingTicks() - partialTicks + 1);
-            if (usingDuration > 0 && usingDuration < MusketItem.RELOAD_DURATION) {
+            if (usingDuration > 0 && usingDuration < GunItem.RELOAD_DURATION) {
                 matrixStack.translate(0, -0.3, 0.05);
                 matrixStack.mulPose(Vector3f.XP.rotationDegrees(60));
                 matrixStack.mulPose(Vector3f.ZP.rotationDegrees(10));

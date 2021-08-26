@@ -31,6 +31,7 @@ public class ClientSetup {
         };
         ItemProperties.register(MusketMod.MUSKET, new ResourceLocation("loaded"), loaded);
         ItemProperties.register(MusketMod.MUSKET_WITH_BAYONET, new ResourceLocation("loaded"), loaded);
+        ItemProperties.register(MusketMod.PISTOL, new ResourceLocation("loaded"), loaded);
     }
 
     @SubscribeEvent(priority = EventPriority.LOW)

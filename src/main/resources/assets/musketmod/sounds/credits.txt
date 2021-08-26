@@ -5,3 +5,6 @@ musket_ready.ogg
     uses (CC0) https://opengameart.org/content/equipment-clicks-iii
 musket_load[0,1,2].ogg
     uses (CC0) https://freesound.org/people/ninjaotter/sounds/423288/
+pistol_fire.ogg
+    based on (CC0) https://freesound.org/people/straget/sounds/410552/
+    with bits from https://www.youtube.com/watch?v=LAjOnNufato

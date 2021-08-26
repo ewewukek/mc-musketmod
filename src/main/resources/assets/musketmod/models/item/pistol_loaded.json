@@ -1,0 +1,6 @@
+{
+  "parent": "musketmod:item/pistol",
+  "textures": {
+    "layer0": "musketmod:item/pistol_loaded"
+  }
+}

@@ -73,7 +73,8 @@ public class MusketItem extends Item {
 
         if (loaded) {
             if (!worldIn.isClientSide) {
-                fireBullet(worldIn, player);
+                Vec3 front = Vec3.directionFromRotation(player.getXRot(), player.getYRot());
+                fireBullet(player, front);
             }
             player.playSound(MusketMod.SOUND_MUSKET_FIRE, 3.5f, 1);
 
@@ -191,13 +192,9 @@ public class MusketItem extends Item {
         }
     }
 
-    public static void fireBullet(Level worldIn, Player player) {
-        final float deg2rad = (float)Math.PI / 180;
-        Vec3 direction = new Vec3(0, 0, 1).xRot(-deg2rad * player.getXRot()).yRot(-deg2rad * player.getYRot());
-        Vec3 pos = new Vec3(player.getX(), player.getEyeY(), player.getZ());
-
-        float angle = (float) Math.PI * 2 * worldIn.getRandom().nextFloat();
-        float gaussian = Math.abs((float) worldIn.getRandom().nextGaussian());
+    public static void fireBullet(LivingEntity shooter, Vec3 direction) {
+        float angle = (float) Math.PI * 2 * shooter.getRandom().nextFloat();
+        float gaussian = Math.abs((float) shooter.getRandom().nextGaussian());
         if (gaussian > 4) gaussian = 4;
 
         float spread = bulletStdDev * gaussian;
@@ -218,13 +215,15 @@ public class MusketItem extends Item {
             .add(n2.scale(Mth.sin(spread) * Mth.cos(angle)))
             .scale(bulletSpeed);
 
-        BulletEntity bullet = new BulletEntity(worldIn);
-        bullet.setOwner(player);
-        bullet.setPos(pos.x, pos.y, pos.z);
+        Vec3 origin = new Vec3(shooter.getX(), shooter.getEyeY(), shooter.getZ());
+
+        BulletEntity bullet = new BulletEntity(shooter.level);
+        bullet.setOwner(shooter);
+        bullet.setPos(origin);
         bullet.setDeltaMovement(motion);
 
-        worldIn.addFreshEntity(bullet);
-        MusketMod.sendSmokeEffect(player, pos, direction);
+        shooter.level.addFreshEntity(bullet);
+        MusketMod.sendSmokeEffect((Player)shooter, origin, direction);
     }
 
     public static void fireParticles(Level world, Vec3 origin, Vec3 direction) {

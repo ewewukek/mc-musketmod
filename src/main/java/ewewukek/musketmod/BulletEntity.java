@@ -7,6 +7,9 @@ import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.protocol.Packet;
 import net.minecraft.network.protocol.game.ClientboundAddEntityPacket;
+import net.minecraft.network.syncher.EntityDataAccessor;
+import net.minecraft.network.syncher.EntityDataSerializers;
+import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.damagesource.IndirectEntityDamageSource;
@@ -23,6 +26,8 @@ import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
 
 public class BulletEntity extends AbstractHurtingProjectile {
+    public static final EntityDataAccessor<Float> INITIAL_SPEED = SynchedEntityData.defineId(BulletEntity.class, EntityDataSerializers.FLOAT);
+
     public static final double GRAVITY = 0.05;
     public static final double AIR_FRICTION = 0.99;
     public static final double WATER_FRICTION = 0.6;
@@ -177,8 +182,14 @@ public class BulletEntity extends AbstractHurtingProjectile {
         return result;
     }
 
+    public void setInitialSpeed(float speed) {
+        entityData.set(INITIAL_SPEED, speed);
+    }
+
     @Override
     protected void defineSynchedData() {
+        super.defineSynchedData();
+        entityData.define(INITIAL_SPEED, (float)0);
     }
 
     @Override
@@ -202,7 +213,7 @@ public class BulletEntity extends AbstractHurtingProjectile {
             getX(), getY(), getZ(),
             getXRot(), getYRot(),
             getType(), owner != null ? owner.getId() : 0,
-            getDeltaMovement().scale(ClientboundAddEntityPacket.LIMIT / MusketItem.bulletSpeed)
+            getDeltaMovement().scale(ClientboundAddEntityPacket.LIMIT / entityData.get(INITIAL_SPEED))
         );
     }
 
@@ -210,6 +221,14 @@ public class BulletEntity extends AbstractHurtingProjectile {
     public void recreateFromPacket(ClientboundAddEntityPacket packet) {
         super.recreateFromPacket(packet);
         Vec3 packet_velocity = new Vec3(packet.getXa(), packet.getYa(), packet.getZa());
-        setDeltaMovement(packet_velocity.scale(MusketItem.bulletSpeed / ClientboundAddEntityPacket.LIMIT));
+        setDeltaMovement(packet_velocity.scale(1.0 / ClientboundAddEntityPacket.LIMIT));
+    }
+
+    @Override
+    public void onSyncedDataUpdated(EntityDataAccessor<?> accessor) {
+        super.onSyncedDataUpdated(accessor);
+        if (INITIAL_SPEED.equals(accessor) && level.isClientSide) {
+            setDeltaMovement(getDeltaMovement().scale(entityData.get(INITIAL_SPEED)));
+        }
     }
 }

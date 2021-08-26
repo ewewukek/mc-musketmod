@@ -229,6 +229,7 @@ public class MusketItem extends Item {
         BulletEntity bullet = new BulletEntity(shooter.level);
         bullet.setOwner(shooter);
         bullet.setPos(origin);
+        bullet.setInitialSpeed((float)bulletSpeed);
         bullet.setDeltaMovement(motion);
 
         shooter.level.addFreshEntity(bullet);

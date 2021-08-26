@@ -6,6 +6,9 @@
     },
     {
       "item": "musketmod:musket_with_bayonet"
+    },
+    {
+      "item": "musketmod:pistol"
     }
   ],
   "result": "minecraft:iron_nugget",

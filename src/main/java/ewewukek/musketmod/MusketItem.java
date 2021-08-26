@@ -74,7 +74,7 @@ public class MusketItem extends Item {
         if (loaded) {
             if (!worldIn.isClientSide) {
                 Vec3 front = Vec3.directionFromRotation(player.getXRot(), player.getYRot());
-                fireBullet(player, front);
+                fire(player, front);
             }
             player.playSound(MusketMod.SOUND_MUSKET_FIRE, 3.5f, 1);
 
@@ -192,7 +192,7 @@ public class MusketItem extends Item {
         }
     }
 
-    public static void fireBullet(LivingEntity shooter, Vec3 direction) {
+    public static void fire(LivingEntity shooter, Vec3 direction) {
         float angle = (float) Math.PI * 2 * shooter.getRandom().nextFloat();
         float gaussian = Math.abs((float) shooter.getRandom().nextGaussian());
         if (gaussian > 4) gaussian = 4;

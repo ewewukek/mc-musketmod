@@ -1,7 +1,6 @@
 package ewewukek.musketmod;
 
 import java.util.Optional;
-import java.util.Random;
 
 import net.minecraft.core.particles.BlockParticleOption;
 import net.minecraft.core.particles.ParticleTypes;
@@ -24,7 +23,6 @@ import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
 
 public class BulletEntity extends AbstractHurtingProjectile {
-    private static final Random random = new Random();
     public static final double GRAVITY = 0.05;
     public static final double AIR_FRICTION = 0.99;
     public static final double WATER_FRICTION = 0.6;

@@ -13,7 +13,8 @@ import net.minecraft.world.entity.HumanoidArm;
 import net.minecraft.world.item.ItemStack;
 
 public class RenderHelper {
-    public static boolean disableEquipAnimation;
+    public static boolean disableMainHandEquipAnimation;
+    public static boolean disableOffhandEquipAnimation;
 
     public static void renderSpecificFirstPersonHand(ItemInHandRenderer renderer, AbstractClientPlayer player, InteractionHand hand, float partialTicks, float interpolatedPitch, float swingProgress, float equipProgress, ItemStack stack, PoseStack matrixStack, MultiBufferSource render, int packedLight) {
         HumanoidArm handside = hand == InteractionHand.MAIN_HAND ? player.getMainArm() : player.getMainArm().getOpposite();
@@ -30,8 +31,8 @@ public class RenderHelper {
             return;
         }
 
-        if (stack == GunItem.activeStack) {
-            disableEquipAnimation = true;
+        if (stack == GunItem.getActiveStack(hand)) {
+            setEquipAnimationDisabled(hand, true);
         }
 
         matrixStack.pushPose();
@@ -72,9 +73,9 @@ public class RenderHelper {
                 }
             }
         } else {
-            if (disableEquipAnimation) {
+            if (isEquipAnimationDisabled(hand)) {
                 if (equipProgress == 0) {
-                    disableEquipAnimation = false;
+                    setEquipAnimationDisabled(hand, false);
                 }
             } else {
                 matrixStack.translate(0, -0.6 * equipProgress, 0);
@@ -83,5 +84,21 @@ public class RenderHelper {
 
         renderer.renderItem(player, stack, isRightHand ? ItemTransforms.TransformType.FIRST_PERSON_RIGHT_HAND : ItemTransforms.TransformType.FIRST_PERSON_LEFT_HAND, !isRightHand, matrixStack, render, packedLight);
         matrixStack.popPose();
+    }
+
+    public static boolean isEquipAnimationDisabled(InteractionHand hand) {
+        if (hand == InteractionHand.MAIN_HAND) {
+            return disableMainHandEquipAnimation;
+        } else {
+            return disableOffhandEquipAnimation;
+        }
+    }
+
+    public static void setEquipAnimationDisabled(InteractionHand hand, boolean disabled) {
+        if (hand == InteractionHand.MAIN_HAND) {
+            disableMainHandEquipAnimation = disabled;
+        } else {
+            disableOffhandEquipAnimation = disabled;
+        }
     }
 }

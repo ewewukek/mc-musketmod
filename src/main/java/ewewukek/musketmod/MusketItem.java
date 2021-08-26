@@ -170,11 +170,11 @@ public class MusketItem extends Item {
                 : super.getDefaultAttributeModifiers(slot);
     }
 
-    private boolean isAmmo(ItemStack stack) {
+    public static boolean isAmmo(ItemStack stack) {
         return stack.getItem() == MusketMod.CARTRIDGE;
     }
 
-    private ItemStack findAmmo(Player player) {
+    public static ItemStack findAmmo(Player player) {
         if (isAmmo(player.getItemBySlot(EquipmentSlot.OFFHAND))) {
             return player.getItemBySlot(EquipmentSlot.OFFHAND);
 
@@ -191,7 +191,7 @@ public class MusketItem extends Item {
         }
     }
 
-    private void fireBullet(Level worldIn, Player player) {
+    public static void fireBullet(Level worldIn, Player player) {
         final float deg2rad = (float)Math.PI / 180;
         Vec3 direction = new Vec3(0, 0, 1).xRot(-deg2rad * player.getXRot()).yRot(-deg2rad * player.getYRot());
         Vec3 pos = new Vec3(player.getX(), player.getEyeY(), player.getZ());
@@ -243,7 +243,7 @@ public class MusketItem extends Item {
         return stack.getOrCreateTag().getByte("loaded") != 0;
     }
 
-    private void setLoaded(ItemStack stack, boolean loaded) {
+    public static void setLoaded(ItemStack stack, boolean loaded) {
         if (loaded) {
             stack.getOrCreateTag().putByte("loaded", (byte)1);
         } else {
@@ -251,11 +251,11 @@ public class MusketItem extends Item {
         }
     }
 
-    private int getLoadingStage(ItemStack stack) {
+    public static int getLoadingStage(ItemStack stack) {
         return stack.getOrCreateTag().getInt("loadingStage");
     }
 
-    private void setLoadingStage(ItemStack stack, int loadingStage) {
+    public static void setLoadingStage(ItemStack stack, int loadingStage) {
         if (loadingStage != 0) {
             stack.getOrCreateTag().putInt("loadingStage", loadingStage);
         } else {

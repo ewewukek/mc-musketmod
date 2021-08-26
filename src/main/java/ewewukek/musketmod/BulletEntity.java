@@ -25,17 +25,17 @@ import net.minecraft.world.phys.Vec3;
 
 public class BulletEntity extends AbstractHurtingProjectile {
     private static final Random random = new Random();
-    static final double GRAVITY = 0.05;
-    static final double AIR_FRICTION = 0.99;
-    static final double WATER_FRICTION = 0.6;
-    static final short LIFETIME = 50;
+    public static final double GRAVITY = 0.05;
+    public static final double AIR_FRICTION = 0.99;
+    public static final double WATER_FRICTION = 0.6;
+    public static final short LIFETIME = 50;
 
     public static float damageFactorMin;
     public static float damageFactorMax;
     public static double maxDistance;
 
-    private float distanceTravelled;
-    private short tickCounter;
+    public float distanceTravelled;
+    public short tickCounter;
 
     public BulletEntity(EntityType<BulletEntity>entityType, Level world) {
         super(entityType, world);
@@ -96,7 +96,7 @@ public class BulletEntity extends AbstractHurtingProjectile {
         checkInsideBlocks();
     }
 
-    private boolean processCollision() {
+    public boolean processCollision() {
         Vec3 from = position();
         Vec3 to = from.add(getDeltaMovement());
 
@@ -140,7 +140,7 @@ public class BulletEntity extends AbstractHurtingProjectile {
         return true;
     }
 
-    private void hitEntity(Entity target) {
+    public void hitEntity(Entity target) {
         Entity shooter = getOwner();
         DamageSource damagesource = causeMusketDamage(this, shooter != null ? shooter : this);
 
@@ -149,7 +149,7 @@ public class BulletEntity extends AbstractHurtingProjectile {
         target.hurt(damagesource, energy * factor);
     }
 
-    private Entity closestEntityOnPath(Vec3 start, Vec3 end) {
+    public Entity closestEntityOnPath(Vec3 start, Vec3 end) {
         Vec3 motion = getDeltaMovement();
 
         Entity result = null;

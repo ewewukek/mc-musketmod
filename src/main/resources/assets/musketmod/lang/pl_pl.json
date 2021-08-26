@@ -2,5 +2,6 @@
   "death.attack.musket": "%1$s został postrzelony przez %2$s",
   "item.musketmod.cartridge": "Nabój",
   "item.musketmod.musket": "Muszkiet",
-  "item.musketmod.musket_with_bayonet": "Muszkiet z bagnetem"
+  "item.musketmod.musket_with_bayonet": "Muszkiet z bagnetem",
+  "item.musketmod.pistol": "Pistolet Skałkowy"
 }

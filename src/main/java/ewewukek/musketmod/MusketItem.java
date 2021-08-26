@@ -59,6 +59,11 @@ public class MusketItem extends GunItem {
     }
 
     @Override
+    public boolean twoHanded() {
+        return true;
+    }
+
+    @Override
     public Multimap<Attribute, AttributeModifier> getDefaultAttributeModifiers(EquipmentSlot slot) {
         return slot == EquipmentSlot.MAINHAND && hasBayonet
                 ? bayonetAttributeModifiers

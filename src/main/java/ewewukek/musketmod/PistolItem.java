@@ -38,4 +38,9 @@ public class PistolItem extends GunItem {
     public SoundEvent fireSound() {
         return MusketMod.SOUND_PISTOL_FIRE;
     }
+
+    @Override
+    public boolean twoHanded() {
+        return false;
+    }
 }

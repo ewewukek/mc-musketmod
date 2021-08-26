@@ -37,9 +37,20 @@ public abstract class GunItem extends Item {
     public abstract float damageMultiplierMin();
     public abstract float damageMultiplierMax();
     public abstract SoundEvent fireSound();
+    public abstract boolean twoHanded();
 
     public boolean canUseFrom(Player player, InteractionHand hand) {
-        return hand == InteractionHand.MAIN_HAND;
+        if (hand == InteractionHand.MAIN_HAND) {
+            return true;
+        }
+        if (twoHanded()) {
+            return false;
+        }
+        ItemStack mainHandStack = player.getItemInHand(InteractionHand.MAIN_HAND);
+        if (!mainHandStack.isEmpty() && mainHandStack.getItem() instanceof GunItem) {
+            return !((GunItem)mainHandStack.getItem()).twoHanded();
+        }
+        return true;
     }
 
     @Override

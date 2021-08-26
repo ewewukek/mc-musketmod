@@ -232,7 +232,7 @@ public class MusketItem extends Item {
         bullet.setDeltaMovement(motion);
 
         shooter.level.addFreshEntity(bullet);
-        MusketMod.sendSmokeEffect((Player)shooter, origin.add(smokeOriginOffset), direction);
+        MusketMod.sendSmokeEffect(shooter, origin.add(smokeOriginOffset), direction);
     }
 
     public static void fireParticles(Level world, Vec3 origin, Vec3 direction) {

@@ -13,8 +13,8 @@ import net.minecraft.sounds.SoundEvent;
 import net.minecraft.util.Unit;
 import net.minecraft.util.profiling.ProfilerFiller;
 import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.MobCategory;
-import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.phys.Vec3;
@@ -112,8 +112,8 @@ public class MusketMod {
         }
     }
 
-    public static void sendSmokeEffect(Player player, Vec3 origin, Vec3 direction) {
-        NETWORK_CHANNEL.send(PacketDistributor.TRACKING_ENTITY_AND_SELF.with(() -> player),
+    public static void sendSmokeEffect(LivingEntity shooter, Vec3 origin, Vec3 direction) {
+        NETWORK_CHANNEL.send(PacketDistributor.TRACKING_ENTITY_AND_SELF.with(() -> shooter),
             new SmokeEffectPacket(origin, direction));
     }
 

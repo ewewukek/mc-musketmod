@@ -17,6 +17,8 @@ public class MusketItem extends GunItem {
 
     public static float bulletStdDev;
     public static float bulletSpeed;
+    public static float damageMultiplierMin;
+    public static float damageMultiplierMax;
 
     public final boolean hasBayonet;
     public final Multimap<Attribute, AttributeModifier> bayonetAttributeModifiers;
@@ -39,6 +41,16 @@ public class MusketItem extends GunItem {
     @Override
     public float bulletSpeed() {
         return bulletSpeed;
+    }
+
+    @Override
+    public float damageMultiplierMin() {
+        return damageMultiplierMin;
+    }
+
+    @Override
+    public float damageMultiplierMax() {
+        return damageMultiplierMax;
     }
 
     @Override

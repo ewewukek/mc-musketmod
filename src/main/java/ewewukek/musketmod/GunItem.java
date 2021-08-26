@@ -34,6 +34,8 @@ public abstract class GunItem extends Item {
 
     public abstract float bulletStdDev();
     public abstract float bulletSpeed();
+    public abstract float damageMultiplierMin();
+    public abstract float damageMultiplierMax();
     public abstract SoundEvent fireSound();
 
     @Override
@@ -186,7 +188,8 @@ public abstract class GunItem extends Item {
         bullet.setPos(origin);
         bullet.setInitialSpeed(bulletSpeed());
         bullet.setDeltaMovement(motion);
-        bullet.damageMultiplier = BulletEntity.damageFactorMin + random.nextFloat() * (BulletEntity.damageFactorMax - BulletEntity.damageFactorMin);
+        float t = random.nextFloat();
+        bullet.damageMultiplier = t * damageMultiplierMin() + (1 - t) * damageMultiplierMax();
 
         shooter.level.addFreshEntity(bullet);
         MusketMod.sendSmokeEffect(shooter, origin.add(smokeOriginOffset), direction);

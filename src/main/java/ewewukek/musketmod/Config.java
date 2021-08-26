@@ -29,8 +29,8 @@ public class Config {
         MusketItem.bulletStdDev = (float)Math.toRadians(INSTANCE.bulletStdDev);
         MusketItem.bulletSpeed = (float)(INSTANCE.bulletSpeed / 20);
         double maxEnergy = MusketItem.bulletSpeed * MusketItem.bulletSpeed;
-        BulletEntity.damageFactorMin = (float)(INSTANCE.damageMin / maxEnergy);
-        BulletEntity.damageFactorMax = (float)(INSTANCE.damageMax / maxEnergy);
+        MusketItem.damageMultiplierMin = (float)(INSTANCE.damageMin / maxEnergy);
+        MusketItem.damageMultiplierMax = (float)(INSTANCE.damageMax / maxEnergy);
         BulletEntity.maxDistance = INSTANCE.bulletMaxDistance;
 
         logger.info("Configuration has been loaded");

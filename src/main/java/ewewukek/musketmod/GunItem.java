@@ -65,6 +65,17 @@ public abstract class GunItem extends Item {
             return InteractionResultHolder.fail(stack);
         }
 
+        // shoot from left hand if both are loaded
+        if (hand == InteractionHand.MAIN_HAND && !twoHanded() && isLoaded(stack)) {
+            ItemStack offhandStack = player.getItemInHand(InteractionHand.OFF_HAND);
+            if (!offhandStack.isEmpty() && offhandStack.getItem() instanceof GunItem) {
+                GunItem offhandGun = (GunItem)offhandStack.getItem();
+                if (!offhandGun.twoHanded() && isLoaded(offhandStack)) {
+                    return InteractionResultHolder.pass(stack);
+                }
+            }
+        }
+
         boolean haveAmmo = !findAmmo(player).isEmpty() || creative;
         boolean loaded = isLoaded(stack);
 

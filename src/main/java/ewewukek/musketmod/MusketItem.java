@@ -15,7 +15,7 @@ public class MusketItem extends GunItem {
     public static final int DURABILITY = 250;
 
     public static float bulletStdDev;
-    public static double bulletSpeed;
+    public static float bulletSpeed;
 
     public final Multimap<Attribute, AttributeModifier> attributeModifiers;
 
@@ -40,7 +40,7 @@ public class MusketItem extends GunItem {
 
     @Override
     public float bulletSpeed() {
-        return (float)bulletSpeed;
+        return bulletSpeed;
     }
 
     @Override

@@ -27,7 +27,7 @@ public class Config {
         INSTANCE.load();
 
         MusketItem.bulletStdDev = (float)Math.toRadians(INSTANCE.bulletStdDev);
-        MusketItem.bulletSpeed = INSTANCE.bulletSpeed / 20;
+        MusketItem.bulletSpeed = (float)(INSTANCE.bulletSpeed / 20);
         double maxEnergy = MusketItem.bulletSpeed * MusketItem.bulletSpeed;
         BulletEntity.damageFactorMin = (float)(INSTANCE.damageMin / maxEnergy);
         BulletEntity.damageFactorMax = (float)(INSTANCE.damageMax / maxEnergy);

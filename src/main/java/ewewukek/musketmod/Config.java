@@ -138,6 +138,9 @@ public class Config {
         }
         if (version < VERSION) {
             logger.info("Configuration file belongs to older version, updating");
+            if (version < 2) {
+                if (damageMax == 21.5) damageMax = 21;
+            }
             save();
         }
     }

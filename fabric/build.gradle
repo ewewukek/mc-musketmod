@@ -26,6 +26,8 @@ loom {
     runs {
         client {
             runDir = '../run'
+            programArgs.add('--username')
+            programArgs.add('Dev')
         }
         server {
             runDir = '../run'

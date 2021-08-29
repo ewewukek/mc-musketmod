@@ -27,18 +27,11 @@ import net.minecraft.world.entity.EntityDimensions;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.MobCategory;
-import net.minecraft.world.item.CreativeModeTab;
-import net.minecraft.world.item.Item;
 import net.minecraft.world.phys.Vec3;
 
 public class MusketMod implements ModInitializer {
     public static final String MODID = "musketmod";
     public static final Path CONFIG_PATH = FabricLoader.getInstance().getConfigDir().resolve("musketmod.txt");
-
-    public static final Item CARTRIDGE = new Item(new Item.Properties().tab(CreativeModeTab.TAB_COMBAT));
-    public static final Item MUSKET = new MusketItem(new Item.Properties().tab(CreativeModeTab.TAB_COMBAT), false);
-    public static final Item MUSKET_WITH_BAYONET = new MusketItem(new Item.Properties().tab(CreativeModeTab.TAB_COMBAT), true);
-    public static final Item PISTOL = new PistolItem(new Item.Properties().tab(CreativeModeTab.TAB_COMBAT));
 
     public static final SoundEvent SOUND_MUSKET_LOAD_0 = new SoundEvent(new ResourceLocation(MODID, "musket_load0"));
     public static final SoundEvent SOUND_MUSKET_LOAD_1 = new SoundEvent(new ResourceLocation(MODID, "musket_load1"));
@@ -55,10 +48,10 @@ public class MusketMod implements ModInitializer {
 
     @Override
     public void onInitialize() {
-        Registry.register(Registry.ITEM, new ResourceLocation(MODID, "cartridge"), CARTRIDGE);
-        Registry.register(Registry.ITEM, new ResourceLocation(MODID, "musket"), MUSKET);
-        Registry.register(Registry.ITEM, new ResourceLocation(MODID, "musket_with_bayonet"), MUSKET_WITH_BAYONET);
-        Registry.register(Registry.ITEM, new ResourceLocation(MODID, "pistol"), PISTOL);
+        Registry.register(Registry.ITEM, new ResourceLocation(MODID, "cartridge"), Items.CARTRIDGE);
+        Registry.register(Registry.ITEM, new ResourceLocation(MODID, "musket"), Items.MUSKET);
+        Registry.register(Registry.ITEM, new ResourceLocation(MODID, "musket_with_bayonet"), Items.MUSKET_WITH_BAYONET);
+        Registry.register(Registry.ITEM, new ResourceLocation(MODID, "pistol"), Items.PISTOL);
 
         Registry.register(Registry.ENTITY_TYPE, new ResourceLocation(MODID, "bullet"), BULLET_ENTITY_TYPE);
 

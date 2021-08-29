@@ -15,7 +15,6 @@ import net.minecraft.util.profiling.ProfilerFiller;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.MobCategory;
-import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.api.distmarker.Dist;
@@ -35,11 +34,6 @@ import net.minecraftforge.fmllegacy.network.simple.SimpleChannel;
 public class MusketMod {
     public static final String MODID = "musketmod";
     public static final Path CONFIG_PATH = FMLPaths.CONFIGDIR.get().resolve("musketmod.txt");
-
-    public static final Item CARTRIDGE = new Item(new Item.Properties().tab(CreativeModeTab.TAB_COMBAT));
-    public static final Item MUSKET = new MusketItem(new Item.Properties().tab(CreativeModeTab.TAB_COMBAT), false);
-    public static final Item MUSKET_WITH_BAYONET = new MusketItem(new Item.Properties().tab(CreativeModeTab.TAB_COMBAT), true);
-    public static final Item PISTOL = new PistolItem(new Item.Properties().tab(CreativeModeTab.TAB_COMBAT));
 
     public static final SoundEvent SOUND_MUSKET_LOAD_0 = new SoundEvent(new ResourceLocation(MODID, "musket_load0"));
     public static final SoundEvent SOUND_MUSKET_LOAD_1 = new SoundEvent(new ResourceLocation(MODID, "musket_load1"));
@@ -71,10 +65,10 @@ public class MusketMod {
         @SubscribeEvent
         public static void onItemsRegistry(final RegistryEvent.Register<Item> event) {
             event.getRegistry().registerAll(
-                CARTRIDGE.setRegistryName(MODID, "cartridge"),
-                MUSKET.setRegistryName(MODID, "musket"),
-                MUSKET_WITH_BAYONET.setRegistryName(MODID, "musket_with_bayonet"),
-                PISTOL.setRegistryName(MODID, "pistol")
+                Items.CARTRIDGE.setRegistryName(MODID, "cartridge"),
+                Items.MUSKET.setRegistryName(MODID, "musket"),
+                Items.MUSKET_WITH_BAYONET.setRegistryName(MODID, "musket_with_bayonet"),
+                Items.PISTOL.setRegistryName(MODID, "pistol")
             );
         }
 

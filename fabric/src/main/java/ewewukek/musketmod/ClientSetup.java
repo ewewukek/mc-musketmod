@@ -18,9 +18,9 @@ public class ClientSetup implements ClientModInitializer {
         ClampedItemPropertyFunction loaded = (stack, world, player, seed) -> {
             return GunItem.isLoaded(stack) ? 1 : 0;
         };
-        FabricModelPredicateProviderRegistry.register(MusketMod.MUSKET, new ResourceLocation("loaded"), loaded);
-        FabricModelPredicateProviderRegistry.register(MusketMod.MUSKET_WITH_BAYONET, new ResourceLocation("loaded"), loaded);
-        FabricModelPredicateProviderRegistry.register(MusketMod.PISTOL, new ResourceLocation("loaded"), loaded);
+        FabricModelPredicateProviderRegistry.register(Items.MUSKET, new ResourceLocation("loaded"), loaded);
+        FabricModelPredicateProviderRegistry.register(Items.MUSKET_WITH_BAYONET, new ResourceLocation("loaded"), loaded);
+        FabricModelPredicateProviderRegistry.register(Items.PISTOL, new ResourceLocation("loaded"), loaded);
 
         ClientPlayNetworking.registerGlobalReceiver(MusketMod.SMOKE_EFFECT_PACKET_ID, (client, handler, buf, responseSender) -> {
             ClientLevel world = handler.getLevel();

@@ -30,9 +30,9 @@ public class ClientSetup {
         ItemPropertyFunction loaded = (stack, world, player, arg) -> {
             return GunItem.isLoaded(stack) ? 1 : 0;
         };
-        ItemProperties.register(MusketMod.MUSKET, new ResourceLocation("loaded"), loaded);
-        ItemProperties.register(MusketMod.MUSKET_WITH_BAYONET, new ResourceLocation("loaded"), loaded);
-        ItemProperties.register(MusketMod.PISTOL, new ResourceLocation("loaded"), loaded);
+        ItemProperties.register(Items.MUSKET, new ResourceLocation("loaded"), loaded);
+        ItemProperties.register(Items.MUSKET_WITH_BAYONET, new ResourceLocation("loaded"), loaded);
+        ItemProperties.register(Items.PISTOL, new ResourceLocation("loaded"), loaded);
     }
 
     @SubscribeEvent(priority = EventPriority.LOW)

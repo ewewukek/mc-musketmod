@@ -42,7 +42,7 @@ public class RenderHelper {
             float swingSharp = Mth.sin(Mth.sqrt(swingProgress) * (float)Math.PI);
             float swingNormal = Mth.sin(swingProgress * (float)Math.PI);
 
-            if (gunItem == MusketMod.MUSKET_WITH_BAYONET) {
+            if (gunItem == Items.MUSKET_WITH_BAYONET) {
                 matrixStack.translate(sign * -0.05 * swingNormal, 0, 0.05 - 0.3 * swingSharp);
                 matrixStack.mulPose(Vector3f.YP.rotationDegrees(5 * swingSharp));
             } else {
@@ -68,7 +68,7 @@ public class RenderHelper {
                     }
                     matrixStack.translate(0, 0, 0.025 * t);
                 }
-                if (gunItem == MusketMod.PISTOL) {
+                if (gunItem == Items.PISTOL) {
                     matrixStack.translate(0, 0, -0.12);
                 }
             }

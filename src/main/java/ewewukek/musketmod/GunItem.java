@@ -253,7 +253,7 @@ public abstract class GunItem extends Item {
     }
 
     public static boolean isAmmo(ItemStack stack) {
-        return stack.getItem() == MusketMod.CARTRIDGE;
+        return stack.getItem() == Items.CARTRIDGE;
     }
 
     public static ItemStack findAmmo(Player player) {

@@ -53,30 +53,16 @@ public class ClientSetup {
     public static void onRenderLivingEventPre(final RenderLivingEvent.Pre<Player, PlayerModel<Player>> event) {
         if (!(event.getEntity() instanceof Player)) return;
         Player player = (Player)event.getEntity();
-        if (player.swinging) return;
-        HumanoidModel.ArmPose rightArmPose;
-        HumanoidModel.ArmPose leftArmPose;
-        if (player.getMainArm() == HumanoidArm.RIGHT) {
-            rightArmPose = getArmPose(player, InteractionHand.MAIN_HAND);
-            leftArmPose = getArmPose(player, InteractionHand.OFF_HAND);
-        } else {
-            rightArmPose = getArmPose(player, InteractionHand.OFF_HAND);
-            leftArmPose = getArmPose(player, InteractionHand.MAIN_HAND);
-        }
+        HumanoidModel.ArmPose mainHandPose = ClientUtilities.getArmPose(player, InteractionHand.MAIN_HAND);
+        HumanoidModel.ArmPose offhandPose = ClientUtilities.getArmPose(player, InteractionHand.OFF_HAND);
         PlayerModel<Player> model = event.getRenderer().getModel();
-        if (rightArmPose != null) model.rightArmPose = rightArmPose;
-        if (leftArmPose != null) model.leftArmPose = leftArmPose;
-    }
-
-    public static HumanoidModel.ArmPose getArmPose(Player player, InteractionHand hand) {
-        ItemStack stack = player.getItemInHand(hand);
-        if (!stack.isEmpty() && stack.getItem() instanceof GunItem) {
-            GunItem gunItem = (GunItem)stack.getItem();
-            if (gunItem.canUseFrom(player, hand) && GunItem.isLoaded(stack)) {
-                return HumanoidModel.ArmPose.CROSSBOW_HOLD;
-            }
+        if (player.getMainArm() == HumanoidArm.RIGHT) {
+            model.rightArmPose = mainHandPose != null ? mainHandPose : model.rightArmPose;
+            model.leftArmPose = offhandPose != null ? offhandPose : model.leftArmPose;
+        } else {
+            model.rightArmPose = offhandPose != null ? offhandPose : model.rightArmPose;
+            model.leftArmPose = mainHandPose != null ? mainHandPose : model.leftArmPose;
         }
-        return null;
     }
 
     public static void handleSmokeEffectPacket(MusketMod.SmokeEffectPacket packet, Supplier<NetworkEvent.Context> ctx) {

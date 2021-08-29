@@ -58,10 +58,10 @@ public class MusketMod {
         @SubscribeEvent
         public static void onItemsRegistry(final RegistryEvent.Register<Item> event) {
             event.getRegistry().registerAll(
-                Items.CARTRIDGE.setRegistryName(MODID, "cartridge"),
                 Items.MUSKET.setRegistryName(MODID, "musket"),
                 Items.MUSKET_WITH_BAYONET.setRegistryName(MODID, "musket_with_bayonet"),
-                Items.PISTOL.setRegistryName(MODID, "pistol")
+                Items.PISTOL.setRegistryName(MODID, "pistol"),
+                Items.CARTRIDGE.setRegistryName(MODID, "cartridge")
             );
         }
 

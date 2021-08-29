@@ -36,7 +36,7 @@ public class PistolItem extends GunItem {
 
     @Override
     public SoundEvent fireSound() {
-        return MusketMod.SOUND_PISTOL_FIRE;
+        return Sounds.PISTOL_FIRE;
     }
 
     @Override

@@ -35,13 +35,6 @@ public class MusketMod {
     public static final String MODID = "musketmod";
     public static final Path CONFIG_PATH = FMLPaths.CONFIGDIR.get().resolve("musketmod.txt");
 
-    public static final SoundEvent SOUND_MUSKET_LOAD_0 = new SoundEvent(new ResourceLocation(MODID, "musket_load0"));
-    public static final SoundEvent SOUND_MUSKET_LOAD_1 = new SoundEvent(new ResourceLocation(MODID, "musket_load1"));
-    public static final SoundEvent SOUND_MUSKET_LOAD_2 = new SoundEvent(new ResourceLocation(MODID, "musket_load2"));
-    public static final SoundEvent SOUND_MUSKET_READY = new SoundEvent(new ResourceLocation(MODID, "musket_ready"));
-    public static final SoundEvent SOUND_MUSKET_FIRE = new SoundEvent(new ResourceLocation(MODID, "musket_fire"));
-    public static final SoundEvent SOUND_PISTOL_FIRE = new SoundEvent(new ResourceLocation(MODID, "pistol_fire"));
-
     public static final EntityType<BulletEntity> BULLET_ENTITY_TYPE = EntityType.Builder.<BulletEntity>of(BulletEntity::new, MobCategory.MISC)
             .sized(0.5f, 0.5f)
             .setTrackingRange(64).setUpdateInterval(5)
@@ -82,12 +75,12 @@ public class MusketMod {
         @SubscribeEvent
         public static void onSoundRegistry(final RegistryEvent.Register<SoundEvent> event) {
             event.getRegistry().registerAll(
-                SOUND_MUSKET_LOAD_0.setRegistryName(MODID, "musket_load0"),
-                SOUND_MUSKET_LOAD_1.setRegistryName(MODID, "musket_load1"),
-                SOUND_MUSKET_LOAD_2.setRegistryName(MODID, "musket_load2"),
-                SOUND_MUSKET_READY.setRegistryName(MODID, "musket_ready"),
-                SOUND_MUSKET_FIRE.setRegistryName(MODID, "musket_fire"),
-                SOUND_PISTOL_FIRE.setRegistryName(MODID, "pistol_fire")
+                Sounds.MUSKET_LOAD_0.setRegistryName(Sounds.MUSKET_LOAD_0.getLocation()),
+                Sounds.MUSKET_LOAD_1.setRegistryName(Sounds.MUSKET_LOAD_1.getLocation()),
+                Sounds.MUSKET_LOAD_2.setRegistryName(Sounds.MUSKET_LOAD_2.getLocation()),
+                Sounds.MUSKET_READY.setRegistryName(Sounds.MUSKET_READY.getLocation()),
+                Sounds.MUSKET_FIRE.setRegistryName(Sounds.MUSKET_FIRE.getLocation()),
+                Sounds.PISTOL_FIRE.setRegistryName(Sounds.PISTOL_FIRE.getLocation())
             );
         }
     }

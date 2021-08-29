@@ -41,22 +41,8 @@ minecraft {
                 }
             }
         }
-
-        data {
-            workingDirectory project.file('run')
-            property 'forge.logging.markers', 'REGISTRIES'
-            property 'forge.logging.console.level', 'debug'
-            args '--mod', 'musketmod', '--all', '--output', file('src/generated/resources/'), '--existing', file('src/main/resources/')
-            mods {
-                musketmod {
-                    source sourceSets.main
-                }
-            }
-        }
     }
 }
-
-sourceSets.main.resources { srcDir 'src/generated/resources' }
 
 dependencies {
     minecraft 'net.minecraftforge:forge:1.17.1-37.0.45'

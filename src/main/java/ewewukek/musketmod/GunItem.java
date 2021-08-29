@@ -119,40 +119,40 @@ public abstract class GunItem extends Item {
 
     @Override
     public void onUseTick(Level world, LivingEntity entity, ItemStack stack, int timeLeft) {
-        if (!(entity instanceof Player)) return;
-
-        Player player = (Player) entity;
         int usingDuration = getUseDuration(stack) - timeLeft;
         int loadingStage = getLoadingStage(stack);
 
         if (loadingStage == 1 && usingDuration >= LOADING_STAGE_1) {
-            player.playSound(Sounds.MUSKET_LOAD_0, 0.8f, 1);
+            entity.playSound(Sounds.MUSKET_LOAD_0, 0.8f, 1);
             setLoadingStage(stack, 2);
 
         } else if (loadingStage == 2 && usingDuration >= LOADING_STAGE_2) {
-            player.playSound(Sounds.MUSKET_LOAD_1, 0.8f, 1);
+            entity.playSound(Sounds.MUSKET_LOAD_1, 0.8f, 1);
             setLoadingStage(stack, 3);
 
         } else if (loadingStage == 3 && usingDuration >= LOADING_STAGE_3) {
-            player.playSound(Sounds.MUSKET_LOAD_2, 0.8f, 1);
+            entity.playSound(Sounds.MUSKET_LOAD_2, 0.8f, 1);
             setLoadingStage(stack, 4);
         }
 
-        if (world.isClientSide) {
-            setActiveStack(player.getUsedItemHand(), stack);
+        if (world.isClientSide && entity instanceof Player) {
+            setActiveStack(entity.getUsedItemHand(), stack);
             return;
         }
 
         if (usingDuration >= RELOAD_DURATION && !isLoaded(stack)) {
-            if (!player.getAbilities().instabuild) {
-                ItemStack ammoStack = findAmmo(player);
-                if (ammoStack.isEmpty()) return;
+            if (entity instanceof Player) {
+                Player player = (Player)entity;
+                if (!player.getAbilities().instabuild) {
+                    ItemStack ammoStack = findAmmo(player);
+                    if (ammoStack.isEmpty()) return;
 
-                ammoStack.shrink(1);
-                if (ammoStack.isEmpty()) player.getInventory().removeItem(ammoStack);
+                    ammoStack.shrink(1);
+                    if (ammoStack.isEmpty()) player.getInventory().removeItem(ammoStack);
+                }
             }
 
-            world.playSound(null, player.getX(), player.getY(), player.getZ(), Sounds.MUSKET_READY, player.getSoundSource(), 0.8f, 1);
+            entity.playSound(Sounds.MUSKET_READY, 0.8f, 1);
             setLoaded(stack, true);
         }
     }

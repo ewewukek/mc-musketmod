@@ -21,7 +21,7 @@ minecraft {
 
     runs {
         client {
-            workingDirectory project.file('run')
+            workingDirectory project.file('../run')
             property 'forge.logging.markers', 'REGISTRIES'
             property 'forge.logging.console.level', 'debug'
             mods {
@@ -32,7 +32,7 @@ minecraft {
         }
 
         server {
-            workingDirectory project.file('run')
+            workingDirectory project.file('../run')
             property 'forge.logging.markers', 'REGISTRIES'
             property 'forge.logging.console.level', 'debug'
             mods {
@@ -43,6 +43,9 @@ minecraft {
         }
     }
 }
+
+sourceSets.main.java { srcDir '../src/main/java' }
+sourceSets.main.resources { srcDir '../src/main/resources' }
 
 dependencies {
     minecraft 'net.minecraftforge:forge:1.17.1-37.0.45'

@@ -7,8 +7,8 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 
+import ewewukek.musketmod.ClientUtilities;
 import ewewukek.musketmod.GunItem;
-import ewewukek.musketmod.RenderHelper;
 import net.minecraft.client.player.AbstractClientPlayer;
 import net.minecraft.client.renderer.ItemInHandRenderer;
 import net.minecraft.client.renderer.MultiBufferSource;
@@ -24,7 +24,7 @@ public class MixinHeldItemRenderer {
     )
     private void renderArmWithItem(AbstractClientPlayer player, float tickDelta, float pitch, InteractionHand hand, float swingProgress, ItemStack stack, float equipProgress, PoseStack matrices, MultiBufferSource vertexConsumers, int light, CallbackInfo ci) {
         if (stack.getItem() instanceof GunItem) {
-            RenderHelper.renderSpecificFirstPersonHand((ItemInHandRenderer)(Object)this, player, hand, tickDelta, pitch, swingProgress, equipProgress, stack, matrices,vertexConsumers, light);
+            ClientUtilities.renderGunInHand((ItemInHandRenderer)(Object)this, player, hand, tickDelta, pitch, swingProgress, equipProgress, stack, matrices,vertexConsumers, light);
             ci.cancel();
         }
     }

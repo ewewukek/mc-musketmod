@@ -40,7 +40,7 @@ public class ClientSetup {
         ItemStack stack = event.getItemStack();
         if (!stack.isEmpty() && stack.getItem() instanceof GunItem) {
             Minecraft mc = Minecraft.getInstance();
-            RenderHelper.renderSpecificFirstPersonHand(
+            ClientUtilities.renderGunInHand(
                     mc.getItemInHandRenderer(), mc.player,
                     event.getHand(), event.getPartialTicks(), event.getInterpolatedPitch(),
                     event.getSwingProgress(), event.getEquipProgress(), stack,

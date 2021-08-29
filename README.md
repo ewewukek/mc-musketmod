@@ -1,7 +1,8 @@
-### Musket Mod (Forge version) 
-(go to [Fabric version](https://github.com/ewewukek/mc-musketmod-fabric))
+### Musket Mod
 
 Simple mod that adds a craftable musket. Use RMB to both load and fire. Doesn't work under water. [Download from CurseForge](https://www.curseforge.com/minecraft/mc-mods/ewewukeks-musket-mod/files/all)
+
+Fabric version requires [Fabric API](https://www.curseforge.com/minecraft/mc-mods/fabric-api).
 
 #### Recipes:
 
@@ -18,6 +19,7 @@ Configurable values are damage, bullet speed and accuracy. Configuration is stor
 #### Credits:
 - Mojang (duh)
 - Minecraft Forge and guys from the forum
+- FabricMC
 - lilypuree (fixes and Korean translation)
 - MikhailTapio (Chinese translation)
 - [Some sounds I've used](src/main/resources/assets/musketmod/sounds/credits.txt)

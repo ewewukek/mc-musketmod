@@ -1,0 +1,33 @@
+{
+  "schemaVersion": 1,
+  "id": "musketmod",
+  "version": "${version}",
+  "name": "Musket Mod",
+  "description": "Simple mod that adds a craftable musket",
+  "authors": [
+    "ewewukek"
+  ],
+  "license": "MIT",
+  "environment": "*",
+  "entrypoints": {
+    "main": [
+      "ewewukek.musketmod.MusketMod"
+    ],
+    "client": [
+      "ewewukek.musketmod.ClientSetup"
+    ]
+  },
+  "mixins": [
+    "musketmod.mixins.json"
+  ],
+  "depends": {
+    "minecraft": "1.17.x",
+    "java": ">=16",
+    "fabricloader": ">=0.11.3",
+    "fabric-api-base": ">=0.1.0",
+    "fabric-networking-api-v1": ">=0.1.0",
+    "fabric-object-builder-api-v1": ">=0.1.0",
+    "fabric-renderer-registries-v1": ">=0.1.0",
+    "fabric-resource-loader-v0": ">=0.1.0"
+  }
+}

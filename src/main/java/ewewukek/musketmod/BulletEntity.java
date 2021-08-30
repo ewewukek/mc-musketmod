@@ -20,6 +20,7 @@ import net.minecraft.world.entity.projectile.AbstractHurtingProjectile;
 import net.minecraft.world.level.ClipContext;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.material.FluidState;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.EntityHitResult;
@@ -68,16 +69,17 @@ public class BulletEntity extends AbstractHurtingProjectile {
             return;
         }
 
-        wasTouchingWater = updateFluidHeightAndDoFluidPushing(FluidTags.WATER, 0);
-
         Vec3 motion = getDeltaMovement();
-        if (wasTouchingWater) {
-            motion = motion.scale(WATER_FRICTION);
-            setDeltaMovement(motion);
-        }
-
         Vec3 from = position();
         Vec3 to = from.add(motion);
+
+        Vec3 waterPos = from;
+        wasTouchingWater = updateFluidHeightAndDoFluidPushing(FluidTags.WATER, 0);
+        if (wasTouchingWater) {
+            motion = motion.scale(WATER_FRICTION);
+            to = from.add(motion);
+            setDeltaMovement(motion);
+        }
 
         HitResult hitResult = level.clip(new ClipContext(from, to, ClipContext.Block.COLLIDER, ClipContext.Fluid.NONE, this));
 
@@ -89,6 +91,37 @@ public class BulletEntity extends AbstractHurtingProjectile {
         EntityHitResult entityHitResult = findHitEntity(from, to);
         if (entityHitResult != null) {
             hitResult = entityHitResult;
+            to = hitResult.getLocation();
+        }
+
+        if (!wasTouchingWater) {
+            BlockHitResult waterHitResult = level.clip(new ClipContext(from, to, ClipContext.Block.COLLIDER, ClipContext.Fluid.ANY, this));
+            if (waterHitResult.getType() == HitResult.Type.BLOCK) {
+                FluidState fluid = level.getFluidState(waterHitResult.getBlockPos());
+                if (fluid.is(FluidTags.WATER)) {
+                    wasTouchingWater = true;
+                    waterPos = waterHitResult.getLocation();
+                    double distanceToWater = waterPos.subtract(from).length();
+                    double velocity = motion.length();
+                    double timeInWater = 1 - distanceToWater / velocity;
+                    double newVelocity = velocity * (1 - timeInWater + timeInWater * Math.pow(WATER_FRICTION, timeInWater));
+
+                    if (hitResult.getType() != HitResult.Type.MISS) {
+                        double distanceToHit = to.subtract(from).length();
+                        if (distanceToWater < distanceToHit) {
+                            if (distanceToHit < newVelocity) {
+                                timeInWater = (distanceToHit - distanceToWater) / velocity;
+                                newVelocity = velocity * (1 - timeInWater + timeInWater * Math.pow(WATER_FRICTION, timeInWater));
+                            } else {
+                                hitResult = BlockHitResult.miss(null, null, null);
+                            }
+                        }
+                    }
+                    motion = motion.scale(newVelocity / velocity);
+                    to = from.add(motion);
+                    setDeltaMovement(motion);
+                }
+            }
         }
 
         if (hitResult.getType() != HitResult.Type.MISS) {
@@ -119,7 +152,7 @@ public class BulletEntity extends AbstractHurtingProjectile {
         if (wasTouchingWater) {
             double len = motion.length();
             Vec3 step = motion.scale(1 / len);
-            Vec3 pos = from.add(step.scale(0.5));
+            Vec3 pos = waterPos.add(step.scale(0.5));
             while (len > 0.5) {
                 pos = pos.add(step);
                 len -= 1;

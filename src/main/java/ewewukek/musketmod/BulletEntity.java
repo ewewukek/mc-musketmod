@@ -10,7 +10,6 @@ import net.minecraft.network.protocol.game.ClientboundAddEntityPacket;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
-import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.damagesource.IndirectEntityDamageSource;
 import net.minecraft.world.entity.Entity;
@@ -79,8 +78,27 @@ public class BulletEntity extends AbstractHurtingProjectile {
         }
 
         if (hitResult != null) {
-            if (!level.isClientSide) onHit(hitResult);
-            discard();
+            if (!level.isClientSide) {
+                onHit(hitResult);
+
+            } else if (hitResult.getType() == HitResult.Type.BLOCK){
+                int impactParticleCount = (int)(getDeltaMovement().lengthSqr() / 20);
+                if (impactParticleCount > 0) {
+                    BlockState blockstate = level.getBlockState(((BlockHitResult)hitResult).getBlockPos());
+                    BlockParticleOption particleOption = new BlockParticleOption(ParticleTypes.BLOCK, blockstate);
+                    Vec3 pos = hitResult.getLocation();
+                    for (int i = 0; i < impactParticleCount; ++i) {
+                        level.addParticle(
+                            particleOption,
+                            pos.x, pos.y, pos.z,
+                            random.nextGaussian() * 0.01,
+                            random.nextGaussian() * 0.01,
+                            random.nextGaussian() * 0.01
+                        );
+                    }
+                }
+            }
+            tickCounter = LIFETIME; // discard on next tick
         }
 
         Vec3 motion = getDeltaMovement();
@@ -109,23 +127,6 @@ public class BulletEntity extends AbstractHurtingProjectile {
         setDeltaMovement(motion.subtract(0, GRAVITY, 0));
         setPos(to);
         checkInsideBlocks();
-    }
-
-    @Override
-    public void onHitBlock(BlockHitResult hitResult) {
-        super.onHitBlock(hitResult);
-
-        int impactParticleCount = (int)(getDeltaMovement().lengthSqr() / 20);
-        if (impactParticleCount > 0) {
-            BlockState blockstate = level.getBlockState(hitResult.getBlockPos());
-            Vec3 pos = hitResult.getLocation();
-            ((ServerLevel)level).sendParticles(
-                new BlockParticleOption(ParticleTypes.BLOCK, blockstate),
-                pos.x, pos.y, pos.z,
-                impactParticleCount,
-                0, 0, 0, 0.01
-            );
-        }
     }
 
     @Override

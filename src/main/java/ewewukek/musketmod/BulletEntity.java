@@ -22,6 +22,7 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.BlockHitResult;
+import net.minecraft.world.phys.EntityHitResult;
 import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
 
@@ -57,34 +58,45 @@ public class BulletEntity extends AbstractHurtingProjectile {
 
     @Override
     public void tick() {
-        if (!level.isClientSide && processCollision()) {
-            discard();
-            return;
-        }
-
         if (++tickCounter >= LIFETIME || distanceTravelled > maxDistance) {
             discard();
             return;
         }
 
-        Vec3 motion = getDeltaMovement();
-        double posX = getX() + motion.x;
-        double posY = getY() + motion.y;
-        double posZ = getZ() + motion.z;
-        distanceTravelled += motion.length();
+        Vec3 from = position();
+        Vec3 to = from.add(getDeltaMovement());
 
-        motion = motion.subtract(0, GRAVITY, 0);
+        HitResult hitResult = level.clip(new ClipContext(from, to, ClipContext.Block.COLLIDER, ClipContext.Fluid.NONE, this));
+
+        // prevents hitting entities behind an obstacle
+        if (hitResult.getType() != HitResult.Type.MISS) {
+            to = hitResult.getLocation();
+        }
+
+        EntityHitResult entityHitResult = findHitEntity(from, to);
+        if (entityHitResult != null) {
+            hitResult = entityHitResult;
+        }
+
+        if (hitResult != null) {
+            if (!level.isClientSide) onHit(hitResult);
+            discard();
+        }
+
+        Vec3 motion = getDeltaMovement();
+        distanceTravelled += motion.length();
 
         double friction = AIR_FRICTION;
         if (isInWater()) {
             final int count = 4;
             for (int i = 0; i != count; ++i) {
                 double t = (i + 1.0) / count;
+                Vec3 pos = from.scale(1 - t).add(to.scale(t));
                 level.addParticle(
                     ParticleTypes.BUBBLE,
-                    posX - motion.x * t,
-                    posY - motion.y * t,
-                    posZ - motion.z * t,
+                    pos.x,
+                    pos.y,
+                    pos.z,
                     motion.x,
                     motion.y,
                     motion.z
@@ -92,69 +104,54 @@ public class BulletEntity extends AbstractHurtingProjectile {
             }
             friction = WATER_FRICTION;
         }
+        motion = motion.scale(friction);
 
-        setDeltaMovement(motion.scale(friction));
-        setPos(posX, posY, posZ);
+        setDeltaMovement(motion.subtract(0, GRAVITY, 0));
+        setPos(to);
         checkInsideBlocks();
     }
 
-    public boolean processCollision() {
-        Vec3 from = position();
-        Vec3 to = from.add(getDeltaMovement());
-
-        BlockHitResult collision = level.clip(
-            new ClipContext(from, to, ClipContext.Block.COLLIDER, ClipContext.Fluid.NONE, this));
-
-        // prevents hitting entities behind an obstacle
-        if (collision.getType() != HitResult.Type.MISS) {
-            to = collision.getLocation();
-        }
-
-        Entity target = closestEntityOnPath(from, to);
-        if (target != null) {
-            if (target instanceof Player) {
-                Entity shooter = getOwner();
-                if (shooter instanceof Player && !((Player)shooter).canHarmPlayer((Player)target)) {
-                    target = null;
-                }
-            }
-            if (target != null) {
-                hitEntity(target);
-                return true;
-            }
-        }
-
-        if (collision.getType() != HitResult.Type.BLOCK) return false;
-
-        BlockState blockstate = level.getBlockState(collision.getBlockPos());
-        blockstate.onProjectileHit(level, blockstate, collision, this);
+    @Override
+    public void onHitBlock(BlockHitResult hitResult) {
+        super.onHitBlock(hitResult);
 
         int impactParticleCount = (int)(getDeltaMovement().lengthSqr() / 20);
         if (impactParticleCount > 0) {
+            BlockState blockstate = level.getBlockState(hitResult.getBlockPos());
+            Vec3 pos = hitResult.getLocation();
             ((ServerLevel)level).sendParticles(
                 new BlockParticleOption(ParticleTypes.BLOCK, blockstate),
-                to.x, to.y, to.z,
+                pos.x, pos.y, pos.z,
                 impactParticleCount,
                 0, 0, 0, 0.01
             );
         }
-
-        return true;
     }
 
-    public void hitEntity(Entity target) {
-        Entity shooter = getOwner();
-        DamageSource damagesource = causeMusketDamage(this, shooter != null ? shooter : this);
+    @Override
+    public void onHitEntity(EntityHitResult hitResult) {
+        Entity target = hitResult.getEntity();
+        if (target instanceof Player) {
+            Entity shooter = getOwner();
+            if (shooter instanceof Player && !((Player)shooter).canHarmPlayer((Player)target)) {
+                target = null;
+            }
+        }
+        if (target != null) {
+            Entity shooter = getOwner();
+            DamageSource damagesource = causeMusketDamage(this, shooter != null ? shooter : this);
 
-        float energy = (float)getDeltaMovement().lengthSqr();
-        target.hurt(damagesource, energy * damageMultiplier);
+            float energy = (float)getDeltaMovement().lengthSqr();
+            target.hurt(damagesource, energy * damageMultiplier);
+        }
     }
 
-    public Entity closestEntityOnPath(Vec3 start, Vec3 end) {
+    public EntityHitResult findHitEntity(Vec3 start, Vec3 end) {
         Vec3 motion = getDeltaMovement();
 
-        Entity result = null;
-        double result_dist = 0;
+        Entity resultEntity = null;
+        Vec3 resultVec = null;
+        double resultDist = 0;
 
         AABB aabbSelection = getBoundingBox().expandTowards(motion).inflate(0.5);
         for (Entity entity : level.getEntities(this, aabbSelection, this::canHitEntity)) {
@@ -170,14 +167,15 @@ public class BulletEntity extends AbstractHurtingProjectile {
             }
             if (optional.isPresent()) {
                 double dist = start.distanceToSqr(optional.get());
-                if (dist < result_dist || result == null) {
-                    result = entity;
-                    result_dist = dist;
+                if (dist < resultDist || resultEntity == null) {
+                    resultEntity = entity;
+                    resultVec = optional.get();
+                    resultDist = dist;
                 }
             }
         }
 
-        return result;
+        return resultEntity != null ? new EntityHitResult(resultEntity, resultVec) : null;
     }
 
     public void setInitialSpeed(float speed) {

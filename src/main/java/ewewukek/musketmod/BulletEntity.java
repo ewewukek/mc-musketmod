@@ -2,6 +2,7 @@ package ewewukek.musketmod;
 
 import java.util.Optional;
 
+import net.minecraft.core.Direction;
 import net.minecraft.core.particles.BlockParticleOption;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.nbt.CompoundTag;
@@ -116,12 +117,30 @@ public class BulletEntity extends AbstractHurtingProjectile {
                             } else {
                                 hitResult = BlockHitResult.miss(null, null, null);
                             }
+                        } else {
+                            fluidHitResult = BlockHitResult.miss(null, null, null);
                         }
                     }
                     motion = motion.scale(newVelocity / velocity);
                     to = from.add(motion);
                     setDeltaMovement(motion);
 
+                    if (fluidHitResult.getType() != HitResult.Type.MISS) {
+                        int impactParticleCount = (int)(getDeltaMovement().lengthSqr() / 10);
+                        if (impactParticleCount > 0) {
+                            Vec3 pos = fluidHitResult.getLocation();
+                            double yv = fluidHitResult.getDirection() == Direction.UP ? 0.02 : 0;
+                            for (int i = 0; i < impactParticleCount; ++i) {
+                                level.addParticle(
+                                    ParticleTypes.SPLASH,
+                                    pos.x, pos.y, pos.z,
+                                    random.nextGaussian() * 0.01,
+                                    random.nextGaussian() * 0.01 + yv,
+                                    random.nextGaussian() * 0.01
+                                );
+                            }
+                        }
+                    }
                 } else if (fluid.is(FluidTags.LAVA)) {
                     if (hitResult.getType() == HitResult.Type.MISS || distanceToFluid < distanceToHit) {
                         hitResult = fluidHitResult;

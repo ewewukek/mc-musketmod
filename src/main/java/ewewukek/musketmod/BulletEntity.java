@@ -57,6 +57,10 @@ public class BulletEntity extends AbstractHurtingProjectile {
         return (new IndirectEntityDamageSource("musket", bullet, attacker)).setProjectile();
     }
 
+    public void discardOnNextTick() {
+        tickCounter = LIFETIME;
+    }
+
     @Override
     public void tick() {
         if (++tickCounter >= LIFETIME || distanceTravelled > maxDistance) {
@@ -90,6 +94,7 @@ public class BulletEntity extends AbstractHurtingProjectile {
         if (hitResult.getType() != HitResult.Type.MISS) {
             if (!level.isClientSide) {
                 onHit(hitResult);
+                discardOnNextTick();
 
             } else if (hitResult.getType() == HitResult.Type.BLOCK){
                 int impactParticleCount = (int)(getDeltaMovement().lengthSqr() / 20);
@@ -107,8 +112,8 @@ public class BulletEntity extends AbstractHurtingProjectile {
                         );
                     }
                 }
+                discard();
             }
-            tickCounter = LIFETIME; // discard on next tick
         }
 
         if (wasTouchingWater) {

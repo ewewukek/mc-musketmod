@@ -77,7 +77,7 @@ public class BulletEntity extends AbstractHurtingProjectile {
             hitResult = entityHitResult;
         }
 
-        if (hitResult != null) {
+        if (hitResult.getType() != HitResult.Type.MISS) {
             if (!level.isClientSide) {
                 onHit(hitResult);
 

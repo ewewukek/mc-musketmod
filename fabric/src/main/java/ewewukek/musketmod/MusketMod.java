@@ -40,6 +40,8 @@ public class MusketMod implements ModInitializer {
 
     @Override
     public void onInitialize() {
+        Config.reload();
+
         Registry.register(Registry.ITEM, new ResourceLocation(MODID, "musket"), Items.MUSKET);
         Registry.register(Registry.ITEM, new ResourceLocation(MODID, "musket_with_bayonet"), Items.MUSKET_WITH_BAYONET);
         Registry.register(Registry.ITEM, new ResourceLocation(MODID, "pistol"), Items.PISTOL);

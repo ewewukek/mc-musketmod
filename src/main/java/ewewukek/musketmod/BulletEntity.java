@@ -95,22 +95,23 @@ public class BulletEntity extends AbstractHurtingProjectile {
         }
 
         if (!wasTouchingWater) {
-            BlockHitResult waterHitResult = level.clip(new ClipContext(from, to, ClipContext.Block.COLLIDER, ClipContext.Fluid.ANY, this));
-            if (waterHitResult.getType() == HitResult.Type.BLOCK) {
-                FluidState fluid = level.getFluidState(waterHitResult.getBlockPos());
+            BlockHitResult fluidHitResult = level.clip(new ClipContext(from, to, ClipContext.Block.COLLIDER, ClipContext.Fluid.ANY, this));
+            if (fluidHitResult.getType() == HitResult.Type.BLOCK) {
+                FluidState fluid = level.getFluidState(fluidHitResult.getBlockPos());
+                double distanceToFluid = fluidHitResult.getLocation().subtract(from).length();
+                double distanceToHit = to.subtract(from).length();
+
                 if (fluid.is(FluidTags.WATER)) {
                     wasTouchingWater = true;
-                    waterPos = waterHitResult.getLocation();
-                    double distanceToWater = waterPos.subtract(from).length();
+                    waterPos = fluidHitResult.getLocation();
                     double velocity = motion.length();
-                    double timeInWater = 1 - distanceToWater / velocity;
+                    double timeInWater = 1 - distanceToFluid / velocity;
                     double newVelocity = velocity * (1 - timeInWater + timeInWater * Math.pow(WATER_FRICTION, timeInWater));
 
                     if (hitResult.getType() != HitResult.Type.MISS) {
-                        double distanceToHit = to.subtract(from).length();
-                        if (distanceToWater < distanceToHit) {
+                        if (distanceToFluid < distanceToHit) {
                             if (distanceToHit < newVelocity) {
-                                timeInWater = (distanceToHit - distanceToWater) / velocity;
+                                timeInWater = (distanceToHit - distanceToFluid) / velocity;
                                 newVelocity = velocity * (1 - timeInWater + timeInWater * Math.pow(WATER_FRICTION, timeInWater));
                             } else {
                                 hitResult = BlockHitResult.miss(null, null, null);
@@ -120,6 +121,12 @@ public class BulletEntity extends AbstractHurtingProjectile {
                     motion = motion.scale(newVelocity / velocity);
                     to = from.add(motion);
                     setDeltaMovement(motion);
+
+                } else if (fluid.is(FluidTags.LAVA)) {
+                    if (hitResult.getType() == HitResult.Type.MISS || distanceToFluid < distanceToHit) {
+                        hitResult = fluidHitResult;
+                        to = fluidHitResult.getLocation();
+                    }
                 }
             }
         }
@@ -129,7 +136,7 @@ public class BulletEntity extends AbstractHurtingProjectile {
                 onHit(hitResult);
                 discardOnNextTick();
 
-            } else if (hitResult.getType() == HitResult.Type.BLOCK){
+            } else if (hitResult.getType() == HitResult.Type.BLOCK) {
                 int impactParticleCount = (int)(getDeltaMovement().lengthSqr() / 20);
                 if (impactParticleCount > 0) {
                     BlockState blockstate = level.getBlockState(((BlockHitResult)hitResult).getBlockPos());

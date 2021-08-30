@@ -29,6 +29,7 @@ import net.minecraft.world.phys.Vec3;
 public class BulletEntity extends AbstractHurtingProjectile {
     public static final EntityDataAccessor<Float> INITIAL_SPEED = SynchedEntityData.defineId(BulletEntity.class, EntityDataSerializers.FLOAT);
 
+    public static final double MIN_DAMAGE = 0.5;
     public static final double GRAVITY = 0.05;
     public static final double AIR_FRICTION = 0.99;
     public static final double WATER_FRICTION = 0.6;
@@ -142,8 +143,8 @@ public class BulletEntity extends AbstractHurtingProjectile {
             Entity shooter = getOwner();
             DamageSource damagesource = causeMusketDamage(this, shooter != null ? shooter : this);
 
-            float energy = (float)getDeltaMovement().lengthSqr();
-            target.hurt(damagesource, energy * damageMultiplier);
+            float damage = damageMultiplier * (float)getDeltaMovement().lengthSqr();
+            if (damage > MIN_DAMAGE) target.hurt(damagesource, damage);
         }
     }
 

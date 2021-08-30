@@ -10,6 +10,7 @@ import net.minecraft.network.protocol.game.ClientboundAddEntityPacket;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
+import net.minecraft.tags.FluidTags;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.damagesource.IndirectEntityDamageSource;
 import net.minecraft.world.entity.Entity;
@@ -62,8 +63,16 @@ public class BulletEntity extends AbstractHurtingProjectile {
             return;
         }
 
+        wasTouchingWater = updateFluidHeightAndDoFluidPushing(FluidTags.WATER, 0);
+
+        Vec3 motion = getDeltaMovement();
+        if (wasTouchingWater) {
+            motion = motion.scale(WATER_FRICTION);
+            setDeltaMovement(motion);
+        }
+
         Vec3 from = position();
-        Vec3 to = from.add(getDeltaMovement());
+        Vec3 to = from.add(motion);
 
         HitResult hitResult = level.clip(new ClipContext(from, to, ClipContext.Block.COLLIDER, ClipContext.Fluid.NONE, this));
 
@@ -101,31 +110,22 @@ public class BulletEntity extends AbstractHurtingProjectile {
             tickCounter = LIFETIME; // discard on next tick
         }
 
-        Vec3 motion = getDeltaMovement();
-        distanceTravelled += motion.length();
-
-        double friction = AIR_FRICTION;
-        if (isInWater()) {
-            final int count = 4;
-            for (int i = 0; i != count; ++i) {
-                double t = (i + 1.0) / count;
-                Vec3 pos = from.scale(1 - t).add(to.scale(t));
-                level.addParticle(
-                    ParticleTypes.BUBBLE,
-                    pos.x,
-                    pos.y,
-                    pos.z,
-                    motion.x,
-                    motion.y,
-                    motion.z
-                );
+        if (wasTouchingWater) {
+            double len = motion.length();
+            Vec3 step = motion.scale(1 / len);
+            Vec3 pos = from.add(step.scale(0.5));
+            while (len > 0.5) {
+                pos = pos.add(step);
+                len -= 1;
+                level.addParticle(ParticleTypes.BUBBLE, pos.x, pos.y, pos.z, 0, 0, 0);
             }
-            friction = WATER_FRICTION;
+        } else {
+            motion = motion.scale(AIR_FRICTION);
         }
-        motion = motion.scale(friction);
 
         setDeltaMovement(motion.subtract(0, GRAVITY, 0));
         setPos(to);
+        distanceTravelled += to.subtract(from).length();
         checkInsideBlocks();
     }
 

@@ -152,7 +152,8 @@ public abstract class GunItem extends Item {
                 }
             }
 
-            entity.playSound(Sounds.MUSKET_READY, 0.8f, 1);
+            // played on server
+            world.playSound(null, entity.getX(), entity.getY(), entity.getZ(), Sounds.MUSKET_READY, entity.getSoundSource(), 0.8f, 1);
             setLoaded(stack, true);
         }
     }

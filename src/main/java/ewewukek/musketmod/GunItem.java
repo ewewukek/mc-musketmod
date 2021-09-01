@@ -82,8 +82,8 @@ public abstract class GunItem extends Item {
         if (loaded) {
             if (!worldIn.isRemote) {
                 Vector3d front = Vector3d.fromPitchYaw(player.rotationPitch, player.rotationYaw);
-                HandSide arm = hand == Hand.MAIN_HAND ? player.getPrimaryHand() : player.getPrimaryHand().opposite();
-                boolean isRightHand = arm == HandSide.RIGHT;
+                HandSide mainArm = player.getPrimaryHand();
+                boolean isRightHand = (hand == Hand.MAIN_HAND && mainArm == HandSide.RIGHT) || (hand == Hand.OFF_HAND && mainArm == HandSide.LEFT);
                 Vector3d side = Vector3d.fromPitchYaw(0, player.rotationYaw + (isRightHand ? 90 : -90));
                 Vector3d down = Vector3d.fromPitchYaw(player.rotationPitch + 90, player.rotationYaw);
                 fire(player, front, side.add(down).scale(0.15));

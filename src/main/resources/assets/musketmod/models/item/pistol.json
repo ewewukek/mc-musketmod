@@ -1,7 +1,7 @@
 {
   "parent": "item/generated",
   "textures": {
-    "layer0": "musketmod:item/musket"
+    "layer0": "musketmod:item/pistol"
   },
   "display": {
     "thirdperson_righthand": {
@@ -16,12 +16,12 @@
     },
     "firstperson_righthand": {
       "rotation": [0, -90, 45],
-      "translation": [0, 0.48, -0.96],
+      "translation": [0, 0.48, -1.92],
       "scale": [0.68, 0.68, 0.68]
     },
     "firstperson_lefthand": {
       "rotation": [0, 90, -45],
-      "translation": [0, 0.48, -0.96],
+      "translation": [0, 0.48, -1.92],
       "scale": [0.68, 0.68, 0.68]
     }
   },
@@ -30,7 +30,7 @@
       "predicate": {
         "loaded": 1
       },
-      "model": "musketmod:item/musket_loaded"
+      "model": "musketmod:item/pistol_loaded"
     }
   ]
 }

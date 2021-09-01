@@ -1,18 +1,24 @@
 {
   "type": "crafting_shaped",
   "pattern": [
-    "IIF",
-    "  I"
+    "IF",
+    "is"
   ],
   "key": {
     "I": {
       "item": "minecraft:iron_ingot"
     },
+    "i": {
+      "item": "minecraft:iron_nugget"
+    },
     "F": {
       "item": "minecraft:flint_and_steel"
+    },
+    "s": {
+      "item": "minecraft:stick"
     }
   },
   "result": {
-    "item": "musketmod:barrel"
+    "item": "musketmod:pistol"
   }
 }

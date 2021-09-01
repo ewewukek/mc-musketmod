@@ -1,7 +1,7 @@
 {
   "death.attack.musket": "%1$s 被 %2$s 的热兵器震撼到了",
-  "item.musketmod.barrel": "火枪枪管",
   "item.musketmod.cartridge": "纸包弹药",
   "item.musketmod.musket": "火枪",
-  "item.musketmod.stock": "火枪枪托"
+  "item.musketmod.musket_with_bayonet": "带刺刀的火枪",
+  "item.musketmod.pistol": "燧发手枪"
 }

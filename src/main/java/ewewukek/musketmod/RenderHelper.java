@@ -16,33 +16,47 @@ import net.minecraftforge.api.distmarker.OnlyIn;
 
 @OnlyIn(Dist.CLIENT)
 public class RenderHelper {
-    private static int previousSlot = -1;
-    public static boolean equipCycleCompleted;
+    public static boolean disableMainHandEquipAnimation;
+    public static boolean disableOffhandEquipAnimation;
 
     public static void renderSpecificFirstPersonHand(FirstPersonRenderer renderer, AbstractClientPlayerEntity player, Hand hand, float partialTicks, float interpolatedPitch, float swingProgress, float equipProgress, ItemStack stack, MatrixStack matrixStack, IRenderTypeBuffer render, int packedLight) {
         HandSide handside = hand == Hand.MAIN_HAND ? player.getPrimaryHand() : player.getPrimaryHand().opposite();
         boolean isRightHand = handside == HandSide.RIGHT;
         float sign = isRightHand ? 1 : -1;
 
-        int slot = player.inventory.currentItem;
-        boolean slotChanged = slot != previousSlot;
-        ItemStack clientStack = hand == Hand.MAIN_HAND ? player.getHeldItemMainhand() : player.getHeldItemOffhand();
-        if (slotChanged || clientStack.isEmpty() || clientStack.getItem() != MusketMod.MUSKET) equipCycleCompleted = false;
+        GunItem gunItem = (GunItem)stack.getItem();
+        if (!gunItem.canUseFrom(player, hand)) {
+            matrixStack.push();
+            matrixStack.translate(sign * 0.5, -0.5 - 0.6 * equipProgress, -0.7);
+            matrixStack.rotate(Vector3f.XP.rotationDegrees(70));
+            renderer.renderItemSide(player, stack, isRightHand ? ItemCameraTransforms.TransformType.FIRST_PERSON_RIGHT_HAND : ItemCameraTransforms.TransformType.FIRST_PERSON_LEFT_HAND, !isRightHand, matrixStack, render, packedLight);
+            matrixStack.pop();
+            return;
+        }
+
+        if (stack == GunItem.getActiveStack(hand)) {
+            setEquipAnimationDisabled(hand, true);
+        }
 
         matrixStack.push();
+        matrixStack.translate(sign * 0.15, -0.25, -0.35);
 
         if (swingProgress > 0) {
             float swingSharp = MathHelper.sin(MathHelper.sqrt(swingProgress) * (float)Math.PI);
             float swingNormal = MathHelper.sin(swingProgress * (float)Math.PI);
-            matrixStack.translate(sign * (0.2f - 0.05f * swingNormal), -0.2f - 0.05f * swingNormal, -0.3f - 0.4f * swingSharp);
-            matrixStack.rotate(Vector3f.XP.rotationDegrees(180 + sign * (20 - 20 * swingSharp)));
 
-        } else {
+            if (gunItem == MusketMod.MUSKET_WITH_BAYONET) {
+                matrixStack.translate(sign * -0.05 * swingNormal, 0, 0.05 - 0.3 * swingSharp);
+                matrixStack.rotate(Vector3f.YP.rotationDegrees(5 * swingSharp));
+            } else {
+                matrixStack.translate(sign * 0.05 * (1 - swingNormal), 0.05 * (1 - swingNormal), 0.05 - 0.4 * swingSharp);
+                matrixStack.rotate(Vector3f.XP.rotationDegrees(180 + sign * 20 * (1 - swingSharp)));
+            }
+
+        } else if (player.isHandActive() && player.getActiveHand() == hand) {
             float usingDuration = stack.getUseDuration() - (player.getItemInUseCount() - partialTicks + 1);
-            boolean isLoading = player.isHandActive() && player.getActiveHand() == hand && !MusketItem.isLoaded(stack)
-                                && usingDuration > 0 && usingDuration < MusketItem.RELOAD_DURATION;
-            if (isLoading) {
-                matrixStack.translate(sign * 0.15f, -0.55f, -0.3f);
+            if (usingDuration > 0 && usingDuration < GunItem.RELOAD_DURATION) {
+                matrixStack.translate(0, -0.3, 0.05);
                 matrixStack.rotate(Vector3f.XP.rotationDegrees(60));
                 matrixStack.rotate(Vector3f.ZP.rotationDegrees(10));
 
@@ -55,31 +69,39 @@ public class RenderHelper {
                     } else {
                         t = (14 - usingDuration) / 4;
                     }
-                    matrixStack.translate(0, 0, 0.02f * t);
+                    matrixStack.translate(0, 0, 0.025 * t);
                 }
-
+                if (gunItem == MusketMod.PISTOL) {
+                    matrixStack.translate(0, 0, -0.12);
+                }
+            }
+        } else {
+            if (isEquipAnimationDisabled(hand)) {
+                if (equipProgress == 0) {
+                    setEquipAnimationDisabled(hand, false);
+                }
             } else {
-                if (equipCycleCompleted) {
-                    equipProgress = 0;
-                } else {
-                    // postpone updating previousSlot because slot changing animation
-                    // sometimes begins with equipProgress == 0
-                    if (slotChanged) {
-                        if (equipProgress > 0.1) previousSlot = slot;
-                    } else {
-                        if (equipProgress == 0f) equipCycleCompleted = true;
-                    }
-                }
-                matrixStack.translate(sign * 0.15f, -0.27f + equipProgress * -0.6f, -0.37f);
+                matrixStack.translate(0, -0.6 * equipProgress, 0);
             }
         }
 
-        // compensate rotated model
-        matrixStack.translate(0, 0.085f, 0);
-        matrixStack.rotate(Vector3f.XP.rotationDegrees(-70));
-
         renderer.renderItemSide(player, stack, isRightHand ? ItemCameraTransforms.TransformType.FIRST_PERSON_RIGHT_HAND : ItemCameraTransforms.TransformType.FIRST_PERSON_LEFT_HAND, !isRightHand, matrixStack, render, packedLight);
-
         matrixStack.pop();
+    }
+
+    public static boolean isEquipAnimationDisabled(Hand hand) {
+        if (hand == Hand.MAIN_HAND) {
+            return disableMainHandEquipAnimation;
+        } else {
+            return disableOffhandEquipAnimation;
+        }
+    }
+
+    public static void setEquipAnimationDisabled(Hand hand, boolean disabled) {
+        if (hand == Hand.MAIN_HAND) {
+            disableMainHandEquipAnimation = disabled;
+        } else {
+            disableOffhandEquipAnimation = disabled;
+        }
     }
 }

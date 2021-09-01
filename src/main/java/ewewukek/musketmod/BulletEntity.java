@@ -1,7 +1,6 @@
 package ewewukek.musketmod;
 
 import java.util.Optional;
-import java.util.Random;
 import java.util.function.Predicate;
 
 import net.minecraft.block.BlockState;
@@ -27,23 +26,20 @@ import net.minecraftforge.fml.network.FMLPlayMessages;
 import net.minecraftforge.fml.network.NetworkHooks;
 
 public class BulletEntity extends ThrowableEntity implements IEntityAdditionalSpawnData {
-    private static final Random random = new Random();
-    static final double GRAVITY = 0.05;
-    static final double AIR_FRICTION = 0.99;
-    static final double WATER_FRICTION = 0.6;
-    static final short LIFETIME = 50;
+    public static final double MIN_DAMAGE = 0.5f;
+    public static final double GRAVITY = 0.05;
+    public static final double AIR_FRICTION = 0.99;
+    public static final double WATER_FRICTION = 0.6;
+    public static final short LIFETIME = 50;
 
-    private Vector3d origin;
-
-    public static float damageFactorMin;
-    public static float damageFactorMax;
     public static double maxDistance;
 
-    public short ticksLeft;
+    public float damageMultiplier;
+    public float distanceTravelled;
+    public short tickCounter;
 
     public BulletEntity(World world) {
         super(MusketMod.BULLET_ENTITY_TYPE, world);
-        ticksLeft = LIFETIME;
     }
 
     public BulletEntity(FMLPlayMessages.SpawnEntity packet, World world) {
@@ -51,7 +47,7 @@ public class BulletEntity extends ThrowableEntity implements IEntityAdditionalSp
     }
 
     public boolean isFirstTick() {
-        return ticksLeft == LIFETIME;
+        return tickCounter == 0;
     }
 
     // temporary adapter until mappings are updated
@@ -70,15 +66,7 @@ public class BulletEntity extends ThrowableEntity implements IEntityAdditionalSp
             return;
         }
 
-        if (world.isRemote && isFirstTick()) {
-            fireParticles();
-        }
-
-        // for compatibility origin is not stored in world save
-        if (origin == null) origin = getPositionVec();
-        double distanceTravelled = getPositionVec().subtract(origin).length();
-
-        if (--ticksLeft <= 0 || distanceTravelled > maxDistance) {
+        if (++tickCounter >= LIFETIME || distanceTravelled > maxDistance) {
             remove();
             return;
         }
@@ -87,6 +75,7 @@ public class BulletEntity extends ThrowableEntity implements IEntityAdditionalSp
         double posX = getPosX() + motion.x;
         double posY = getPosY() + motion.y;
         double posZ = getPosZ() + motion.z;
+        distanceTravelled += motion.length();
 
         motion = motion.subtract(0, GRAVITY, 0);
 
@@ -113,20 +102,7 @@ public class BulletEntity extends ThrowableEntity implements IEntityAdditionalSp
         doBlockCollisions();
     }
 
-    private void fireParticles() {
-        Vector3d pos = getPositionVec();
-        Vector3d front = getMotion().normalize();
-
-        for (int i = 0; i != 10; ++i) {
-            double t = Math.pow(random.nextFloat(), 1.5);
-            Vector3d p = pos.add(front.scale(1.25 + t));
-            p = p.add(new Vector3d(random.nextFloat() - 0.5, random.nextFloat() - 0.5, random.nextFloat() - 0.5).scale(0.1));
-            Vector3d v = front.scale(0.1).scale(1 - t);
-            world.addParticle(ParticleTypes.POOF, p.x, p.y, p.z, v.x, v.y, v.z);
-        }
-    }
-
-    private boolean processCollision() {
+    public boolean processCollision() {
         Vector3d from = getPositionVec();
         Vector3d to = from.add(getMotion());
 
@@ -171,23 +147,22 @@ public class BulletEntity extends ThrowableEntity implements IEntityAdditionalSp
         return true;
     }
 
-    private void hitEntity(Entity target) {
+    public void hitEntity(Entity target) {
         Entity shooter = getShooter();
         DamageSource damagesource = causeMusketDamage(this, shooter != null ? shooter : this);
 
-        float energy = (float)getMotion().lengthSquared();
-        float factor = damageFactorMin + random.nextFloat() * (damageFactorMax - damageFactorMin);
-        target.attackEntityFrom(damagesource, energy * factor);
+        float damage = damageMultiplier * (float)getMotion().lengthSquared();
+        if (damage > MIN_DAMAGE) target.attackEntityFrom(damagesource, damage);
     }
 
-    private Predicate<Entity> getTargetPredicate() {
+    public Predicate<Entity> getTargetPredicate() {
         Entity shooter = getShooter();
         return (entity) -> {
             return !entity.isSpectator() && entity.isAlive() && entity.canBeCollidedWith() && entity != shooter;
         };
     }
 
-    private Entity closestEntityOnPath(Vector3d start, Vector3d end) {
+    public Entity closestEntityOnPath(Vector3d start, Vector3d end) {
         Vector3d motion = getMotion();
 
         Entity result = null;
@@ -223,13 +198,15 @@ public class BulletEntity extends ThrowableEntity implements IEntityAdditionalSp
     @Override
     protected void readAdditional(CompoundNBT compound) {
         super.readAdditional(compound);
-        ticksLeft = compound.getShort("ticksLeft");
+        damageMultiplier = compound.getFloat("damageMultiplier");
+        distanceTravelled = compound.getFloat("distanceTravelled");
     }
 
     @Override
     protected void writeAdditional(CompoundNBT compound) {
         super.writeAdditional(compound);
-        compound.putShort("ticksLeft", ticksLeft);
+        compound.putFloat("damageMultiplier", damageMultiplier);
+        compound.putFloat("distanceTravelled", distanceTravelled);
     }
 
 // Forge {
@@ -240,7 +217,7 @@ public class BulletEntity extends ThrowableEntity implements IEntityAdditionalSp
 
     @Override
     public void writeSpawnData(PacketBuffer data) {
-        data.writeShort(ticksLeft);
+        data.writeShort(0);
         Vector3d motion = getMotion();
         data.writeFloat((float)motion.x);
         data.writeFloat((float)motion.y);
@@ -249,7 +226,7 @@ public class BulletEntity extends ThrowableEntity implements IEntityAdditionalSp
 
     @Override
     public void readSpawnData(PacketBuffer data) {
-        ticksLeft = data.readShort();
+        data.readShort();
         Vector3d motion = new Vector3d(data.readFloat(), data.readFloat(), data.readFloat());
         setMotion(motion);
     }

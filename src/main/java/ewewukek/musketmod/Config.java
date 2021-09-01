@@ -20,34 +20,53 @@ public class Config {
     public static final Path CONFIG_PATH = FMLPaths.CONFIGDIR.get().resolve("musketmod.txt");
     public static final Config INSTANCE = new Config();
 
-    public static final int VERSION = 1;
+    public static final int VERSION = 2;
+
+    public double bulletMaxDistance;
 
     public double bulletStdDev;
     public double bulletSpeed;
-    public double bulletMaxDistance;
     public double damageMin;
     public double damageMax;
+
+    public double pistolBulletStdDev;
+    public double pistolBulletSpeed;
+    public double pistolDamageMin;
+    public double pistolDamageMax;
 
     public static void reload() {
         INSTANCE.setDefaults();
         INSTANCE.load();
 
-        MusketItem.bulletStdDev = (float)Math.toRadians(INSTANCE.bulletStdDev);
-        MusketItem.bulletSpeed = INSTANCE.bulletSpeed / 20;
-        double maxEnergy = MusketItem.bulletSpeed * MusketItem.bulletSpeed;
-        BulletEntity.damageFactorMin = (float)(INSTANCE.damageMin / maxEnergy);
-        BulletEntity.damageFactorMax = (float)(INSTANCE.damageMax / maxEnergy);
         BulletEntity.maxDistance = INSTANCE.bulletMaxDistance;
+
+        MusketItem.bulletStdDev = (float)Math.toRadians(INSTANCE.bulletStdDev);
+        MusketItem.bulletSpeed = (float)(INSTANCE.bulletSpeed / 20);
+        double maxEnergy = MusketItem.bulletSpeed * MusketItem.bulletSpeed;
+        MusketItem.damageMultiplierMin = (float)(INSTANCE.damageMin / maxEnergy);
+        MusketItem.damageMultiplierMax = (float)(INSTANCE.damageMax / maxEnergy);
+
+        PistolItem.bulletStdDev = (float)Math.toRadians(INSTANCE.pistolBulletStdDev);
+        PistolItem.bulletSpeed = (float)(INSTANCE.pistolBulletSpeed / 20);
+        maxEnergy = PistolItem.bulletSpeed * PistolItem.bulletSpeed;
+        PistolItem.damageMultiplierMin = (float)(INSTANCE.pistolDamageMin / maxEnergy);
+        PistolItem.damageMultiplierMax = (float)(INSTANCE.pistolDamageMax / maxEnergy);
 
         logger.info("Configuration has been loaded");
     }
 
     private void setDefaults() {
+        bulletMaxDistance = 256;
+
         bulletStdDev = 1;
         bulletSpeed = 180;
-        bulletMaxDistance = 256;
         damageMin = 20.5;
-        damageMax = 21.5;
+        damageMax = 21;
+
+        pistolBulletStdDev = 1.5;
+        pistolBulletSpeed = 140;
+        pistolDamageMin = 12;
+        pistolDamageMax = 12.5;
     }
 
     private void load() {
@@ -84,20 +103,32 @@ public class Config {
                     case "version":
                         version = (int)value;
                         break;
+                    case "bulletMaxDistance":
+                        bulletMaxDistance = value;
+                        break;
                     case "bulletStdDev":
                         bulletStdDev = value;
                         break;
                     case "bulletSpeed":
                         bulletSpeed = value;
                         break;
-                    case "bulletMaxDistance":
-                        bulletMaxDistance = value;
-                        break;
                     case "damageMin":
                         damageMin = value;
                         break;
                     case "damageMax":
                         damageMax = value;
+                        break;
+                    case "pistolBulletStdDev":
+                        pistolBulletStdDev = value;
+                        break;
+                    case "pistolBulletSpeed":
+                        pistolBulletSpeed = value;
+                        break;
+                    case "pistolDamageMin":
+                        pistolDamageMin = value;
+                        break;
+                    case "pistolDamageMax":
+                        pistolDamageMax = value;
                         break;
                     default:
                         logger.warn(errorPrefix+"unrecognized parameter name: "+key);
@@ -113,6 +144,9 @@ public class Config {
         }
         if (version < VERSION) {
             logger.info("Configuration file belongs to older version, updating");
+            if (version < 2) {
+                if (damageMax == 21.5) damageMax = 21;
+            }
             save();
         }
     }
@@ -120,16 +154,31 @@ public class Config {
     private void save() {
         try (BufferedWriter writer = Files.newBufferedWriter(CONFIG_PATH)) {
             writer.write("version = "+VERSION+"\n");
+            writer.write("\n");
+            writer.write("# Maximum bullet travel distance (in blocks)\n");
+            writer.write("bulletMaxDistance = "+bulletMaxDistance+"\n");
+            writer.write("\n");
+            writer.write("# Musket\n");
+            writer.write("\n");
             writer.write("# Standard deviation of bullet spread (in degrees)\n");
             writer.write("bulletStdDev = "+bulletStdDev+"\n");
             writer.write("# Muzzle velocity of bullet (in blocks per second)\n");
             writer.write("bulletSpeed = "+bulletSpeed+"\n");
-            writer.write("# Maximum bullet travel distance (in blocks)\n");
-            writer.write("bulletMaxDistance = "+bulletMaxDistance+"\n");
             writer.write("# Minimum damage at point-blank range\n");
             writer.write("damageMin = "+damageMin+"\n");
             writer.write("# Maximum damage at point-blank range\n");
             writer.write("damageMax = "+damageMax+"\n");
+            writer.write("\n");
+            writer.write("# Pistol\n");
+            writer.write("\n");
+            writer.write("# Standard deviation of bullet spread (in degrees)\n");
+            writer.write("pistolBulletStdDev = "+pistolBulletStdDev+"\n");
+            writer.write("# Muzzle velocity of bullet (in blocks per second)\n");
+            writer.write("pistolBulletSpeed = "+pistolBulletSpeed+"\n");
+            writer.write("# Minimum damage at point-blank range\n");
+            writer.write("pistolDamageMin = "+pistolDamageMin+"\n");
+            writer.write("# Maximum damage at point-blank range\n");
+            writer.write("pistolDamageMax = "+pistolDamageMax+"\n");
 
         } catch (IOException e) {
             logger.warn("Could not save configuration file: ", e);

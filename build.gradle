@@ -11,7 +11,7 @@ buildscript {
 apply plugin: 'net.minecraftforge.gradle'
 apply plugin: 'eclipse'
 
-version = '1.2.2'
+version = '1.4.0'
 group = 'ewewukek.musketmod'
 archivesBaseName = 'musketmod-1.16.5-forge'
 

@@ -4,6 +4,7 @@
   "version": "${version}",
   "name": "Musket Mod",
   "description": "Small mod that adds craftable muskets and pistols",
+  "icon": "assets/musketmod/icon.png",
   "authors": [
     "ewewukek"
   ],

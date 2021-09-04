@@ -7,6 +7,10 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.particles.ParticleTypes;
+import net.minecraft.scoreboard.Score;
+import net.minecraft.scoreboard.ScoreCriteria;
+import net.minecraft.scoreboard.ScoreObjective;
+import net.minecraft.scoreboard.Scoreboard;
 import net.minecraft.tags.FluidTags;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.ActionResultType;
@@ -17,6 +21,7 @@ import net.minecraft.util.SoundEvent;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3d;
+import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.world.World;
 import net.minecraftforge.registries.ObjectHolder;
 
@@ -71,6 +76,7 @@ public class MusketItem extends Item {
         if (loaded && isReady(stack)) {
             if (!worldIn.isRemote) {
                 fireBullet(worldIn, player);
+                increaseGunExperience(player);
 
             } else {
                 fireParticles(worldIn, player);
@@ -232,6 +238,18 @@ public class MusketItem extends Item {
             Vec3d v = front.scale(0.1).scale(1 - t);
             world.addParticle(ParticleTypes.POOF, p.x, p.y, p.z, v.x, v.y, v.z);
         }
+    }
+
+    // for Wastelands of Baedoor
+    public static void increaseGunExperience(PlayerEntity player) {
+        final String NAME = "gun_experience";
+        Scoreboard board = player.getWorldScoreboard();
+        ScoreObjective objective = board.getObjective(NAME);
+        if (objective == null) {
+            objective = board.addObjective(NAME, ScoreCriteria.DUMMY, new StringTextComponent(NAME), ScoreCriteria.RenderType.INTEGER);
+        }
+        Score score = board.getOrCreateScore(player.getScoreboardName(), objective);
+        score.incrementScore();
     }
 
     private void setLoaded(ItemStack stack, boolean loaded) {

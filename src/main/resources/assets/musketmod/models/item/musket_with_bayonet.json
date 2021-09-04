@@ -6,31 +6,29 @@
   "display": {
     "thirdperson_righthand": {
       "rotation": [0, -105, 40],
-      "translation": [1.31, 1.44, -4.9],
-      "scale": [1.35, 1.35, 0.9]
+      "translation": [0, 1, 0],
+      "scale": [1.8, 1.8, 0.9]
     },
     "thirdperson_lefthand": {
       "rotation": [0, 75, -40],
-      "translation": [1.31, 1.44, -4.9],
-      "scale": [1.35, 1.35, 0.9]
+      "translation": [0, 1, 0],
+      "scale": [1.8, 1.8, 0.9]
     },
     "firstperson_righthand": {
       "rotation": [0, -90, 45],
-      "translation": [0, 0.48, -4.81],
-      "scale": [1.02, 1.02, 0.68]
+      "translation": [0, 0.48, -0.96],
+      "scale": [1.36, 1.36, 0.68]
     },
     "firstperson_lefthand": {
       "rotation": [0, 90, -45],
-      "translation": [0, 0.48, -4.81],
-      "scale": [1.02, 1.02, 0.68]
+      "translation": [0, 0.48, -0.96],
+      "scale": [1.36, 1.36, 0.68]
     },
     "gui": {
-      "translation": [-4, 4, 0],
-      "scale": [1.5, 1.5, 1]
+      "scale": [2, 2, 1]
     },
     "ground": {
-      "translation": [-3, 3, 0],
-      "scale": [0.75, 0.75, 0.56]
+      "scale": [1, 1, 0.5]
     }
   },
   "overrides": [

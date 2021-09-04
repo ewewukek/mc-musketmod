@@ -10,6 +10,9 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.particles.ParticleTypes;
+import net.minecraft.scoreboard.Score;
+import net.minecraft.scoreboard.ScoreObjective;
+import net.minecraft.scoreboard.Scoreboard;
 import net.minecraft.tags.FluidTags;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.Hand;
@@ -87,6 +90,7 @@ public abstract class GunItem extends Item {
                 Vector3d side = Vector3d.fromPitchYaw(0, player.rotationYaw + (isRightHand ? 90 : -90));
                 Vector3d down = Vector3d.fromPitchYaw(player.rotationPitch + 90, player.rotationYaw);
                 fire(player, front, side.add(down).scale(0.15));
+                increaseGunExperience(player);
             }
             player.playSound(fireSound(), 3.5f, 1);
 
@@ -270,6 +274,15 @@ public abstract class GunItem extends Item {
             p = p.add(new Vector3d(random.nextFloat() - 0.5, random.nextFloat() - 0.5, random.nextFloat() - 0.5).scale(0.1));
             Vector3d v = direction.scale(0.1).scale(1 - t);
             world.addParticle(ParticleTypes.POOF, p.x, p.y, p.z, v.x, v.y, v.z);
+        }
+    }
+
+    public static void increaseGunExperience(PlayerEntity player) {
+        Scoreboard board = player.getWorldScoreboard();
+        ScoreObjective objective = board.getObjective("gun_experience");
+        if (objective != null) {
+            Score score = board.getOrCreateScore(player.getScoreboardName(), objective);
+            score.incrementScore();
         }
     }
 

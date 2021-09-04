@@ -42,7 +42,7 @@ Fires slower bullets. Can be used from offhand. If both pistols are loaded, offh
 
 ### Configuration:
 
-Configurable values are damage, bullet speed and accuracy. Configuration is stored in `<game directory>/config/musketmod.ini`. Supports `/reload` command.
+Configurable values are damage, bullet speed and accuracy. Configuration is stored in `<game directory>/config/musketmod.txt`. Supports `/reload` command.
 
 ### Credits:
 - Mojang (duh)

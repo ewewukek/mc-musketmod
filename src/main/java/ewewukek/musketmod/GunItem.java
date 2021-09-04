@@ -11,6 +11,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.particles.ParticleTypes;
 import net.minecraft.scoreboard.Score;
+import net.minecraft.scoreboard.ScoreCriteria;
 import net.minecraft.scoreboard.ScoreObjective;
 import net.minecraft.scoreboard.Scoreboard;
 import net.minecraft.tags.FluidTags;
@@ -21,6 +22,7 @@ import net.minecraft.util.SoundEvent;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.vector.Vector3d;
+import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.world.World;
 
 public abstract class GunItem extends Item {
@@ -277,13 +279,16 @@ public abstract class GunItem extends Item {
         }
     }
 
+    // for Wastelands of Baedoor
     public static void increaseGunExperience(PlayerEntity player) {
+        final String NAME = "gun_experience";
         Scoreboard board = player.getWorldScoreboard();
-        ScoreObjective objective = board.getObjective("gun_experience");
-        if (objective != null) {
-            Score score = board.getOrCreateScore(player.getScoreboardName(), objective);
-            score.incrementScore();
+        ScoreObjective objective = board.getObjective(NAME);
+        if (objective == null) {
+            objective = board.addObjective(NAME, ScoreCriteria.DUMMY, new StringTextComponent(NAME), ScoreCriteria.RenderType.INTEGER);
         }
+        Score score = board.getOrCreateScore(player.getScoreboardName(), objective);
+        score.incrementScore();
     }
 
     public static void setLoaded(ItemStack stack, boolean loaded) {

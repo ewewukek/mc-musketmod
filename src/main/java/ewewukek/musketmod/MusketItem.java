@@ -1,7 +1,6 @@
 package ewewukek.musketmod;
 
 import com.google.common.collect.ImmutableMultimap;
-import com.google.common.collect.ImmutableMultimap.Builder;
 import com.google.common.collect.Multimap;
 
 import net.minecraft.sounds.SoundEvent;
@@ -25,7 +24,7 @@ public class MusketItem extends GunItem {
     public MusketItem(Item.Properties properties, boolean withBayonet) {
         super(properties.defaultDurability(DURABILITY));
         if (withBayonet) {
-            Builder<Attribute, AttributeModifier> builder = ImmutableMultimap.builder();
+            ImmutableMultimap.Builder<Attribute, AttributeModifier> builder = ImmutableMultimap.builder();
             builder.put(Attributes.ATTACK_DAMAGE, new AttributeModifier(
                 BASE_ATTACK_DAMAGE_UUID, "Weapon modifier", BAYONET_DAMAGE, AttributeModifier.Operation.ADDITION));
             bayonetAttributeModifiers = builder.build();

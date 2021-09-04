@@ -27,6 +27,10 @@
     "gui": {
       "scale": [2, 2, 1]
     },
+    "fixed": {
+      "scale": [2, 2, 1],
+      "rotation": [0, 180, 0]
+    },
     "ground": {
       "scale": [1, 1, 0.5]
     }

@@ -20,17 +20,18 @@ public class MusketItem extends GunItem {
     public static float damageMultiplierMin;
     public static float damageMultiplierMax;
 
-    public final boolean hasBayonet;
     public final Multimap<Attribute, AttributeModifier> bayonetAttributeModifiers;
 
     public MusketItem(Item.Properties properties, boolean withBayonet) {
         super(properties.defaultDurability(DURABILITY));
-        hasBayonet = withBayonet;
-
-        Builder<Attribute, AttributeModifier> builder = ImmutableMultimap.builder();
-        builder.put(Attributes.ATTACK_DAMAGE, new AttributeModifier(
-            BASE_ATTACK_DAMAGE_UUID, "Weapon modifier", BAYONET_DAMAGE, AttributeModifier.Operation.ADDITION));
-        bayonetAttributeModifiers = builder.build();
+        if (withBayonet) {
+            Builder<Attribute, AttributeModifier> builder = ImmutableMultimap.builder();
+            builder.put(Attributes.ATTACK_DAMAGE, new AttributeModifier(
+                BASE_ATTACK_DAMAGE_UUID, "Weapon modifier", BAYONET_DAMAGE, AttributeModifier.Operation.ADDITION));
+            bayonetAttributeModifiers = builder.build();
+        } else {
+            bayonetAttributeModifiers = null;
+        }
     }
 
     @Override
@@ -65,8 +66,7 @@ public class MusketItem extends GunItem {
 
     @Override
     public Multimap<Attribute, AttributeModifier> getDefaultAttributeModifiers(EquipmentSlot slot) {
-        return slot == EquipmentSlot.MAINHAND && hasBayonet
-                ? bayonetAttributeModifiers
-                : super.getDefaultAttributeModifiers(slot);
+        return slot == EquipmentSlot.MAINHAND && bayonetAttributeModifiers != null
+                ? bayonetAttributeModifiers : super.getDefaultAttributeModifiers(slot);
     }
 }

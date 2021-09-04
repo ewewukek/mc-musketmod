@@ -3,7 +3,7 @@
   "id": "musketmod",
   "version": "${version}",
   "name": "Musket Mod",
-  "description": "Simple mod that adds a craftable musket",
+  "description": "Small mod that adds craftable muskets and pistols",
   "authors": [
     "ewewukek"
   ],

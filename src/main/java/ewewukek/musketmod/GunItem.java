@@ -4,6 +4,7 @@ import java.util.Random;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.ParticleTypes;
+import net.minecraft.network.chat.TextComponent;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.tags.FluidTags;
 import net.minecraft.util.Mth;
@@ -18,6 +19,10 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.Vec3;
+import net.minecraft.world.scores.Objective;
+import net.minecraft.world.scores.Score;
+import net.minecraft.world.scores.Scoreboard;
+import net.minecraft.world.scores.criteria.ObjectiveCriteria;
 
 public abstract class GunItem extends Item {
     public static final int LOADING_STAGE_1 = 5;
@@ -235,6 +240,18 @@ public abstract class GunItem extends Item {
             Vec3 v = direction.scale(0.1 * (1 - t));
             world.addParticle(ParticleTypes.POOF, p.x, p.y, p.z, v.x, v.y, v.z);
         }
+    }
+
+    // for Wastelands of Baedoor
+    public static void increaseGunExperience(Player player) {
+        final String NAME = "gun_experience";
+        Scoreboard board = player.getScoreboard();
+        Objective objective = board.getObjective(NAME);
+        if (objective == null) {
+            objective = board.addObjective(NAME, ObjectiveCriteria.DUMMY, new TextComponent(NAME), ObjectiveCriteria.RenderType.INTEGER);
+        }
+        Score score = board.getOrCreatePlayerScore(player.getScoreboardName(), objective);
+        score.increment();
     }
 
     public static ItemStack getActiveStack(InteractionHand hand) {

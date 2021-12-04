@@ -4,8 +4,6 @@ Small mod that adds craftable muskets and pistols. [Download from CurseForge](ht
 
 ### Forge
 
-**Forge 37.0.32+ is required.** Prior versions don't show weapons in first person mode correctly.
-
 No additional dependencies required.
 
 ### Fabric

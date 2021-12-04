@@ -7,8 +7,8 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.model.HumanoidModel;
 import net.minecraft.client.model.PlayerModel;
 import net.minecraft.client.multiplayer.ClientPacketListener;
+import net.minecraft.client.renderer.item.ClampedItemPropertyFunction;
 import net.minecraft.client.renderer.item.ItemProperties;
-import net.minecraft.client.renderer.item.ItemPropertyFunction;
 import net.minecraft.network.PacketListener;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.InteractionHand;
@@ -28,7 +28,7 @@ import net.minecraftforge.fmllegacy.network.NetworkEvent;
 @Mod.EventBusSubscriber(Dist.CLIENT)
 public class ClientSetup {
     public static void init(final FMLClientSetupEvent event) {
-        ItemPropertyFunction loaded = (stack, world, player, arg) -> {
+        ClampedItemPropertyFunction loaded = (stack, world, player, arg) -> {
             return GunItem.isLoaded(stack) ? 1 : 0;
         };
         ItemProperties.register(Items.MUSKET, new ResourceLocation("loaded"), loaded);

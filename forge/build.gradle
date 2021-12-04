@@ -21,7 +21,7 @@ group = maven_group
 archivesBaseName = "${mod_name}-${minecraft_version}-forge"
 
 eclipse {
-    project { name = "${mod_name}-forge" }
+    project { name = "${mod_name}-${minecraft_version}-forge" }
 }
 
 java.toolchain.languageVersion = JavaLanguageVersion.of(16)

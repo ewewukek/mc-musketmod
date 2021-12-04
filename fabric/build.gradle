@@ -13,7 +13,7 @@ group = maven_group
 archivesBaseName = "${mod_name}-${minecraft_version}-fabric"
 
 eclipse {
-    project { name = "${mod_name}-fabric" }
+    project { name = "${mod_name}-${minecraft_version}-fabric" }
 }
 
 sourceCompatibility = JavaVersion.VERSION_16

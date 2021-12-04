@@ -51,7 +51,8 @@ public class ClientSetup {
 
     @SubscribeEvent
     public static void onRenderLivingEventPre(final RenderLivingEvent.Pre<Player, PlayerModel<Player>> event) {
-        if (!(event.getEntity() instanceof Player)) return;
+        if (!(event.getEntity() instanceof Player)
+         || !(event.getRenderer().getModel() instanceof PlayerModel)) return;
         Player player = (Player)event.getEntity();
         HumanoidModel.ArmPose mainHandPose = ClientUtilities.getArmPose(player, InteractionHand.MAIN_HAND);
         HumanoidModel.ArmPose offhandPose = ClientUtilities.getArmPose(player, InteractionHand.OFF_HAND);

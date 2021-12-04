@@ -53,7 +53,9 @@ public class ClientSetup {
 
     @SubscribeEvent
     public static void onRenderLivingEventPre(final RenderLivingEvent.Pre<PlayerEntity, PlayerModel<PlayerEntity>> event) {
-        if (!(event.getEntity() instanceof PlayerEntity)) return;
+        if (!(event.getEntity() instanceof PlayerEntity)
+         || !(event.getRenderer().getEntityModel() instanceof PlayerModel)) return;
+
         PlayerEntity player = (PlayerEntity)event.getEntity();
         if (player.isSwingInProgress) return;
         BipedModel.ArmPose rightArmPose;

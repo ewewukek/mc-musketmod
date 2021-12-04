@@ -1,5 +1,6 @@
 package ewewukek.musketmod;
 
+import java.util.Optional;
 import java.util.function.Supplier;
 
 import net.minecraft.client.Minecraft;
@@ -54,15 +55,15 @@ public class ClientSetup {
         if (!(event.getEntity() instanceof Player)
          || !(event.getRenderer().getModel() instanceof PlayerModel)) return;
         Player player = (Player)event.getEntity();
-        HumanoidModel.ArmPose mainHandPose = ClientUtilities.getArmPose(player, InteractionHand.MAIN_HAND);
-        HumanoidModel.ArmPose offhandPose = ClientUtilities.getArmPose(player, InteractionHand.OFF_HAND);
+        Optional<HumanoidModel.ArmPose> mainHandPose = ClientUtilities.getArmPose(player, InteractionHand.MAIN_HAND);
+        Optional<HumanoidModel.ArmPose> offhandPose = ClientUtilities.getArmPose(player, InteractionHand.OFF_HAND);
         PlayerModel<Player> model = event.getRenderer().getModel();
         if (player.getMainArm() == HumanoidArm.RIGHT) {
-            model.rightArmPose = mainHandPose != null ? mainHandPose : model.rightArmPose;
-            model.leftArmPose = offhandPose != null ? offhandPose : model.leftArmPose;
+            model.rightArmPose = mainHandPose.isPresent() ? mainHandPose.get() : model.rightArmPose;
+            model.leftArmPose = offhandPose.isPresent() ? offhandPose.get() : model.leftArmPose;
         } else {
-            model.rightArmPose = offhandPose != null ? offhandPose : model.rightArmPose;
-            model.leftArmPose = mainHandPose != null ? mainHandPose : model.leftArmPose;
+            model.rightArmPose = offhandPose.isPresent() ? offhandPose.get() : model.rightArmPose;
+            model.leftArmPose = mainHandPose.isPresent() ? mainHandPose.get() : model.leftArmPose;
         }
     }
 

@@ -1,5 +1,7 @@
 package ewewukek.musketmod.mixin;
 
+import java.util.Optional;
+
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
@@ -19,9 +21,9 @@ public class MixinPlayerEntityRenderer {
         cancellable = true
     )
     private static void getArmPose(AbstractClientPlayer player, InteractionHand hand, CallbackInfoReturnable<HumanoidModel.ArmPose> ci) {
-        HumanoidModel.ArmPose armPose = ClientUtilities.getArmPose(player, hand);
-        if (armPose != null) {
-            ci.setReturnValue(armPose);
+        Optional<HumanoidModel.ArmPose> armPose = ClientUtilities.getArmPose(player, hand);
+        if (armPose.isPresent()) {
+            ci.setReturnValue(armPose.get());
             ci.cancel();
         }
     }

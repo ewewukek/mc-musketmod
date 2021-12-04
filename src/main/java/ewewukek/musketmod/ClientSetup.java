@@ -1,5 +1,6 @@
 package ewewukek.musketmod;
 
+import java.util.Optional;
 import java.util.function.Supplier;
 
 import net.minecraft.client.Minecraft;
@@ -58,8 +59,8 @@ public class ClientSetup {
 
         PlayerEntity player = (PlayerEntity)event.getEntity();
         if (player.isSwingInProgress) return;
-        BipedModel.ArmPose rightArmPose;
-        BipedModel.ArmPose leftArmPose;
+        Optional<BipedModel.ArmPose> rightArmPose;
+        Optional<BipedModel.ArmPose> leftArmPose;
         if (player.getPrimaryHand() == HandSide.RIGHT) {
             rightArmPose = getArmPose(player, Hand.MAIN_HAND);
             leftArmPose = getArmPose(player, Hand.OFF_HAND);
@@ -68,19 +69,19 @@ public class ClientSetup {
             leftArmPose = getArmPose(player, Hand.MAIN_HAND);
         }
         PlayerModel<PlayerEntity> model = event.getRenderer().getEntityModel();
-        if (rightArmPose != null) model.rightArmPose = rightArmPose;
-        if (leftArmPose != null) model.leftArmPose = leftArmPose;
+        if (rightArmPose.isPresent()) model.rightArmPose = rightArmPose.get();
+        if (leftArmPose.isPresent()) model.leftArmPose = leftArmPose.get();
     }
 
-    public static BipedModel.ArmPose getArmPose(PlayerEntity player, Hand hand) {
+    public static Optional<BipedModel.ArmPose> getArmPose(PlayerEntity player, Hand hand) {
         ItemStack stack = player.getHeldItem(hand);
         if (!stack.isEmpty() && stack.getItem() instanceof GunItem) {
             GunItem gunItem = (GunItem)stack.getItem();
             if (gunItem.canUseFrom(player, hand) && GunItem.isLoaded(stack)) {
-                return BipedModel.ArmPose.CROSSBOW_HOLD;
+                return Optional.of(BipedModel.ArmPose.CROSSBOW_HOLD);
             }
         }
-        return null;
+        return Optional.empty();
     }
 
     public static void handleSmokeEffectPacket(MusketMod.SmokeEffectPacket packet, Supplier<NetworkEvent.Context> ctx) {

@@ -16,6 +16,8 @@ file("../gradle.properties").withInputStream {
     props.each { prop -> project.ext.set(prop.key, prop.value) }
 }
 
+java.toolchain.languageVersion = JavaLanguageVersion.of(17)
+
 version = mod_version
 group = maven_group
 archivesBaseName = "${mod_name}-${minecraft_version}-forge"
@@ -23,8 +25,6 @@ archivesBaseName = "${mod_name}-${minecraft_version}-forge"
 eclipse {
     project { name = "${mod_name}-${minecraft_version}-forge" }
 }
-
-java.toolchain.languageVersion = JavaLanguageVersion.of(16)
 
 minecraft {
     mappings channel: 'official', version: minecraft_version

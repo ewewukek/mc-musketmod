@@ -23,7 +23,7 @@ import net.minecraftforge.eventbus.api.EventPriority;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
-import net.minecraftforge.fmllegacy.network.NetworkEvent;
+import net.minecraftforge.network.NetworkEvent;
 
 @Mod.EventBusSubscriber(Dist.CLIENT)
 public class ClientSetup {
@@ -45,7 +45,7 @@ public class ClientSetup {
                     mc.getItemInHandRenderer(), mc.player,
                     event.getHand(), event.getPartialTicks(), event.getInterpolatedPitch(),
                     event.getSwingProgress(), event.getEquipProgress(), stack,
-                    event.getMatrixStack(), event.getBuffers(), event.getLight());
+                    event.getPoseStack(), event.getMultiBufferSource(), event.getPackedLight());
             event.setCanceled(true);
         }
     }

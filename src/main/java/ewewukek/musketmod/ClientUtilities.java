@@ -18,10 +18,8 @@ import net.minecraft.world.item.ItemStack;
 
 public class ClientUtilities {
     public static Optional<HumanoidModel.ArmPose> getArmPose(Player player, InteractionHand hand) {
-        if (player.swinging) return null;
-
         ItemStack stack = player.getItemInHand(hand);
-        if (!stack.isEmpty() && stack.getItem() instanceof GunItem) {
+        if (!player.swinging && !stack.isEmpty() && stack.getItem() instanceof GunItem) {
             GunItem gunItem = (GunItem)stack.getItem();
             if (gunItem.canUseFrom(player, hand) && GunItem.isLoaded(stack)) {
                 return Optional.of(HumanoidModel.ArmPose.CROSSBOW_HOLD);

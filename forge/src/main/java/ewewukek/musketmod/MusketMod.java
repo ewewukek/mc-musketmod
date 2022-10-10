@@ -35,11 +35,7 @@ public class MusketMod {
     public static final String MODID = "musketmod";
     public static final Path CONFIG_PATH = FMLPaths.CONFIGDIR.get().resolve("musketmod.txt");
 
-    public static final EntityType<BulletEntity> BULLET_ENTITY_TYPE = EntityType.Builder.<BulletEntity>of(BulletEntity::new, MobCategory.MISC)
-            .sized(0.5f, 0.5f)
-            .setTrackingRange(64).setUpdateInterval(5)
-            .setShouldReceiveVelocityUpdates(false)
-            .build(MODID + ":bullet");
+    public static EntityType<BulletEntity> BULLET_ENTITY_TYPE;
 
     public static final String PROTOCOL_VERSION = "1";
     public static final SimpleChannel NETWORK_CHANNEL = NetworkRegistry.newSimpleChannel(
@@ -68,6 +64,11 @@ public class MusketMod {
 
         @SubscribeEvent
         public static void onEntityRegistry(final RegistryEvent.Register<EntityType<?>> event) {
+            BULLET_ENTITY_TYPE = EntityType.Builder.<BulletEntity>of(BulletEntity::new, MobCategory.MISC)
+                .sized(0.5f, 0.5f)
+                .setTrackingRange(64).setUpdateInterval(5)
+                .setShouldReceiveVelocityUpdates(false)
+                .build(MODID + ":bullet");
             event.getRegistry().register(
                 BULLET_ENTITY_TYPE.setRegistryName(MODID, "bullet")
             );

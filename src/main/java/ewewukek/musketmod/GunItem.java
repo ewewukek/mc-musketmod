@@ -1,13 +1,12 @@
 package ewewukek.musketmod;
 
-import java.util.Random;
-
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.ParticleTypes;
-import net.minecraft.network.chat.TextComponent;
+import net.minecraft.network.chat.Component;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.tags.FluidTags;
 import net.minecraft.util.Mth;
+import net.minecraft.util.RandomSource;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResultHolder;
 import net.minecraft.world.entity.EquipmentSlot;
@@ -191,7 +190,7 @@ public abstract class GunItem extends Item {
     }
 
     public void fire(LivingEntity shooter, Vec3 direction, Vec3 smokeOriginOffset) {
-        Random random = shooter.getRandom();
+        RandomSource random = shooter.getRandom();
         Level level = shooter.level;
 
         float angle = (float) Math.PI * 2 * random.nextFloat();
@@ -231,7 +230,7 @@ public abstract class GunItem extends Item {
     }
 
     public static void fireParticles(Level world, Vec3 origin, Vec3 direction) {
-        Random random = world.getRandom();
+        RandomSource random = RandomSource.create();
 
         for (int i = 0; i != 10; ++i) {
             double t = Math.pow(random.nextFloat(), 1.5);
@@ -248,7 +247,7 @@ public abstract class GunItem extends Item {
         Scoreboard board = player.getScoreboard();
         Objective objective = board.getObjective(NAME);
         if (objective == null) {
-            objective = board.addObjective(NAME, ObjectiveCriteria.DUMMY, new TextComponent(NAME), ObjectiveCriteria.RenderType.INTEGER);
+            objective = board.addObjective(NAME, ObjectiveCriteria.DUMMY, Component.literal(NAME), ObjectiveCriteria.RenderType.INTEGER);
         }
         Score score = board.getOrCreatePlayerScore(player.getScoreboardName(), objective);
         score.increment();

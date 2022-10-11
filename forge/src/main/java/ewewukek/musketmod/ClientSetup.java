@@ -42,8 +42,8 @@ public class ClientSetup {
         if (!stack.isEmpty() && stack.getItem() instanceof GunItem) {
             Minecraft mc = Minecraft.getInstance();
             ClientUtilities.renderGunInHand(
-                    mc.getItemInHandRenderer(), mc.player,
-                    event.getHand(), event.getPartialTicks(), event.getInterpolatedPitch(),
+                    mc.getEntityRenderDispatcher().getItemInHandRenderer(), mc.player,
+                    event.getHand(), event.getPartialTick(), event.getInterpolatedPitch(),
                     event.getSwingProgress(), event.getEquipProgress(), stack,
                     event.getPoseStack(), event.getMultiBufferSource(), event.getPackedLight());
             event.setCanceled(true);

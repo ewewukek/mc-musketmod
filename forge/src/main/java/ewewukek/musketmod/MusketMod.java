@@ -9,17 +9,14 @@ import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.packs.resources.PreparableReloadListener;
 import net.minecraft.server.packs.resources.ResourceManager;
-import net.minecraft.sounds.SoundEvent;
 import net.minecraft.util.Unit;
 import net.minecraft.util.profiling.ProfilerFiller;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.MobCategory;
-import net.minecraft.world.item.Item;
 import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.event.AddReloadListenerEvent;
-import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.DistExecutor;
 import net.minecraftforge.fml.common.Mod;
@@ -29,6 +26,8 @@ import net.minecraftforge.network.NetworkEvent;
 import net.minecraftforge.network.NetworkRegistry;
 import net.minecraftforge.network.PacketDistributor;
 import net.minecraftforge.network.simple.SimpleChannel;
+import net.minecraftforge.registries.ForgeRegistries;
+import net.minecraftforge.registries.RegisterEvent;
 
 @Mod(MusketMod.MODID)
 public class MusketMod {
@@ -53,37 +52,31 @@ public class MusketMod {
     @Mod.EventBusSubscriber(bus = Mod.EventBusSubscriber.Bus.MOD)
     public static class RegistryEvents {
         @SubscribeEvent
-        public static void onItemsRegistry(final RegistryEvent.Register<Item> event) {
-            event.getRegistry().registerAll(
-                Items.MUSKET.setRegistryName(MODID, "musket"),
-                Items.MUSKET_WITH_BAYONET.setRegistryName(MODID, "musket_with_bayonet"),
-                Items.PISTOL.setRegistryName(MODID, "pistol"),
-                Items.CARTRIDGE.setRegistryName(MODID, "cartridge")
-            );
-        }
+        public static void onRegisterEvent(final RegisterEvent event) {
+            event.register(ForgeRegistries.Keys.ITEMS, helper -> {
+                helper.register("musket", Items.MUSKET);
+                helper.register("musket_with_bayonet", Items.MUSKET_WITH_BAYONET);
+                helper.register("pistol", Items.PISTOL);
+                helper.register("cartridge", Items.CARTRIDGE);
+            });
 
-        @SubscribeEvent
-        public static void onEntityRegistry(final RegistryEvent.Register<EntityType<?>> event) {
-            BULLET_ENTITY_TYPE = EntityType.Builder.<BulletEntity>of(BulletEntity::new, MobCategory.MISC)
-                .sized(0.5f, 0.5f)
-                .setTrackingRange(64).setUpdateInterval(5)
-                .setShouldReceiveVelocityUpdates(false)
-                .build(MODID + ":bullet");
-            event.getRegistry().register(
-                BULLET_ENTITY_TYPE.setRegistryName(MODID, "bullet")
-            );
-        }
+            event.register(ForgeRegistries.Keys.ENTITY_TYPES, helper -> {
+                BULLET_ENTITY_TYPE = EntityType.Builder.<BulletEntity>of(BulletEntity::new, MobCategory.MISC)
+                    .sized(0.5f, 0.5f)
+                    .setTrackingRange(64).setUpdateInterval(5)
+                    .setShouldReceiveVelocityUpdates(false)
+                    .build(MODID + ":bullet");
+                helper.register("bullet", BULLET_ENTITY_TYPE);
+            });
 
-        @SubscribeEvent
-        public static void onSoundRegistry(final RegistryEvent.Register<SoundEvent> event) {
-            event.getRegistry().registerAll(
-                Sounds.MUSKET_LOAD_0.setRegistryName(Sounds.MUSKET_LOAD_0.getLocation()),
-                Sounds.MUSKET_LOAD_1.setRegistryName(Sounds.MUSKET_LOAD_1.getLocation()),
-                Sounds.MUSKET_LOAD_2.setRegistryName(Sounds.MUSKET_LOAD_2.getLocation()),
-                Sounds.MUSKET_READY.setRegistryName(Sounds.MUSKET_READY.getLocation()),
-                Sounds.MUSKET_FIRE.setRegistryName(Sounds.MUSKET_FIRE.getLocation()),
-                Sounds.PISTOL_FIRE.setRegistryName(Sounds.PISTOL_FIRE.getLocation())
-            );
+            event.register(ForgeRegistries.Keys.SOUND_EVENTS, helper -> {
+                helper.register(Sounds.MUSKET_LOAD_0.getLocation(), Sounds.MUSKET_LOAD_0);
+                helper.register(Sounds.MUSKET_LOAD_1.getLocation(), Sounds.MUSKET_LOAD_1);
+                helper.register(Sounds.MUSKET_LOAD_2.getLocation(), Sounds.MUSKET_LOAD_2);
+                helper.register(Sounds.MUSKET_READY.getLocation(), Sounds.MUSKET_READY);
+                helper.register(Sounds.MUSKET_FIRE.getLocation(), Sounds.MUSKET_FIRE);
+                helper.register(Sounds.PISTOL_FIRE.getLocation(), Sounds.PISTOL_FIRE);
+            });
         }
     }
 

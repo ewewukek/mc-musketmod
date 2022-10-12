@@ -43,4 +43,9 @@ public class PistolItem extends GunItem {
     public boolean twoHanded() {
         return false;
     }
+
+    @Override
+    public boolean ignoreInvulnerableTime() {
+        return true;
+    }
 }

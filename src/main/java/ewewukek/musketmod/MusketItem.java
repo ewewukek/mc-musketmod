@@ -67,6 +67,11 @@ public class MusketItem extends GunItem {
     }
 
     @Override
+    public boolean ignoreInvulnerableTime() {
+        return false;
+    }
+
+    @Override
     public Multimap<Attribute, AttributeModifier> getDefaultAttributeModifiers(EquipmentSlot slot) {
         return slot == EquipmentSlot.MAINHAND && bayonetAttributeModifiers != null
                 ? bayonetAttributeModifiers : super.getDefaultAttributeModifiers(slot);

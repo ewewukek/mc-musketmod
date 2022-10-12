@@ -13,6 +13,7 @@ import net.minecraft.world.item.Item;
 public class MusketItem extends GunItem {
     public static final int DURABILITY = 250;
     public static final int BAYONET_DAMAGE = 3;
+    public static final float BAYONET_SPEED = -2.4f;
 
     public static float bulletStdDev;
     public static float bulletSpeed;
@@ -27,6 +28,8 @@ public class MusketItem extends GunItem {
             ImmutableMultimap.Builder<Attribute, AttributeModifier> builder = ImmutableMultimap.builder();
             builder.put(Attributes.ATTACK_DAMAGE, new AttributeModifier(
                 BASE_ATTACK_DAMAGE_UUID, "Weapon modifier", BAYONET_DAMAGE, AttributeModifier.Operation.ADDITION));
+            builder.put(Attributes.ATTACK_SPEED, new AttributeModifier(
+                BASE_ATTACK_SPEED_UUID, "Weapon modifier", BAYONET_SPEED, AttributeModifier.Operation.ADDITION));
             bayonetAttributeModifiers = builder.build();
         } else {
             bayonetAttributeModifiers = null;

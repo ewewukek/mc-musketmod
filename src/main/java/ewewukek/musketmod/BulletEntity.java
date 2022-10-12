@@ -40,6 +40,7 @@ public class BulletEntity extends AbstractHurtingProjectile {
     public static double maxDistance;
 
     public float damageMultiplier;
+    public boolean ignoreInvulnerableTime;
     public float distanceTravelled;
     public short tickCounter;
 
@@ -208,7 +209,12 @@ public class BulletEntity extends AbstractHurtingProjectile {
             DamageSource damagesource = causeMusketDamage(this, shooter != null ? shooter : this);
 
             float damage = damageMultiplier * (float)getDeltaMovement().lengthSqr();
-            if (damage > MIN_DAMAGE) target.hurt(damagesource, damage);
+            if (damage > MIN_DAMAGE) {
+                int oldInvulnerableTime = target.invulnerableTime;
+                if (ignoreInvulnerableTime) target.invulnerableTime = 0;
+                boolean beenHurt = target.hurt(damagesource, damage);
+                if (ignoreInvulnerableTime && !beenHurt) target.invulnerableTime = oldInvulnerableTime;
+            }
         }
     }
 
@@ -258,6 +264,7 @@ public class BulletEntity extends AbstractHurtingProjectile {
     public void readAdditionalSaveData(CompoundTag compound) {
         super.readAdditionalSaveData(compound);
         damageMultiplier = compound.getFloat("damageMultiplier");
+        ignoreInvulnerableTime = compound.getByte("ignoreInvulnerableTime") != 0;
         distanceTravelled = compound.getFloat("distanceTravelled");
     }
 
@@ -265,6 +272,7 @@ public class BulletEntity extends AbstractHurtingProjectile {
     public void addAdditionalSaveData(CompoundTag compound) {
         super.addAdditionalSaveData(compound);
         compound.putFloat("damageMultiplier", damageMultiplier);
+        compound.putByte("ignoreInvulnerableTime", (byte)(ignoreInvulnerableTime ? 1 : 0));
         compound.putFloat("distanceTravelled", distanceTravelled);
     }
 

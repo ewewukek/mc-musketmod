@@ -44,6 +44,7 @@ public abstract class GunItem extends Item {
     public abstract float damageMultiplierMax();
     public abstract SoundEvent fireSound();
     public abstract boolean twoHanded();
+    public abstract boolean ignoreInvulnerableTime();
 
     public boolean canUseFrom(Player player, InteractionHand hand) {
         if (hand == InteractionHand.MAIN_HAND) {
@@ -225,6 +226,7 @@ public abstract class GunItem extends Item {
         bullet.setDeltaMovement(motion);
         float t = random.nextFloat();
         bullet.damageMultiplier = t * damageMultiplierMin() + (1 - t) * damageMultiplierMax();
+        bullet.ignoreInvulnerableTime = ignoreInvulnerableTime();
 
         level.addFreshEntity(bullet);
         MusketMod.sendSmokeEffect(shooter, origin.add(smokeOriginOffset), direction);

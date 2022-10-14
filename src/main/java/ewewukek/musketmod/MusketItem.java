@@ -12,7 +12,7 @@ import net.minecraft.world.item.Item;
 
 public class MusketItem extends GunItem {
     public static final int DURABILITY = 250;
-    public static final int BAYONET_DAMAGE = 3;
+    public static final int BAYONET_DAMAGE = 4;
     public static final float BAYONET_SPEED = -2.4f;
 
     public static float bulletStdDev;

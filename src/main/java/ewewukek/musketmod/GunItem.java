@@ -1,7 +1,5 @@
 package ewewukek.musketmod;
 
-import java.util.Random;
-
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.network.chat.Component;
@@ -234,7 +232,7 @@ public abstract class GunItem extends Item {
     }
 
     public static void fireParticles(Level world, Vec3 origin, Vec3 direction) {
-        Random random = new Random();
+        RandomSource random = RandomSource.create();
 
         for (int i = 0; i != 10; ++i) {
             double t = Math.pow(random.nextFloat(), 1.5);

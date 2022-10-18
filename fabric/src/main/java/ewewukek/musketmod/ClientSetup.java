@@ -26,7 +26,7 @@ public class ClientSetup implements ClientModInitializer {
             ClientLevel world = handler.getLevel();
             Vec3 origin = new Vec3(buf.readFloat(), buf.readFloat(), buf.readFloat());
             Vec3 direction = new Vec3(buf.readFloat(), buf.readFloat(), buf.readFloat());
-            GunItem.fireParticles(world, origin, direction);
+            client.execute(() -> GunItem.fireParticles(world, origin, direction));
         });
     }
 }

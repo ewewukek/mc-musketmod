@@ -58,7 +58,7 @@ public class MusketItem extends GunItem {
 
     @Override
     public SoundEvent fireSound() {
-        return Sounds.MUSKET_FIRE;
+        return Sounds.MUSKET_FIRE.get();
     }
 
     @Override

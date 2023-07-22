@@ -2,16 +2,16 @@ package ewewukek.musketmod;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
-import com.mojang.math.Matrix3f;
-import com.mojang.math.Matrix4f;
-import com.mojang.math.Vector3f;
 
+import com.mojang.math.Axis;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.entity.EntityRenderer;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.resources.ResourceLocation;
+import org.joml.Matrix3f;
+import org.joml.Matrix4f;
 
 public class BulletRenderer extends EntityRenderer<BulletEntity> {
     public static final ResourceLocation TEXTURE = new ResourceLocation(MusketMod.MODID + ":textures/entity/bullet.png");
@@ -34,7 +34,7 @@ public class BulletRenderer extends EntityRenderer<BulletEntity> {
         matrixStack.scale(0.1f, 0.1f, 0.1f);
         // billboarding
         matrixStack.mulPose(entityRenderDispatcher.cameraOrientation());
-        matrixStack.mulPose(Vector3f.YP.rotationDegrees(180));
+        matrixStack.mulPose(Axis.YP.rotationDegrees(180));
 
         PoseStack.Pose entry = matrixStack.last();
         Matrix4f positionMatrix = entry.pose();

@@ -14,9 +14,12 @@ import net.minecraft.util.profiling.ProfilerFiller;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.MobCategory;
+import net.minecraft.world.item.CreativeModeTabs;
 import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.event.AddReloadListenerEvent;
+import net.minecraftforge.event.BuildCreativeModeTabContentsEvent;
+import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.DistExecutor;
 import net.minecraftforge.fml.common.Mod;
@@ -28,6 +31,8 @@ import net.minecraftforge.network.PacketDistributor;
 import net.minecraftforge.network.simple.SimpleChannel;
 import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.registries.RegisterEvent;
+
+import static ewewukek.musketmod.Sounds.SOUND_EVENTS;
 
 @Mod(MusketMod.MODID)
 public class MusketMod {
@@ -43,10 +48,22 @@ public class MusketMod {
 
     public MusketMod() {
         Config.reload();
+        IEventBus modEventBus = FMLJavaModLoadingContext.get().getModEventBus();
         DistExecutor.unsafeRunWhenOn(Dist.CLIENT, () -> () ->
-            FMLJavaModLoadingContext.get().getModEventBus().addListener(ClientSetup::init));
+            modEventBus.addListener(ClientSetup::init));
         NETWORK_CHANNEL.registerMessage(1, SmokeEffectPacket.class,
             SmokeEffectPacket::encode, SmokeEffectPacket::new, SmokeEffectPacket::handle);
+        modEventBus.addListener(this::addCreative);
+        SOUND_EVENTS.register(modEventBus);
+    }
+
+    private void addCreative(BuildCreativeModeTabContentsEvent event) {
+        if (event.getTabKey() == CreativeModeTabs.COMBAT) {
+            event.accept(Items.CARTRIDGE);
+            event.accept(Items.MUSKET);
+            event.accept(Items.MUSKET_WITH_BAYONET);
+            event.accept(Items.PISTOL);
+        }
     }
 
     @Mod.EventBusSubscriber(bus = Mod.EventBusSubscriber.Bus.MOD)
@@ -67,15 +84,6 @@ public class MusketMod {
                     .setShouldReceiveVelocityUpdates(false)
                     .build(MODID + ":bullet");
                 helper.register("bullet", BULLET_ENTITY_TYPE);
-            });
-
-            event.register(ForgeRegistries.Keys.SOUND_EVENTS, helper -> {
-                helper.register(Sounds.MUSKET_LOAD_0.getLocation(), Sounds.MUSKET_LOAD_0);
-                helper.register(Sounds.MUSKET_LOAD_1.getLocation(), Sounds.MUSKET_LOAD_1);
-                helper.register(Sounds.MUSKET_LOAD_2.getLocation(), Sounds.MUSKET_LOAD_2);
-                helper.register(Sounds.MUSKET_READY.getLocation(), Sounds.MUSKET_READY);
-                helper.register(Sounds.MUSKET_FIRE.getLocation(), Sounds.MUSKET_FIRE);
-                helper.register(Sounds.PISTOL_FIRE.getLocation(), Sounds.PISTOL_FIRE);
             });
         }
     }

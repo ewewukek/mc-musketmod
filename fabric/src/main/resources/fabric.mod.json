@@ -22,7 +22,7 @@
     "musketmod.mixins.json"
   ],
   "depends": {
-    "minecraft": "~1.19",
+    "minecraft": ">=1.19",
     "java": ">=17",
     "fabricloader": ">=0.14.9",
     "fabric": "*"

@@ -36,7 +36,7 @@ public class PistolItem extends GunItem {
 
     @Override
     public SoundEvent fireSound() {
-        return Sounds.PISTOL_FIRE.get();
+        return Sounds.PISTOL_FIRE;
     }
 
     @Override

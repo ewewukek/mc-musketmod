@@ -128,15 +128,15 @@ public abstract class GunItem extends Item {
         int loadingStage = getLoadingStage(stack);
 
         if (loadingStage == 1 && usingDuration >= LOADING_STAGE_1) {
-            entity.playSound(Sounds.MUSKET_LOAD_0.get(), 0.8f, 1);
+            entity.playSound(Sounds.MUSKET_LOAD_0, 0.8f, 1);
             setLoadingStage(stack, 2);
 
         } else if (loadingStage == 2 && usingDuration >= LOADING_STAGE_2) {
-            entity.playSound(Sounds.MUSKET_LOAD_1.get(), 0.8f, 1);
+            entity.playSound(Sounds.MUSKET_LOAD_1, 0.8f, 1);
             setLoadingStage(stack, 3);
 
         } else if (loadingStage == 3 && usingDuration >= LOADING_STAGE_3) {
-            entity.playSound(Sounds.MUSKET_LOAD_2.get(), 0.8f, 1);
+            entity.playSound(Sounds.MUSKET_LOAD_2, 0.8f, 1);
             setLoadingStage(stack, 4);
         }
 
@@ -158,7 +158,7 @@ public abstract class GunItem extends Item {
             }
 
             // played on server
-            world.playSound(null, entity.getX(), entity.getY(), entity.getZ(), Sounds.MUSKET_READY.get(), entity.getSoundSource(), 0.8f, 1);
+            world.playSound(null, entity.getX(), entity.getY(), entity.getZ(), Sounds.MUSKET_READY, entity.getSoundSource(), 0.8f, 1);
             setLoaded(stack, true);
         }
     }

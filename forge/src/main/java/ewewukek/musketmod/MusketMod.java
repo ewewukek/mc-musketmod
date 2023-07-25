@@ -32,7 +32,6 @@ import net.minecraftforge.network.simple.SimpleChannel;
 import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.registries.RegisterEvent;
 
-import static ewewukek.musketmod.Sounds.SOUND_EVENTS;
 
 @Mod(MusketMod.MODID)
 public class MusketMod {
@@ -54,7 +53,6 @@ public class MusketMod {
         NETWORK_CHANNEL.registerMessage(1, SmokeEffectPacket.class,
             SmokeEffectPacket::encode, SmokeEffectPacket::new, SmokeEffectPacket::handle);
         modEventBus.addListener(this::addCreative);
-        SOUND_EVENTS.register(modEventBus);
     }
 
     private void addCreative(BuildCreativeModeTabContentsEvent event) {
@@ -84,6 +82,15 @@ public class MusketMod {
                     .setShouldReceiveVelocityUpdates(false)
                     .build(MODID + ":bullet");
                 helper.register("bullet", BULLET_ENTITY_TYPE);
+            });
+
+            event.register(ForgeRegistries.Keys.SOUND_EVENTS, helper -> {
+                helper.register(Sounds.MUSKET_LOAD_0.getLocation(), Sounds.MUSKET_LOAD_0);
+                helper.register(Sounds.MUSKET_LOAD_1.getLocation(), Sounds.MUSKET_LOAD_1);
+                helper.register(Sounds.MUSKET_LOAD_2.getLocation(), Sounds.MUSKET_LOAD_2);
+                helper.register(Sounds.MUSKET_READY.getLocation(), Sounds.MUSKET_READY);
+                helper.register(Sounds.MUSKET_FIRE.getLocation(), Sounds.MUSKET_FIRE);
+                helper.register(Sounds.PISTOL_FIRE.getLocation(), Sounds.PISTOL_FIRE);
             });
         }
     }

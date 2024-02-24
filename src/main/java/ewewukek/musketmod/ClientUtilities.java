@@ -3,7 +3,7 @@ package ewewukek.musketmod;
 import java.util.Optional;
 
 import com.mojang.blaze3d.vertex.PoseStack;
-import com.mojang.math.Vector3f;
+import com.mojang.math.Axis;
 
 import net.minecraft.client.model.HumanoidModel;
 import net.minecraft.client.player.AbstractClientPlayer;
@@ -40,7 +40,7 @@ public class ClientUtilities {
         if (!gunItem.canUseFrom(player, hand)) {
             matrixStack.pushPose();
             matrixStack.translate(sign * 0.5, -0.5 - 0.6 * equipProgress, -0.7);
-            matrixStack.mulPose(Vector3f.XP.rotationDegrees(70));
+            matrixStack.mulPose(Axis.XP.rotationDegrees(70));
             renderer.renderItem(player, stack, isRightHand ? ItemTransforms.TransformType.FIRST_PERSON_RIGHT_HAND : ItemTransforms.TransformType.FIRST_PERSON_LEFT_HAND, !isRightHand, matrixStack, render, packedLight);
             matrixStack.popPose();
             return;
@@ -59,18 +59,18 @@ public class ClientUtilities {
 
             if (gunItem == Items.MUSKET_WITH_BAYONET) {
                 matrixStack.translate(sign * -0.05 * swingNormal, 0, 0.05 - 0.3 * swingSharp);
-                matrixStack.mulPose(Vector3f.YP.rotationDegrees(5 * swingSharp));
+                matrixStack.mulPose(Axis.YP.rotationDegrees(5 * swingSharp));
             } else {
                 matrixStack.translate(sign * 0.05 * (1 - swingNormal), 0.05 * (1 - swingNormal), 0.05 - 0.4 * swingSharp);
-                matrixStack.mulPose(Vector3f.XP.rotationDegrees(180 + sign * 20 * (1 - swingSharp)));
+                matrixStack.mulPose(Axis.XP.rotationDegrees(180 + sign * 20 * (1 - swingSharp)));
             }
 
         } else if (player.isUsingItem() && player.getUsedItemHand() == hand) {
             float usingDuration = stack.getUseDuration() - (player.getUseItemRemainingTicks() - partialTicks + 1);
             if (usingDuration > 0 && usingDuration < GunItem.RELOAD_DURATION) {
                 matrixStack.translate(0, -0.3, 0.05);
-                matrixStack.mulPose(Vector3f.XP.rotationDegrees(60));
-                matrixStack.mulPose(Vector3f.ZP.rotationDegrees(10));
+                matrixStack.mulPose(Axis.XP.rotationDegrees(60));
+                matrixStack.mulPose(Axis.ZP.rotationDegrees(10));
 
                 if (usingDuration >= 8 && usingDuration <= 14 || usingDuration >= 18 && usingDuration <= 24) {
                     if (usingDuration >= 18) usingDuration -= 10;

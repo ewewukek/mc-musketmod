@@ -1,14 +1,7 @@
-buildscript {
-    repositories {
-        maven { url = 'https://maven.minecraftforge.net' }
-        mavenCentral()
-    }
-    dependencies {
-        classpath group: 'net.minecraftforge.gradle', name: 'ForgeGradle', version: '5.1.+', changing: true
-    }
+plugins {
+    id 'eclipse'
+    id 'net.minecraftforge.gradle' version '5.1.+'
 }
-apply plugin: 'net.minecraftforge.gradle'
-apply plugin: 'eclipse'
 
 file("../gradle.properties").withInputStream {
     def props = new Properties()
@@ -16,11 +9,11 @@ file("../gradle.properties").withInputStream {
     props.each { prop -> project.ext.set(prop.key, prop.value) }
 }
 
-java.toolchain.languageVersion = JavaLanguageVersion.of(17)
-
 version = mod_version
 group = maven_group
 archivesBaseName = "${mod_name}-${minecraft_version}-forge"
+
+java.toolchain.languageVersion = JavaLanguageVersion.of(17)
 
 eclipse {
     project { name = "${mod_name}-${minecraft_version}-forge" }

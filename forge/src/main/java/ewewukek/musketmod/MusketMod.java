@@ -14,9 +14,11 @@ import net.minecraft.util.profiling.ProfilerFiller;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.MobCategory;
+import net.minecraft.world.item.CreativeModeTabs;
 import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.event.AddReloadListenerEvent;
+import net.minecraftforge.event.CreativeModeTabEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.DistExecutor;
 import net.minecraftforge.fml.common.Mod;
@@ -77,6 +79,16 @@ public class MusketMod {
                 helper.register(Sounds.MUSKET_FIRE.getLocation(), Sounds.MUSKET_FIRE);
                 helper.register(Sounds.PISTOL_FIRE.getLocation(), Sounds.PISTOL_FIRE);
             });
+        }
+
+        @SubscribeEvent
+        public static void buildContents(CreativeModeTabEvent.BuildContents event) {
+            if (event.getTab() == CreativeModeTabs.COMBAT) {
+                event.accept(Items.MUSKET);
+                event.accept(Items.MUSKET_WITH_BAYONET);
+                event.accept(Items.PISTOL);
+                event.accept(Items.CARTRIDGE);
+            }
         }
     }
 

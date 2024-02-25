@@ -39,7 +39,7 @@ public class MusketMod {
 
     public static EntityType<BulletEntity> BULLET_ENTITY_TYPE;
 
-    public static final DamageType BULLET_DAMAGE = new DamageType("musket", 0.5f);
+    public static final DamageType BULLET_DAMAGE = new DamageType(MusketMod.MODID + ".bullet", 0.5f);
 
     public static final String PROTOCOL_VERSION = "1";
     public static final SimpleChannel NETWORK_CHANNEL = NetworkRegistry.newSimpleChannel(

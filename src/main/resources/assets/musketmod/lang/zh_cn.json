@@ -1,5 +1,5 @@
 {
-  "death.attack.musket": "%1$s 被 %2$s 的热兵器震撼到了",
+  "death.attack.musketmod.bullet": "%1$s 被 %2$s 的热兵器震撼到了",
   "item.musketmod.cartridge": "纸包弹药",
   "item.musketmod.musket": "火枪",
   "item.musketmod.musket_with_bayonet": "带刺刀的火枪",

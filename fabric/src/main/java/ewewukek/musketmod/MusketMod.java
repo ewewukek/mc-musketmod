@@ -42,7 +42,7 @@ public class MusketMod implements ModInitializer {
             .forceTrackedVelocityUpdates(false)
             .build();
 
-    public static final DamageType BULLET_DAMAGE = new DamageType("musket", 0.5f);
+    public static final DamageType BULLET_DAMAGE = new DamageType(MusketMod.MODID + ".bullet", 0.5f);
 
     @Override
     public void onInitialize() {

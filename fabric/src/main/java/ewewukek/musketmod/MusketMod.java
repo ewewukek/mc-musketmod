@@ -98,7 +98,7 @@ public class MusketMod implements ModInitializer {
         buf.writeFloat((float)direction.y);
         buf.writeFloat((float)direction.z);
         BlockPos blockPos = new BlockPos((int)origin.x, (int)origin.y, (int)origin.z);
-        for (ServerPlayer serverPlayer : PlayerLookup.tracking((ServerLevel)shooter.level, blockPos)) {
+        for (ServerPlayer serverPlayer : PlayerLookup.tracking((ServerLevel)shooter.level(), blockPos)) {
             ServerPlayNetworking.send(serverPlayer, SMOKE_EFFECT_PACKET_ID, buf);
         }
 

@@ -193,7 +193,7 @@ public abstract class GunItem extends Item {
 
     public void fire(LivingEntity shooter, Vec3 direction, Vec3 smokeOriginOffset) {
         RandomSource random = shooter.getRandom();
-        Level level = shooter.level;
+        Level level = shooter.level();
 
         float angle = (float) Math.PI * 2 * random.nextFloat();
         float gaussian = Math.abs((float) random.nextGaussian());

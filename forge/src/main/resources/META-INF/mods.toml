@@ -1,10 +1,10 @@
 modLoader="javafml"
-loaderVersion="[44,)"
+loaderVersion="[47,)"
 license="MIT License"
 issueTrackerURL="https://github.com/ewewukek/mc-musketmod/issues"
 [[mods]]
 modId="musketmod"
-version="${file.jarVersion}"
+version="${mod_version}"
 displayName="Musket Mod"
 #updateJSONURL=""
 displayURL="https://github.com/ewewukek/mc-musketmod"

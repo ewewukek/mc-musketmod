@@ -1,6 +1,5 @@
 {
   "required": true,
-  "minVersion": "0.8",
   "package": "ewewukek.musketmod.mixin",
   "compatibilityLevel": "JAVA_17",
   "client": [

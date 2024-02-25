@@ -74,6 +74,8 @@ public class BulletEntity extends AbstractHurtingProjectile {
             return;
         }
 
+        Level level = level();
+
         Vec3 motion = getDeltaMovement();
         Vec3 from = position();
         Vec3 to = from.add(motion);
@@ -229,7 +231,7 @@ public class BulletEntity extends AbstractHurtingProjectile {
         double resultDist = 0;
 
         AABB aabbSelection = getBoundingBox().expandTowards(motion).inflate(0.5);
-        for (Entity entity : level.getEntities(this, aabbSelection, this::canHitEntity)) {
+        for (Entity entity : level().getEntities(this, aabbSelection, this::canHitEntity)) {
             AABB aabb = entity.getBoundingBox();
             Optional<Vec3> optional = aabb.clip(start, end);
             if (!optional.isPresent()) {
@@ -303,7 +305,7 @@ public class BulletEntity extends AbstractHurtingProjectile {
     @Override
     public void onSyncedDataUpdated(EntityDataAccessor<?> accessor) {
         super.onSyncedDataUpdated(accessor);
-        if (INITIAL_SPEED.equals(accessor) && level.isClientSide && !packetSpeedReceived) {
+        if (INITIAL_SPEED.equals(accessor) && level().isClientSide && !packetSpeedReceived) {
             setDeltaMovement(getDeltaMovement().scale(entityData.get(INITIAL_SPEED)));
             packetSpeedReceived = true;
         }

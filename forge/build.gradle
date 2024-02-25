@@ -1,6 +1,6 @@
 plugins {
     id 'eclipse'
-    id 'net.minecraftforge.gradle' version '5.1.+'
+    id 'net.minecraftforge.gradle' version '[6.0,6.2)'
 }
 
 file("../gradle.properties").withInputStream {
@@ -11,7 +11,10 @@ file("../gradle.properties").withInputStream {
 
 version = mod_version
 group = maven_group
-archivesBaseName = "${mod_name}-${minecraft_version}-forge"
+
+base {
+    archivesName = "${mod_name}-${minecraft_version}-forge"
+}
 
 java.toolchain.languageVersion = JavaLanguageVersion.of(17)
 
@@ -22,27 +25,24 @@ eclipse {
 minecraft {
     mappings channel: 'official', version: minecraft_version
 
+    copyIdeResources = true
+
     runs {
-        client {
+        configureEach {
             workingDirectory project.file('../run')
             property 'forge.logging.markers', 'REGISTRIES'
             property 'forge.logging.console.level', 'debug'
             mods {
-                musketmod {
+                "${mod_name}" {
                     source sourceSets.main
                 }
             }
         }
 
+        client {
+        }
+
         server {
-            workingDirectory project.file('../run')
-            property 'forge.logging.markers', 'REGISTRIES'
-            property 'forge.logging.console.level', 'debug'
-            mods {
-                musketmod {
-                    source sourceSets.main
-                }
-            }
         }
     }
 }
@@ -51,14 +51,14 @@ sourceSets.main.java { srcDir '../src/main/java' }
 sourceSets.main.resources { srcDir '../src/main/resources' }
 
 dependencies {
-    minecraft "net.minecraftforge:forge:${minecraft_version}-${forge_version}"
+    minecraft "net.minecraftforge:forge:${forge_version}"
 }
 
-jar {
-    manifest {
-        attributes([
-            "Implementation-Version": mod_version,
-        ])
+tasks.named('processResources', ProcessResources).configure {
+    filesMatching('META-INF/mods.toml') {
+        expand [
+            mod_version: mod_version,
+        ]
     }
 }
 

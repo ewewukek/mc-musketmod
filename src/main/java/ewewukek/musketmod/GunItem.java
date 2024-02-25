@@ -100,6 +100,7 @@ public abstract class GunItem extends Item {
                 entity.broadcastBreakEvent(hand);
             });
 
+            player.releaseUsingItem();
             if (worldIn.isClientSide) setActiveStack(hand, stack);
 
             return InteractionResultHolder.consume(stack);

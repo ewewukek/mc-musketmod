@@ -1,5 +1,5 @@
 plugins {
-    id 'fabric-loom' version '1.0-SNAPSHOT'
+    id 'fabric-loom' version '1.2-SNAPSHOT'
 }
 
 file("../gradle.properties").withInputStream {
@@ -8,12 +8,12 @@ file("../gradle.properties").withInputStream {
     props.each { prop -> project.ext.set(prop.key, prop.value) }
 }
 
-sourceCompatibility = JavaVersion.VERSION_17
-targetCompatibility = JavaVersion.VERSION_17
-
 version = mod_version
 group = maven_group
-archivesBaseName = "${mod_name}-${minecraft_version}-fabric"
+
+base {
+    archivesName = "${mod_name}-${minecraft_version}-fabric"
+}
 
 eclipse {
     project { name = "${mod_name}-${minecraft_version}-fabric" }
@@ -54,4 +54,9 @@ tasks.withType(JavaCompile).configureEach {
     // Minecraft 1.18 (1.18-pre2) upwards uses Java 17.
     it.options.release = 17
     options.encoding = 'UTF-8' // Use the UTF-8 charset for Java compilation
+}
+
+java {
+	sourceCompatibility = JavaVersion.VERSION_17
+	targetCompatibility = JavaVersion.VERSION_17
 }

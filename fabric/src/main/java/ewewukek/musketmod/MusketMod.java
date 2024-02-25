@@ -24,6 +24,7 @@ import net.minecraft.server.packs.PackType;
 import net.minecraft.server.packs.resources.ResourceManager;
 import net.minecraft.util.Unit;
 import net.minecraft.util.profiling.ProfilerFiller;
+import net.minecraft.world.damagesource.DamageType;
 import net.minecraft.world.entity.EntityDimensions;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
@@ -40,6 +41,8 @@ public class MusketMod implements ModInitializer {
             .trackRangeBlocks(64).trackedUpdateRate(5)
             .forceTrackedVelocityUpdates(false)
             .build();
+
+    public static final DamageType BULLET_DAMAGE = new DamageType("musket", 0.5f);
 
     @Override
     public void onInitialize() {
@@ -94,7 +97,7 @@ public class MusketMod implements ModInitializer {
         buf.writeFloat((float)direction.x);
         buf.writeFloat((float)direction.y);
         buf.writeFloat((float)direction.z);
-        BlockPos blockPos = new BlockPos(origin);
+        BlockPos blockPos = new BlockPos((int)origin.x, (int)origin.y, (int)origin.z);
         for (ServerPlayer serverPlayer : PlayerLookup.tracking((ServerLevel)shooter.level, blockPos)) {
             ServerPlayNetworking.send(serverPlayer, SMOKE_EFFECT_PACKET_ID, buf);
         }

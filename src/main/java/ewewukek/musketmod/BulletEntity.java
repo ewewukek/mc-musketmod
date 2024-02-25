@@ -45,6 +45,8 @@ public class BulletEntity extends AbstractHurtingProjectile {
     public float distanceTravelled;
     public short tickCounter;
 
+    private boolean packetSpeedReceived;
+
     public BulletEntity(EntityType<BulletEntity>entityType, Level world) {
         super(entityType, world);
     }
@@ -301,8 +303,9 @@ public class BulletEntity extends AbstractHurtingProjectile {
     @Override
     public void onSyncedDataUpdated(EntityDataAccessor<?> accessor) {
         super.onSyncedDataUpdated(accessor);
-        if (INITIAL_SPEED.equals(accessor) && level.isClientSide) {
+        if (INITIAL_SPEED.equals(accessor) && level.isClientSide && !packetSpeedReceived) {
             setDeltaMovement(getDeltaMovement().scale(entityData.get(INITIAL_SPEED)));
+            packetSpeedReceived = true;
         }
     }
 }

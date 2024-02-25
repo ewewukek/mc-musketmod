@@ -23,9 +23,9 @@ Durability: 250
 Can't be used from offhand.
 
 #### Musket with bayonet
-![](doc/musket_with_bayonet_recipe.png?raw=true)
+![](doc/musket_with_bayonet_crafting.png?raw=true)
 
-Crafted on smithing table. Deals 5 melee damage.
+Deals 5 melee damage.
 
 #### Pistol
 ![](doc/pistol_recipe.png?raw=true)

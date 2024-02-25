@@ -15,6 +15,7 @@ import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.tags.FluidTags;
 import net.minecraft.world.damagesource.DamageSource;
+import net.minecraft.world.damagesource.DamageType;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.player.Player;
@@ -31,6 +32,8 @@ import net.minecraft.world.phys.Vec3;
 
 public class BulletEntity extends AbstractHurtingProjectile {
     public static final EntityDataAccessor<Float> INITIAL_SPEED = SynchedEntityData.defineId(BulletEntity.class, EntityDataSerializers.FLOAT);
+
+    public static final DamageType BULLET_DAMAGE = new DamageType(MusketMod.MODID + ".bullet", 0.5f);
 
     public static final double MIN_DAMAGE = 0.5;
     public static final double GRAVITY = 0.05;
@@ -60,7 +63,7 @@ public class BulletEntity extends AbstractHurtingProjectile {
     }
 
     public DamageSource causeMusketDamage(BulletEntity bullet, Entity attacker) {
-        return new DamageSource(Holder.direct(MusketMod.BULLET_DAMAGE), bullet, attacker);
+        return new DamageSource(Holder.direct(BULLET_DAMAGE), bullet, attacker);
     }
 
     public void discardOnNextTick() {

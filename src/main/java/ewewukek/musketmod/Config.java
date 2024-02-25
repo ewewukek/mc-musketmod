@@ -14,7 +14,7 @@ import org.apache.logging.log4j.Logger;
 public class Config {
     private static final Logger logger = LogManager.getLogger(MusketMod.class);
     public static final Config INSTANCE = new Config();
-    public static final int VERSION = 2;
+    public static final int VERSION = 3;
 
     public double bulletMaxDistance;
 
@@ -22,11 +22,15 @@ public class Config {
     public double bulletSpeed;
     public double damageMin;
     public double damageMax;
+    public int durability;
+    public int bayonetDamage;
 
     public double pistolBulletStdDev;
     public double pistolBulletSpeed;
     public double pistolDamageMin;
     public double pistolDamageMax;
+    public int pistolDurability;
+
 
     public static void reload() {
         INSTANCE.setDefaults();
@@ -39,12 +43,15 @@ public class Config {
         double maxEnergy = MusketItem.bulletSpeed * MusketItem.bulletSpeed;
         MusketItem.damageMultiplierMin = (float)(INSTANCE.damageMin / maxEnergy);
         MusketItem.damageMultiplierMax = (float)(INSTANCE.damageMax / maxEnergy);
+        MusketItem.durability = INSTANCE.durability;
+        MusketItem.bayonetDamage = INSTANCE.bayonetDamage;
 
         PistolItem.bulletStdDev = (float)Math.toRadians(INSTANCE.pistolBulletStdDev);
         PistolItem.bulletSpeed = (float)(INSTANCE.pistolBulletSpeed / 20);
         maxEnergy = PistolItem.bulletSpeed * PistolItem.bulletSpeed;
         PistolItem.damageMultiplierMin = (float)(INSTANCE.pistolDamageMin / maxEnergy);
         PistolItem.damageMultiplierMax = (float)(INSTANCE.pistolDamageMax / maxEnergy);
+        PistolItem.durability = INSTANCE.pistolDurability;
 
         logger.info("Configuration has been loaded");
     }
@@ -56,11 +63,14 @@ public class Config {
         bulletSpeed = 180;
         damageMin = 20.5;
         damageMax = 21;
+        durability = 250;
+        bayonetDamage = 4;
 
         pistolBulletStdDev = 1.5;
         pistolBulletSpeed = 140;
         pistolDamageMin = 12;
         pistolDamageMax = 12.5;
+        pistolDurability = 150;
     }
 
     private void load() {
@@ -112,6 +122,12 @@ public class Config {
                     case "damageMax":
                         damageMax = value;
                         break;
+                    case "durability":
+                        durability = (int)value;
+                        break;
+                    case "bayonetDamage":
+                        bayonetDamage = (int)value;
+                        break;
                     case "pistolBulletStdDev":
                         pistolBulletStdDev = value;
                         break;
@@ -123,6 +139,9 @@ public class Config {
                         break;
                     case "pistolDamageMax":
                         pistolDamageMax = value;
+                        break;
+                    case "pistolDurability":
+                        pistolDurability = (int)value;
                         break;
                     default:
                         logger.warn(errorPrefix+"unrecognized parameter name: "+key);
@@ -162,6 +181,10 @@ public class Config {
             writer.write("damageMin = "+damageMin+"\n");
             writer.write("# Maximum damage at point-blank range\n");
             writer.write("damageMax = "+damageMax+"\n");
+            writer.write("# Durability (applied on restart)\n");
+            writer.write("durability = "+durability+"\n");
+            writer.write("# Added bayonet damage (applied on restart)\n");
+            writer.write("bayonetDamage = "+bayonetDamage+"\n");
             writer.write("\n");
             writer.write("# Pistol\n");
             writer.write("\n");
@@ -173,6 +196,8 @@ public class Config {
             writer.write("pistolDamageMin = "+pistolDamageMin+"\n");
             writer.write("# Maximum damage at point-blank range\n");
             writer.write("pistolDamageMax = "+pistolDamageMax+"\n");
+            writer.write("# Durability (applied on restart)\n");
+            writer.write("pistolDurability = "+pistolDurability+"\n");
 
         } catch (IOException e) {
             logger.warn("Could not save configuration file: ", e);

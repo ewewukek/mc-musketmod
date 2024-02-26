@@ -20,9 +20,11 @@ java.toolchain.languageVersion = JavaLanguageVersion.of(17)
 
 eclipse {
     project { name = "${mod_name}-${minecraft_version}-forge" }
+    synchronizationTasks 'genEclipseRuns'
 }
 
 minecraft {
+    accessTransformer = file('src/main/resources/META-INF/accesstransformer.cfg')
     mappings channel: 'official', version: minecraft_version
 
     copyIdeResources = true
@@ -32,11 +34,6 @@ minecraft {
             workingDirectory project.file('../run')
             property 'forge.logging.markers', 'REGISTRIES'
             property 'forge.logging.console.level', 'debug'
-            mods {
-                "${mod_name}" {
-                    source sourceSets.main
-                }
-            }
         }
 
         client {

@@ -19,7 +19,7 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.scores.Objective;
-import net.minecraft.world.scores.Score;
+import net.minecraft.world.scores.ScoreAccess;
 import net.minecraft.world.scores.Scoreboard;
 import net.minecraft.world.scores.criteria.ObjectiveCriteria;
 
@@ -250,9 +250,10 @@ public abstract class GunItem extends Item {
         Scoreboard board = player.getScoreboard();
         Objective objective = board.getObjective(NAME);
         if (objective == null) {
-            objective = board.addObjective(NAME, ObjectiveCriteria.DUMMY, Component.literal(NAME), ObjectiveCriteria.RenderType.INTEGER);
+            objective = board.addObjective(NAME, ObjectiveCriteria.DUMMY, Component.literal(NAME),
+                ObjectiveCriteria.RenderType.INTEGER, true, null);
         }
-        Score score = board.getOrCreatePlayerScore(player.getScoreboardName(), objective);
+        ScoreAccess score = board.getOrCreatePlayerScore(player, objective);
         score.increment();
     }
 

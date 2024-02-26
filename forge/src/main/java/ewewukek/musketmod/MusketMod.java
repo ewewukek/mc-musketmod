@@ -119,8 +119,11 @@ public class MusketMod {
     }
 
     public static void sendSmokeEffect(LivingEntity shooter, Vec3 origin, Vec3 direction) {
+        PacketDistributor.TargetPoint point = new PacketDistributor.TargetPoint(
+            origin.x, origin.y, origin.z,
+            64.0, shooter.level().dimension());
         NETWORK_CHANNEL.send(new SmokeEffectPacket(origin, direction),
-            PacketDistributor.TRACKING_ENTITY_AND_SELF.with(shooter));
+            PacketDistributor.NEAR.with(point));
     }
 
     public static class SmokeEffectPacket {

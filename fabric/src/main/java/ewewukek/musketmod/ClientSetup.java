@@ -23,9 +23,9 @@ public class ClientSetup implements ClientModInitializer {
         ItemProperties.register(Items.PISTOL, new ResourceLocation("loaded"), loaded);
 
         ClientPlayNetworking.registerGlobalReceiver(MusketMod.SMOKE_EFFECT_PACKET_ID, (client, handler, buf, responseSender) -> {
-            ClientLevel world = handler.getLevel();
             Vec3 origin = new Vec3(buf.readFloat(), buf.readFloat(), buf.readFloat());
             Vec3 direction = new Vec3(buf.readFloat(), buf.readFloat(), buf.readFloat());
+            ClientLevel world = handler.getLevel();
             client.execute(() -> GunItem.fireParticles(world, origin, direction));
         });
     }

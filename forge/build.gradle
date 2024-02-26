@@ -47,6 +47,12 @@ minecraft {
 sourceSets.main.java { srcDir '../src/main/java' }
 sourceSets.main.resources { srcDir '../src/main/resources' }
 
+sourceSets.each {
+    def dir = layout.buildDirectory.dir("sourcesSets/$it.name")
+    it.output.resourcesDir = dir
+    it.java.destinationDirectory = dir
+}
+
 dependencies {
     minecraft "net.minecraftforge:forge:${forge_version}"
 }

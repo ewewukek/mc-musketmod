@@ -3,8 +3,9 @@ package ewewukek.musketmod;
 import java.nio.file.Path;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Executor;
-import java.util.function.Supplier;
 
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.packs.resources.PreparableReloadListener;
@@ -19,15 +20,16 @@ import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.event.AddReloadListenerEvent;
 import net.minecraftforge.event.BuildCreativeModeTabContentsEvent;
+import net.minecraftforge.event.network.CustomPayloadEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.DistExecutor;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import net.minecraftforge.fml.loading.FMLPaths;
-import net.minecraftforge.network.NetworkEvent;
-import net.minecraftforge.network.NetworkRegistry;
+import net.minecraftforge.network.Channel;
+import net.minecraftforge.network.ChannelBuilder;
 import net.minecraftforge.network.PacketDistributor;
-import net.minecraftforge.network.simple.SimpleChannel;
+import net.minecraftforge.network.SimpleChannel;
 import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.registries.RegisterEvent;
 
@@ -38,17 +40,23 @@ public class MusketMod {
 
     public static EntityType<BulletEntity> BULLET_ENTITY_TYPE;
 
-    public static final String PROTOCOL_VERSION = "1";
-    public static final SimpleChannel NETWORK_CHANNEL = NetworkRegistry.newSimpleChannel(
-        new ResourceLocation(MODID, "main"), () -> PROTOCOL_VERSION,
-        PROTOCOL_VERSION::equals, PROTOCOL_VERSION::equals);
+    private static final int PROTOCOL_VERSION = 2;
+    public static final SimpleChannel NETWORK_CHANNEL = ChannelBuilder.named(
+        new ResourceLocation(MODID, "main"))
+        .networkProtocolVersion(PROTOCOL_VERSION)
+        .clientAcceptedVersions(Channel.VersionTest.exact(PROTOCOL_VERSION))
+        .serverAcceptedVersions(Channel.VersionTest.exact(PROTOCOL_VERSION))
+        .simpleChannel();
 
     public MusketMod() {
         Config.reload();
         DistExecutor.unsafeRunWhenOn(Dist.CLIENT, () -> () ->
             FMLJavaModLoadingContext.get().getModEventBus().addListener(ClientSetup::init));
-        NETWORK_CHANNEL.registerMessage(1, SmokeEffectPacket.class,
-            SmokeEffectPacket::encode, SmokeEffectPacket::new, SmokeEffectPacket::handle);
+        NETWORK_CHANNEL.messageBuilder(SmokeEffectPacket.class)
+            .encoder(SmokeEffectPacket::encode)
+            .decoder(SmokeEffectPacket::decode)
+            .consumerNetworkThread(SmokeEffectPacket::handle)
+            .add();
     }
 
     @Mod.EventBusSubscriber(bus = Mod.EventBusSubscriber.Bus.MOD)
@@ -111,8 +119,8 @@ public class MusketMod {
     }
 
     public static void sendSmokeEffect(LivingEntity shooter, Vec3 origin, Vec3 direction) {
-        NETWORK_CHANNEL.send(PacketDistributor.TRACKING_ENTITY_AND_SELF.with(() -> shooter),
-            new SmokeEffectPacket(origin, direction));
+        NETWORK_CHANNEL.send(new SmokeEffectPacket(origin, direction),
+            PacketDistributor.TRACKING_ENTITY_AND_SELF.with(shooter));
     }
 
     public static class SmokeEffectPacket {
@@ -124,25 +132,27 @@ public class MusketMod {
             this.direction = direction;
         }
 
-        public SmokeEffectPacket(FriendlyByteBuf buf) {
-            origin = new Vec3(buf.readFloat(), buf.readFloat(), buf.readFloat());
-            direction = new Vec3(buf.readFloat(), buf.readFloat(), buf.readFloat());
+        public static SmokeEffectPacket decode(FriendlyByteBuf buf) {
+            return new SmokeEffectPacket(
+                new Vec3(buf.readFloat(), buf.readFloat(), buf.readFloat()),
+                new Vec3(buf.readFloat(), buf.readFloat(), buf.readFloat()));
         }
 
-        public void encode(FriendlyByteBuf buf) {
-            buf.writeFloat((float)origin.x);
-            buf.writeFloat((float)origin.y);
-            buf.writeFloat((float)origin.z);
-            buf.writeFloat((float)direction.x);
-            buf.writeFloat((float)direction.y);
-            buf.writeFloat((float)direction.z);
+        public static void encode(SmokeEffectPacket msg, FriendlyByteBuf buf) {
+            buf.writeFloat((float)msg.origin.x);
+            buf.writeFloat((float)msg.origin.y);
+            buf.writeFloat((float)msg.origin.z);
+            buf.writeFloat((float)msg.direction.x);
+            buf.writeFloat((float)msg.direction.y);
+            buf.writeFloat((float)msg.direction.z);
         }
 
-        public void handle(Supplier<NetworkEvent.Context> ctx) {
-            ctx.get().enqueueWork(() -> {
-                DistExecutor.unsafeRunWhenOn(Dist.CLIENT, () -> () -> ClientSetup.handleSmokeEffectPacket(this, ctx));
+        public static void handle(SmokeEffectPacket msg, CustomPayloadEvent.Context ctx) {
+            ctx.enqueueWork(() -> {
+                ClientLevel level = Minecraft.getInstance().level;
+                ClientSetup.handleSmokeEffectPacket(level, msg);
             });
-            ctx.get().setPacketHandled(true);
+            ctx.setPacketHandled(true);
         }
     }
 }

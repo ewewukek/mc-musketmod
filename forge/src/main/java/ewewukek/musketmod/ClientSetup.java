@@ -1,15 +1,13 @@
 package ewewukek.musketmod;
 
 import java.util.Optional;
-import java.util.function.Supplier;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.model.HumanoidModel;
 import net.minecraft.client.model.PlayerModel;
-import net.minecraft.client.multiplayer.ClientPacketListener;
+import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.renderer.item.ClampedItemPropertyFunction;
 import net.minecraft.client.renderer.item.ItemProperties;
-import net.minecraft.network.PacketListener;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.HumanoidArm;
@@ -23,7 +21,6 @@ import net.minecraftforge.eventbus.api.EventPriority;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
-import net.minecraftforge.network.NetworkEvent;
 
 @Mod.EventBusSubscriber(Dist.CLIENT)
 public class ClientSetup {
@@ -67,11 +64,8 @@ public class ClientSetup {
         }
     }
 
-    public static void handleSmokeEffectPacket(MusketMod.SmokeEffectPacket packet, Supplier<NetworkEvent.Context> ctx) {
-        PacketListener listener = ctx.get().getNetworkManager().getPacketListener();
-        if (listener instanceof ClientPacketListener) {
-            GunItem.fireParticles(((ClientPacketListener)listener).getLevel(), packet.origin, packet.direction);
-        }
+    public static void handleSmokeEffectPacket(ClientLevel level, MusketMod.SmokeEffectPacket msg) {
+        GunItem.fireParticles(level, msg.origin, msg.direction);
     }
 
     @Mod.EventBusSubscriber(bus = Mod.EventBusSubscriber.Bus.MOD)

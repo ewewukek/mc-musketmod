@@ -48,6 +48,7 @@ Configuration is stored in `<game directory>/config/musketmod.txt`. Configurable
 - FabricMC
 - lilypuree (fixes and Korean translation)
 - MikhailTapio (Chinese translation)
+- Xannosz & SkpC9 (1.20.x update)
 - [Some sounds I've used](src/main/resources/assets/musketmod/sounds/credits.txt)
 
 ### Permissions:

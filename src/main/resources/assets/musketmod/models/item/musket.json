@@ -28,7 +28,7 @@
   "overrides": [
     {
       "predicate": {
-        "loaded": 1
+        "musketmod:loaded": 1
       },
       "model": "musketmod:item/musket_loaded"
     }

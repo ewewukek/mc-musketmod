@@ -15,6 +15,7 @@ import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.level.ServerEntity;
 import net.minecraft.tags.FluidTags;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.damagesource.DamageType;
@@ -33,9 +34,10 @@ import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
 
 public class BulletEntity extends AbstractHurtingProjectile {
+    // workaround for ClientboundAddEntityPacket.LIMIT
     public static final EntityDataAccessor<Float> INITIAL_SPEED = SynchedEntityData.defineId(BulletEntity.class, EntityDataSerializers.FLOAT);
 
-    public static final ResourceKey<DamageType> BULLET_DAMAGE = ResourceKey.create(Registries.DAMAGE_TYPE, new ResourceLocation(MusketMod.MODID, "bullet"));
+    public static final ResourceKey<DamageType> BULLET_DAMAGE = ResourceKey.create(Registries.DAMAGE_TYPE, ResourceLocation.fromNamespaceAndPath(MusketMod.MODID, "bullet"));
 
     public static final double MIN_DAMAGE = 0.5;
     public static final double GRAVITY = 0.05;
@@ -288,15 +290,16 @@ public class BulletEntity extends AbstractHurtingProjectile {
 
     // workaround for ClientboundAddEntityPacket.LIMIT
     @Override
-    public Packet<ClientGamePacketListener> getAddEntityPacket() {
+    public Packet<ClientGamePacketListener> getAddEntityPacket(ServerEntity entity) {
         Entity owner = getOwner();
+        Vec3 position = entity.getPositionBase();
         return new ClientboundAddEntityPacket(
             getId(), getUUID(),
-            getX(), getY(), getZ(),
-            getXRot(), getYRot(),
+            position.x(), position.y(), position.z(),
+            entity.getLastSentXRot(), entity.getLastSentYRot(),
             getType(), owner != null ? owner.getId() : 0,
-            getDeltaMovement().scale(4.0 / entityData.get(INITIAL_SPEED)),
-            getYHeadRot()
+            entity.getLastSentMovement().scale(4.0 / entityData.get(INITIAL_SPEED)),
+            0
         );
     }
 

@@ -55,7 +55,7 @@ public class MusketMod {
 
     private static final int PROTOCOL_VERSION = 2;
     public static final SimpleChannel NETWORK_CHANNEL = ChannelBuilder.named(
-        new ResourceLocation(MODID, "main"))
+        ResourceLocation.fromNamespaceAndPath(MODID, "main"))
         .networkProtocolVersion(PROTOCOL_VERSION)
         .clientAcceptedVersions(Channel.VersionTest.exact(PROTOCOL_VERSION))
         .serverAcceptedVersions(Channel.VersionTest.exact(PROTOCOL_VERSION))

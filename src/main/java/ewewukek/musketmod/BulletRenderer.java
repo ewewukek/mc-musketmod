@@ -12,7 +12,8 @@ import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.resources.ResourceLocation;
 
 public class BulletRenderer extends EntityRenderer<BulletEntity> {
-    public static final ResourceLocation TEXTURE = new ResourceLocation(MusketMod.MODID + ":textures/entity/bullet.png");
+    public static final ResourceLocation TEXTURE = ResourceLocation.fromNamespaceAndPath(MusketMod.MODID, "textures/entity/bullet.png");
+    public static final RenderType RENDER_TYPE = RenderType.entityCutoutNoCull(TEXTURE);
 
     public BulletRenderer(EntityRendererProvider.Context ctx) {
         super(ctx);
@@ -24,34 +25,35 @@ public class BulletRenderer extends EntityRenderer<BulletEntity> {
     }
 
     @Override
-    public void render(BulletEntity bullet, float yaw, float partialTicks, PoseStack matrixStack, MultiBufferSource render, int packedLight) {
+    public void render(BulletEntity bullet, float yaw, float partialTicks, PoseStack poseStack, MultiBufferSource render, int light) {
         if (bullet.isFirstTick()) return;
 
-        matrixStack.pushPose();
+        poseStack.pushPose();
 
-        matrixStack.scale(0.1f, 0.1f, 0.1f);
+        poseStack.scale(0.1f, 0.1f, 0.1f);
         // billboarding
-        matrixStack.mulPose(entityRenderDispatcher.cameraOrientation());
-        matrixStack.mulPose(Axis.YP.rotationDegrees(180));
+        poseStack.mulPose(entityRenderDispatcher.cameraOrientation());
+        poseStack.mulPose(Axis.YP.rotationDegrees(180));
 
-        PoseStack.Pose pose = matrixStack.last();
-        VertexConsumer builder = render.getBuffer(RenderType.entityCutout(getTextureLocation(bullet)));
+        PoseStack.Pose pose = poseStack.last();
+        VertexConsumer builder = render.getBuffer(RENDER_TYPE);
 
-        addVertex(builder, pose, -1, -1, 0, 0, 1, 0, 0, 1, packedLight);
-        addVertex(builder, pose,  1, -1, 0, 1, 1, 0, 0, 1, packedLight);
-        addVertex(builder, pose,  1,  1, 0, 1, 0, 0, 0, 1, packedLight);
-        addVertex(builder, pose, -1,  1, 0, 0, 0, 0, 0, 1, packedLight);
+        addVertex(builder, pose, -1, -1, 0, 0, 1, 0, 0, 1, light);
+        addVertex(builder, pose,  1, -1, 0, 1, 1, 0, 0, 1, light);
+        addVertex(builder, pose,  1,  1, 0, 1, 0, 0, 0, 1, light);
+        addVertex(builder, pose, -1,  1, 0, 0, 0, 0, 0, 1, light);
 
-        matrixStack.popPose();
+        poseStack.popPose();
+
+        super.render(bullet, yaw, partialTicks, poseStack, render, light);
     }
 
-    void addVertex(VertexConsumer builder, PoseStack.Pose pose, float x, float y, float z, float u, float v, float nx, float ny, float nz, int packedLight) {
-        builder.vertex(pose, x, y, z)
-               .color(255, 255, 255, 255)
-               .uv(u, v)
-               .overlayCoords(OverlayTexture.NO_OVERLAY)
-               .uv2(packedLight)
-               .normal(pose, nx, ny, nz)
-               .endVertex();
+    void addVertex(VertexConsumer builder, PoseStack.Pose pose, float x, float y, float z, float u, float v, float nx, float ny, float nz, int light) {
+        builder.addVertex(pose, x, y, z)
+               .setColor(255, 255, 255, 255)
+               .setUv(u, v)
+               .setOverlay(OverlayTexture.NO_OVERLAY)
+               .setLight(light)
+               .setNormal(pose, nx, ny, nz);
     }
 }

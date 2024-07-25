@@ -25,10 +25,10 @@ public class MusketItem extends GunItem {
     public static ItemAttributeModifiers createBayonetAttributes() {
         return ItemAttributeModifiers.builder()
             .add(Attributes.ATTACK_DAMAGE, new AttributeModifier(
-                BASE_ATTACK_DAMAGE_UUID, "Weapon modifier", bayonetDamage, AttributeModifier.Operation.ADD_VALUE),
+                BASE_ATTACK_DAMAGE_ID, bayonetDamage, AttributeModifier.Operation.ADD_VALUE),
                 EquipmentSlotGroup.MAINHAND)
             .add(Attributes.ATTACK_SPEED, new AttributeModifier(
-                BASE_ATTACK_SPEED_UUID, "Weapon modifier", BAYONET_SPEED, AttributeModifier.Operation.ADD_VALUE),
+                BASE_ATTACK_SPEED_ID, BAYONET_SPEED, AttributeModifier.Operation.ADD_VALUE),
                 EquipmentSlotGroup.MAINHAND)
             .build();
     }

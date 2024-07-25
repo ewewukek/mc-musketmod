@@ -44,13 +44,13 @@ public class MusketMod implements ModInitializer {
     public void onInitialize() {
         Config.reload();
 
-        Registry.register(BuiltInRegistries.DATA_COMPONENT_TYPE, new ResourceLocation(MODID, "loaded"), GunItem.LOADED);
-        Registry.register(BuiltInRegistries.DATA_COMPONENT_TYPE, new ResourceLocation(MODID, "loading_stage"), GunItem.LOADING_STAGE);
+        Registry.register(BuiltInRegistries.DATA_COMPONENT_TYPE, ResourceLocation.fromNamespaceAndPath(MODID, "loaded"), GunItem.LOADED);
+        Registry.register(BuiltInRegistries.DATA_COMPONENT_TYPE, ResourceLocation.fromNamespaceAndPath(MODID, "loading_stage"), GunItem.LOADING_STAGE);
 
-        Registry.register(BuiltInRegistries.ITEM, new ResourceLocation(MODID, "musket"), Items.MUSKET);
-        Registry.register(BuiltInRegistries.ITEM, new ResourceLocation(MODID, "musket_with_bayonet"), Items.MUSKET_WITH_BAYONET);
-        Registry.register(BuiltInRegistries.ITEM, new ResourceLocation(MODID, "pistol"), Items.PISTOL);
-        Registry.register(BuiltInRegistries.ITEM, new ResourceLocation(MODID, "cartridge"), Items.CARTRIDGE);
+        Registry.register(BuiltInRegistries.ITEM, ResourceLocation.fromNamespaceAndPath(MODID, "musket"), Items.MUSKET);
+        Registry.register(BuiltInRegistries.ITEM, ResourceLocation.fromNamespaceAndPath(MODID, "musket_with_bayonet"), Items.MUSKET_WITH_BAYONET);
+        Registry.register(BuiltInRegistries.ITEM, ResourceLocation.fromNamespaceAndPath(MODID, "pistol"), Items.PISTOL);
+        Registry.register(BuiltInRegistries.ITEM, ResourceLocation.fromNamespaceAndPath(MODID, "cartridge"), Items.CARTRIDGE);
 
         ItemGroupEvents.modifyEntriesEvent(CreativeModeTabs.COMBAT).register(entries -> {
             entries.accept(Items.MUSKET);
@@ -59,7 +59,7 @@ public class MusketMod implements ModInitializer {
             entries.accept(Items.CARTRIDGE);
         });
 
-        Registry.register(BuiltInRegistries.ENTITY_TYPE, new ResourceLocation(MODID, "bullet"), BULLET_ENTITY_TYPE);
+        Registry.register(BuiltInRegistries.ENTITY_TYPE, ResourceLocation.fromNamespaceAndPath(MODID, "bullet"), BULLET_ENTITY_TYPE);
 
         Registry.register(BuiltInRegistries.SOUND_EVENT, Sounds.MUSKET_LOAD_0.getLocation(), Sounds.MUSKET_LOAD_0);
         Registry.register(BuiltInRegistries.SOUND_EVENT, Sounds.MUSKET_LOAD_1.getLocation(), Sounds.MUSKET_LOAD_1);
@@ -73,7 +73,7 @@ public class MusketMod implements ModInitializer {
         ResourceManagerHelper.get(PackType.SERVER_DATA).registerReloadListener(new IdentifiableResourceReloadListener() {
             @Override
             public ResourceLocation getFabricId() {
-                return new ResourceLocation(MODID, "reload");
+                return ResourceLocation.fromNamespaceAndPath(MODID, "reload");
             }
 
             @Override
@@ -88,7 +88,7 @@ public class MusketMod implements ModInitializer {
         });
     }
 
-    public static final ResourceLocation SMOKE_EFFECT_PACKET_ID = new ResourceLocation(MODID, "smoke_effect");
+    public static final ResourceLocation SMOKE_EFFECT_PACKET_ID = ResourceLocation.fromNamespaceAndPath(MODID, "smoke_effect");
 
     public static void sendSmokeEffect(LivingEntity shooter, Vec3 origin, Vec3 direction) {
         SmokeEffectPacket packet = SmokeEffectPacket.fromVec3(origin, direction);

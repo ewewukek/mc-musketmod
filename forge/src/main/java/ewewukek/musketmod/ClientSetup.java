@@ -28,9 +28,9 @@ public class ClientSetup {
         ClampedItemPropertyFunction loaded = (stack, world, player, arg) -> {
             return GunItem.isLoaded(stack) ? 1 : 0;
         };
-        ItemProperties.register(Items.MUSKET, new ResourceLocation("loaded"), loaded);
-        ItemProperties.register(Items.MUSKET_WITH_BAYONET, new ResourceLocation("loaded"), loaded);
-        ItemProperties.register(Items.PISTOL, new ResourceLocation("loaded"), loaded);
+        ItemProperties.register(Items.MUSKET, ResourceLocation.fromNamespaceAndPath(MusketMod.MODID, "loaded"), loaded);
+        ItemProperties.register(Items.MUSKET_WITH_BAYONET, ResourceLocation.fromNamespaceAndPath(MusketMod.MODID, "loaded"), loaded);
+        ItemProperties.register(Items.PISTOL, ResourceLocation.fromNamespaceAndPath(MusketMod.MODID, "loaded"), loaded);
     }
 
     @SubscribeEvent(priority = EventPriority.LOW)

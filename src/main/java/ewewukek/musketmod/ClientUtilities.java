@@ -66,7 +66,7 @@ public class ClientUtilities {
             }
 
         } else if (player.isUsingItem() && player.getUsedItemHand() == hand) {
-            float usingDuration = stack.getUseDuration() - (player.getUseItemRemainingTicks() - partialTicks + 1);
+            float usingDuration = stack.getUseDuration(player) - (player.getUseItemRemainingTicks() - partialTicks + 1);
             if (usingDuration > 0 && usingDuration < GunItem.RELOAD_DURATION) {
                 matrixStack.translate(0, -0.3, 0.05);
                 matrixStack.mulPose(Axis.XP.rotationDegrees(60));

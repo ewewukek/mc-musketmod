@@ -1,5 +1,6 @@
 {
-  "type": "crafting_shapeless",
+  "type": "minecraft:crafting_shapeless",
+  "category": "equipment",
   "ingredients": [
     {
       "item": "musketmod:musket"
@@ -9,7 +10,7 @@
     }
   ],
   "result": {
-    "item": "musketmod:musket_with_bayonet",
-    "count": 1
+    "count": 1,
+    "id": "musketmod:musket_with_bayonet"
   }
 }

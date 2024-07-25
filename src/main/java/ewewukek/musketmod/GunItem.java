@@ -1,8 +1,12 @@
 package ewewukek.musketmod;
 
+import com.mojang.serialization.Codec;
+
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.component.DataComponentType;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.tags.FluidTags;
 import net.minecraft.util.Mth;
@@ -28,6 +32,11 @@ public abstract class GunItem extends Item {
     public static final int LOADING_STAGE_2 = 10;
     public static final int LOADING_STAGE_3 = 20;
     public static final int RELOAD_DURATION = 30;
+
+    public static final DataComponentType<Boolean> LOADED = new DataComponentType.Builder<Boolean>()
+        .persistent(Codec.BOOL).networkSynchronized(ByteBufCodecs.BOOL).build();
+    public static final DataComponentType<Byte> LOADING_STAGE = new DataComponentType.Builder<Byte>()
+        .persistent(Codec.BYTE).networkSynchronized(ByteBufCodecs.BYTE).build();
 
     // for RenderHelper
     public static ItemStack activeMainHandStack;
@@ -96,9 +105,7 @@ public abstract class GunItem extends Item {
             player.playSound(fireSound(), 3.5f, 1);
 
             setLoaded(stack, false);
-            stack.hurtAndBreak(1, player, (entity) -> {
-                entity.broadcastBreakEvent(hand);
-            });
+            stack.hurtAndBreak(1, player, Player.getSlotForHand(hand));
 
             player.releaseUsingItem();
             if (worldIn.isClientSide) setActiveStack(hand, stack);
@@ -166,18 +173,14 @@ public abstract class GunItem extends Item {
 
     @Override
     public boolean hurtEnemy(ItemStack stack, LivingEntity enemy, LivingEntity entityIn) {
-        stack.hurtAndBreak(1, entityIn, (entity) -> {
-            entity.broadcastBreakEvent(EquipmentSlot.MAINHAND);
-        });
+        stack.hurtAndBreak(1, entityIn, EquipmentSlot.MAINHAND);
         return false;
     }
 
     @Override
     public boolean mineBlock(ItemStack stack, Level worldIn, BlockState state, BlockPos pos, LivingEntity entityIn) {
         if (state.getDestroySpeed(worldIn, pos) != 0) {
-            stack.hurtAndBreak(1, entityIn, (entity) -> {
-                entity.broadcastBreakEvent(EquipmentSlot.MAINHAND);
-            });
+            stack.hurtAndBreak(1, entityIn, EquipmentSlot.MAINHAND);
         }
         return false;
     }
@@ -295,26 +298,28 @@ public abstract class GunItem extends Item {
     }
 
     public static boolean isLoaded(ItemStack stack) {
-        return stack.getOrCreateTag().getByte("loaded") != 0;
+        Boolean loaded = stack.get(LOADED);
+        return loaded != null && loaded;
     }
 
     public static void setLoaded(ItemStack stack, boolean loaded) {
         if (loaded) {
-            stack.getOrCreateTag().putByte("loaded", (byte)1);
+            stack.set(LOADED, true);
         } else {
-            stack.getOrCreateTag().remove("loaded");
+            stack.remove(LOADED);
         }
     }
 
     public static int getLoadingStage(ItemStack stack) {
-        return stack.getOrCreateTag().getInt("loadingStage");
+        Byte loadingStage = stack.get(LOADING_STAGE);
+        return loadingStage != null ? loadingStage : 0;
     }
 
     public static void setLoadingStage(ItemStack stack, int loadingStage) {
-        if (loadingStage != 0) {
-            stack.getOrCreateTag().putInt("loadingStage", loadingStage);
+        if (loadingStage > 0) {
+            stack.set(LOADING_STAGE, (byte)loadingStage);
         } else {
-            stack.getOrCreateTag().remove("loadingStage");
+            stack.remove(LOADING_STAGE);
         }
     }
 }

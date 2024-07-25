@@ -3,7 +3,6 @@ package ewewukek.musketmod;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
 import net.fabricmc.fabric.api.client.rendering.v1.EntityRendererRegistry;
-import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.renderer.item.ClampedItemPropertyFunction;
 import net.minecraft.client.renderer.item.ItemProperties;
 import net.minecraft.resources.ResourceLocation;
@@ -22,11 +21,12 @@ public class ClientSetup implements ClientModInitializer {
         ItemProperties.register(Items.MUSKET_WITH_BAYONET, new ResourceLocation("loaded"), loaded);
         ItemProperties.register(Items.PISTOL, new ResourceLocation("loaded"), loaded);
 
-        ClientPlayNetworking.registerGlobalReceiver(MusketMod.SMOKE_EFFECT_PACKET_ID, (client, handler, buf, responseSender) -> {
-            Vec3 origin = new Vec3(buf.readFloat(), buf.readFloat(), buf.readFloat());
-            Vec3 direction = new Vec3(buf.readFloat(), buf.readFloat(), buf.readFloat());
-            ClientLevel world = handler.getLevel();
-            client.execute(() -> GunItem.fireParticles(world, origin, direction));
+        ClientPlayNetworking.registerGlobalReceiver(SmokeEffectPacket.TYPE, (packet, context) -> {
+            Vec3 origin = new Vec3(packet.origin());
+            Vec3 direction = new Vec3(packet.direction());
+            context.client().execute(() -> {
+                GunItem.fireParticles(context.player().level(), origin, direction);
+            });
         });
     }
 }

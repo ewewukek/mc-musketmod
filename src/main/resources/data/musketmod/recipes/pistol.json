@@ -1,5 +1,6 @@
 {
-  "type": "crafting_shaped",
+  "type": "minecraft:crafting_shaped",
+  "category": "equipment",
   "pattern": [
     "IF",
     "is"
@@ -19,6 +20,7 @@
     }
   },
   "result": {
-    "item": "musketmod:pistol"
+    "count": 1,
+    "id": "musketmod:pistol"
   }
 }

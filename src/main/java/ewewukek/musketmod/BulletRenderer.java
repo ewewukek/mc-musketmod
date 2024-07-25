@@ -1,8 +1,5 @@
 package ewewukek.musketmod;
 
-import org.joml.Matrix3f;
-import org.joml.Matrix4f;
-
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.mojang.math.Axis;
@@ -37,27 +34,24 @@ public class BulletRenderer extends EntityRenderer<BulletEntity> {
         matrixStack.mulPose(entityRenderDispatcher.cameraOrientation());
         matrixStack.mulPose(Axis.YP.rotationDegrees(180));
 
-        PoseStack.Pose entry = matrixStack.last();
-        Matrix4f positionMatrix = entry.pose();
-        Matrix3f normalMatrix = entry.normal();
-
+        PoseStack.Pose pose = matrixStack.last();
         VertexConsumer builder = render.getBuffer(RenderType.entityCutout(getTextureLocation(bullet)));
 
-        addVertex(builder, positionMatrix, normalMatrix, -1, -1, 0, 0, 1, 0, 0, 1, packedLight);
-        addVertex(builder, positionMatrix, normalMatrix,  1, -1, 0, 1, 1, 0, 0, 1, packedLight);
-        addVertex(builder, positionMatrix, normalMatrix,  1,  1, 0, 1, 0, 0, 0, 1, packedLight);
-        addVertex(builder, positionMatrix, normalMatrix, -1,  1, 0, 0, 0, 0, 0, 1, packedLight);
+        addVertex(builder, pose, -1, -1, 0, 0, 1, 0, 0, 1, packedLight);
+        addVertex(builder, pose,  1, -1, 0, 1, 1, 0, 0, 1, packedLight);
+        addVertex(builder, pose,  1,  1, 0, 1, 0, 0, 0, 1, packedLight);
+        addVertex(builder, pose, -1,  1, 0, 0, 0, 0, 0, 1, packedLight);
 
         matrixStack.popPose();
     }
 
-    void addVertex(VertexConsumer builder, Matrix4f positionMatrix, Matrix3f normalMatrix, float x, float y, float z, float u, float v, float nx, float ny, float nz, int packedLight) {
-        builder.vertex(positionMatrix, x, y, z)
+    void addVertex(VertexConsumer builder, PoseStack.Pose pose, float x, float y, float z, float u, float v, float nx, float ny, float nz, int packedLight) {
+        builder.vertex(pose, x, y, z)
                .color(255, 255, 255, 255)
                .uv(u, v)
                .overlayCoords(OverlayTexture.NO_OVERLAY)
                .uv2(packedLight)
-               .normal(normalMatrix, nx, ny, nz)
+               .normal(pose, nx, ny, nz)
                .endVertex();
     }
 }

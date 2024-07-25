@@ -265,9 +265,9 @@ public class BulletEntity extends AbstractHurtingProjectile {
     }
 
     @Override
-    protected void defineSynchedData() {
-        super.defineSynchedData();
-        entityData.define(INITIAL_SPEED, (float)0);
+    protected void defineSynchedData(SynchedEntityData.Builder builder) {
+        super.defineSynchedData(builder);
+        builder.define(INITIAL_SPEED, (float)0);
     }
 
     @Override

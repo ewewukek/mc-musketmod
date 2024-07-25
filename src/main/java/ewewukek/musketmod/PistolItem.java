@@ -11,7 +11,7 @@ public class PistolItem extends GunItem {
     public static int durability;
 
     public PistolItem(Properties properties) {
-        super(properties.defaultDurability(durability));
+        super(properties.durability(durability));
     }
 
     @Override

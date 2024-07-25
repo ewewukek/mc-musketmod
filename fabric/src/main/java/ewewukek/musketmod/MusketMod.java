@@ -6,7 +6,7 @@ import java.util.concurrent.Executor;
 
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.itemgroup.v1.ItemGroupEvents;
-import net.fabricmc.fabric.api.networking.v1.PacketByteBufs;
+import net.fabricmc.fabric.api.networking.v1.PayloadTypeRegistry;
 import net.fabricmc.fabric.api.networking.v1.PlayerLookup;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.fabricmc.fabric.api.object.builder.v1.entity.FabricEntityTypeBuilder;
@@ -16,7 +16,6 @@ import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Registry;
 import net.minecraft.core.registries.BuiltInRegistries;
-import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
@@ -45,6 +44,9 @@ public class MusketMod implements ModInitializer {
     public void onInitialize() {
         Config.reload();
 
+        Registry.register(BuiltInRegistries.DATA_COMPONENT_TYPE, new ResourceLocation(MODID, "loaded"), GunItem.LOADED);
+        Registry.register(BuiltInRegistries.DATA_COMPONENT_TYPE, new ResourceLocation(MODID, "loading_stage"), GunItem.LOADING_STAGE);
+
         Registry.register(BuiltInRegistries.ITEM, new ResourceLocation(MODID, "musket"), Items.MUSKET);
         Registry.register(BuiltInRegistries.ITEM, new ResourceLocation(MODID, "musket_with_bayonet"), Items.MUSKET_WITH_BAYONET);
         Registry.register(BuiltInRegistries.ITEM, new ResourceLocation(MODID, "pistol"), Items.PISTOL);
@@ -65,6 +67,8 @@ public class MusketMod implements ModInitializer {
         Registry.register(BuiltInRegistries.SOUND_EVENT, Sounds.MUSKET_READY.getLocation(), Sounds.MUSKET_READY);
         Registry.register(BuiltInRegistries.SOUND_EVENT, Sounds.MUSKET_FIRE.getLocation(), Sounds.MUSKET_FIRE);
         Registry.register(BuiltInRegistries.SOUND_EVENT, Sounds.PISTOL_FIRE.getLocation(), Sounds.PISTOL_FIRE);
+
+        PayloadTypeRegistry.playS2C().register(SmokeEffectPacket.TYPE, SmokeEffectPacket.CODEC);
 
         ResourceManagerHelper.get(PackType.SERVER_DATA).registerReloadListener(new IdentifiableResourceReloadListener() {
             @Override
@@ -87,17 +91,10 @@ public class MusketMod implements ModInitializer {
     public static final ResourceLocation SMOKE_EFFECT_PACKET_ID = new ResourceLocation(MODID, "smoke_effect");
 
     public static void sendSmokeEffect(LivingEntity shooter, Vec3 origin, Vec3 direction) {
-        FriendlyByteBuf buf = PacketByteBufs.create();
-        buf.writeFloat((float)origin.x);
-        buf.writeFloat((float)origin.y);
-        buf.writeFloat((float)origin.z);
-        buf.writeFloat((float)direction.x);
-        buf.writeFloat((float)direction.y);
-        buf.writeFloat((float)direction.z);
+        SmokeEffectPacket packet = SmokeEffectPacket.fromVec3(origin, direction);
         BlockPos blockPos = BlockPos.containing(origin.x, origin.y, origin.z);
         for (ServerPlayer serverPlayer : PlayerLookup.tracking((ServerLevel)shooter.level(), blockPos)) {
-            ServerPlayNetworking.send(serverPlayer, SMOKE_EFFECT_PACKET_ID, buf);
+            ServerPlayNetworking.send(serverPlayer, packet);
         }
-
     }
 }

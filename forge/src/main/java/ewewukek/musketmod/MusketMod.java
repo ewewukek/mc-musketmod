@@ -12,17 +12,20 @@ import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.packs.resources.PreparableReloadListener;
 import net.minecraft.server.packs.resources.ResourceManager;
+import net.minecraft.sounds.SoundEvent;
 import net.minecraft.util.Unit;
 import net.minecraft.util.profiling.ProfilerFiller;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.MobCategory;
 import net.minecraft.world.item.CreativeModeTabs;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.event.AddReloadListenerEvent;
 import net.minecraftforge.event.BuildCreativeModeTabContentsEvent;
 import net.minecraftforge.event.network.CustomPayloadEvent;
+import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.DistExecutor;
 import net.minecraftforge.fml.common.Mod;
@@ -45,6 +48,10 @@ public class MusketMod {
 
     private static final DeferredRegister<DataComponentType<?>> DATA_COMPONENT_TYPES =
         DeferredRegister.create(Registries.DATA_COMPONENT_TYPE, MODID);
+    private static final DeferredRegister<Item> ITEMS =
+        DeferredRegister.create(Registries.ITEM, MODID);
+    private static final DeferredRegister<SoundEvent> SOUND_EVENTS =
+        DeferredRegister.create(Registries.SOUND_EVENT, MODID);
 
     private static final int PROTOCOL_VERSION = 2;
     public static final SimpleChannel NETWORK_CHANNEL = ChannelBuilder.named(
@@ -57,9 +64,25 @@ public class MusketMod {
     public MusketMod() {
         Config.reload();
 
+        IEventBus bus = FMLJavaModLoadingContext.get().getModEventBus();
+
         DATA_COMPONENT_TYPES.register("loaded", () -> GunItem.LOADED);
         DATA_COMPONENT_TYPES.register("loading_stage", () -> GunItem.LOADING_STAGE);
-        DATA_COMPONENT_TYPES.register(FMLJavaModLoadingContext.get().getModEventBus());
+        DATA_COMPONENT_TYPES.register(bus);
+
+        ITEMS.register("musket", () -> Items.MUSKET);
+        ITEMS.register("musket_with_bayonet", () -> Items.MUSKET_WITH_BAYONET);
+        ITEMS.register("pistol", () -> Items.PISTOL);
+        ITEMS.register("cartridge", () -> Items.CARTRIDGE);
+        ITEMS.register(bus);
+
+        SOUND_EVENTS.register(Sounds.MUSKET_LOAD_0.getLocation().getPath(), () -> Sounds.MUSKET_LOAD_0);
+        SOUND_EVENTS.register(Sounds.MUSKET_LOAD_1.getLocation().getPath(), () -> Sounds.MUSKET_LOAD_1);
+        SOUND_EVENTS.register(Sounds.MUSKET_LOAD_2.getLocation().getPath(), () -> Sounds.MUSKET_LOAD_2);
+        SOUND_EVENTS.register(Sounds.MUSKET_READY.getLocation().getPath(), () -> Sounds.MUSKET_READY);
+        SOUND_EVENTS.register(Sounds.MUSKET_FIRE.getLocation().getPath(), () -> Sounds.MUSKET_FIRE);
+        SOUND_EVENTS.register(Sounds.PISTOL_FIRE.getLocation().getPath(), () -> Sounds.PISTOL_FIRE);
+        SOUND_EVENTS.register(bus);
 
         DistExecutor.unsafeRunWhenOn(Dist.CLIENT, () -> () ->
             FMLJavaModLoadingContext.get().getModEventBus().addListener(ClientSetup::init));
@@ -74,13 +97,6 @@ public class MusketMod {
     public static class RegistryEvents {
         @SubscribeEvent
         public static void onRegisterEvent(final RegisterEvent event) {
-            event.register(ForgeRegistries.Keys.ITEMS, helper -> {
-                helper.register("musket", Items.MUSKET);
-                helper.register("musket_with_bayonet", Items.MUSKET_WITH_BAYONET);
-                helper.register("pistol", Items.PISTOL);
-                helper.register("cartridge", Items.CARTRIDGE);
-            });
-
             event.register(ForgeRegistries.Keys.ENTITY_TYPES, helper -> {
                 BULLET_ENTITY_TYPE = EntityType.Builder.<BulletEntity>of(BulletEntity::new, MobCategory.MISC)
                     .sized(0.5f, 0.5f)
@@ -88,15 +104,6 @@ public class MusketMod {
                     .setShouldReceiveVelocityUpdates(false)
                     .build(MODID + ":bullet");
                 helper.register("bullet", BULLET_ENTITY_TYPE);
-            });
-
-            event.register(ForgeRegistries.Keys.SOUND_EVENTS, helper -> {
-                helper.register(Sounds.MUSKET_LOAD_0.getLocation(), Sounds.MUSKET_LOAD_0);
-                helper.register(Sounds.MUSKET_LOAD_1.getLocation(), Sounds.MUSKET_LOAD_1);
-                helper.register(Sounds.MUSKET_LOAD_2.getLocation(), Sounds.MUSKET_LOAD_2);
-                helper.register(Sounds.MUSKET_READY.getLocation(), Sounds.MUSKET_READY);
-                helper.register(Sounds.MUSKET_FIRE.getLocation(), Sounds.MUSKET_FIRE);
-                helper.register(Sounds.PISTOL_FIRE.getLocation(), Sounds.PISTOL_FIRE);
             });
         }
 

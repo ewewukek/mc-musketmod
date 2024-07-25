@@ -6,6 +6,8 @@ import java.util.concurrent.Executor;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientLevel;
+import net.minecraft.core.component.DataComponentType;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.packs.resources.PreparableReloadListener;
@@ -30,6 +32,7 @@ import net.minecraftforge.network.Channel;
 import net.minecraftforge.network.ChannelBuilder;
 import net.minecraftforge.network.PacketDistributor;
 import net.minecraftforge.network.SimpleChannel;
+import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.registries.RegisterEvent;
 
@@ -39,6 +42,9 @@ public class MusketMod {
     public static final Path CONFIG_PATH = FMLPaths.CONFIGDIR.get().resolve("musketmod.txt");
 
     public static EntityType<BulletEntity> BULLET_ENTITY_TYPE;
+
+    private static final DeferredRegister<DataComponentType<?>> DATA_COMPONENT_TYPES =
+        DeferredRegister.create(Registries.DATA_COMPONENT_TYPE, MODID);
 
     private static final int PROTOCOL_VERSION = 2;
     public static final SimpleChannel NETWORK_CHANNEL = ChannelBuilder.named(
@@ -50,6 +56,11 @@ public class MusketMod {
 
     public MusketMod() {
         Config.reload();
+
+        DATA_COMPONENT_TYPES.register("loaded", () -> GunItem.LOADED);
+        DATA_COMPONENT_TYPES.register("loading_stage", () -> GunItem.LOADING_STAGE);
+        DATA_COMPONENT_TYPES.register(FMLJavaModLoadingContext.get().getModEventBus());
+
         DistExecutor.unsafeRunWhenOn(Dist.CLIENT, () -> () ->
             FMLJavaModLoadingContext.get().getModEventBus().addListener(ClientSetup::init));
         NETWORK_CHANNEL.messageBuilder(SmokeEffectPacket.class)
@@ -126,6 +137,7 @@ public class MusketMod {
             PacketDistributor.NEAR.with(point));
     }
 
+    // TODO: use ewewukek.musketmod.SmokeEffectPacket when forge adds api for CustomPacketPayload
     public static class SmokeEffectPacket {
         public final Vec3 origin;
         public final Vec3 direction;

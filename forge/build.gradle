@@ -1,6 +1,6 @@
 plugins {
     id 'eclipse'
-    id 'net.minecraftforge.gradle' version '[6.0.16,6.2)'
+    id 'net.minecraftforge.gradle' version '[6.0.24,6.2)'
 }
 
 file("../gradle.properties").withInputStream {
@@ -16,7 +16,7 @@ base {
     archivesName = "${mod_name}-${minecraft_version}-forge"
 }
 
-java.toolchain.languageVersion = JavaLanguageVersion.of(17)
+java.toolchain.languageVersion = JavaLanguageVersion.of(21)
 
 eclipse {
     project { name = "${mod_name}-${minecraft_version}-forge" }
@@ -26,6 +26,7 @@ eclipse {
 minecraft {
     accessTransformer = file('src/main/resources/META-INF/accesstransformer.cfg')
     mappings channel: 'official', version: minecraft_version
+    reobf = false
 
     copyIdeResources = true
 
@@ -55,6 +56,9 @@ sourceSets.each {
 
 dependencies {
     minecraft "net.minecraftforge:forge:${forge_version}"
+
+    // Hack fix for now, force jopt-simple to be exactly 5.0.4 because Mojang ships that version, but some transitive dependencies request 6.0+
+    implementation('net.sf.jopt-simple:jopt-simple:5.0.4') { version { strictly '5.0.4' } }
 }
 
 tasks.named('processResources', ProcessResources).configure {

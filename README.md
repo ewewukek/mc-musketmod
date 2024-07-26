@@ -20,7 +20,7 @@ Requires [Fabric API](https://modrinth.com/mod/fabric-api).
 #### Musket
 ![](doc/musket_recipe.png?raw=true)
 
-Damage: 20.5 - 21.0  
+Damage: 20.5 - 21.0\
 Durability: 250
 
 Can't be used from offhand.
@@ -33,10 +33,10 @@ Deals 5 melee damage.
 #### Pistol
 ![](doc/pistol_recipe.png?raw=true)
 
-Damage: 12.0 - 12.5  
+Damage: 12.0 - 12.5\
 Durability: 150
 
-Fires slower bullets. Can be used from both hands.
+Fires slower bullets. Can be used from both hands.\
 Only pistol in main hand is loaded. To load second, swap pistols in hands.
 
 #### Paper cartridge (ammunition)

@@ -88,10 +88,10 @@ public class MusketMod {
         bus.addListener(this::creativeTabs);
         MinecraftForge.EVENT_BUS.addListener(this::reload);
 
-        NETWORK_CHANNEL.messageBuilder(SmokeEffectPacket.class)
-            .encoder(SmokeEffectPacket::encode)
-            .decoder(SmokeEffectPacket::decode)
-            .consumerNetworkThread(SmokeEffectPacket::handle)
+        NETWORK_CHANNEL.messageBuilder(SmokeEffectPacketWrapper.class)
+            .encoder(SmokeEffectPacketWrapper::encode)
+            .decoder(SmokeEffectPacketWrapper::decode)
+            .consumerNetworkThread(SmokeEffectPacketWrapper::handle)
             .add();
     }
 
@@ -133,40 +133,31 @@ public class MusketMod {
         PacketDistributor.TargetPoint point = new PacketDistributor.TargetPoint(
             origin.x, origin.y, origin.z,
             64.0, shooter.level().dimension());
-        NETWORK_CHANNEL.send(new SmokeEffectPacket(origin, direction),
+        NETWORK_CHANNEL.send(new SmokeEffectPacketWrapper(SmokeEffectPacket.fromVec3(origin, direction)),
             PacketDistributor.NEAR.with(point));
     }
 
-    // TODO: use ewewukek.musketmod.SmokeEffectPacket when forge adds api for CustomPacketPayload
-    public static class SmokeEffectPacket {
-        public final Vec3 origin;
-        public final Vec3 direction;
+    // TODO: use SmokeEffectPacket directly when forge adds api for CustomPacketPayload
+    public static class SmokeEffectPacketWrapper {
+        public final SmokeEffectPacket packet;
 
-        public SmokeEffectPacket(Vec3 origin, Vec3 direction) {
-            this.origin = origin;
-            this.direction = direction;
+        public SmokeEffectPacketWrapper(SmokeEffectPacket packet) {
+            this.packet = packet;
         }
 
-        public static SmokeEffectPacket decode(FriendlyByteBuf buf) {
-            return new SmokeEffectPacket(
-                new Vec3(buf.readFloat(), buf.readFloat(), buf.readFloat()),
-                new Vec3(buf.readFloat(), buf.readFloat(), buf.readFloat()));
+        public static SmokeEffectPacketWrapper decode(FriendlyByteBuf buf) {
+            return new SmokeEffectPacketWrapper(SmokeEffectPacket.CODEC.decode(buf));
         }
 
-        public static void encode(SmokeEffectPacket msg, FriendlyByteBuf buf) {
-            buf.writeFloat((float)msg.origin.x);
-            buf.writeFloat((float)msg.origin.y);
-            buf.writeFloat((float)msg.origin.z);
-            buf.writeFloat((float)msg.direction.x);
-            buf.writeFloat((float)msg.direction.y);
-            buf.writeFloat((float)msg.direction.z);
+        public static void encode(SmokeEffectPacketWrapper msg, FriendlyByteBuf buf) {
+            SmokeEffectPacket.CODEC.encode(buf, msg.packet);
         }
 
-        public static void handle(SmokeEffectPacket msg, CustomPayloadEvent.Context ctx) {
-            ctx.enqueueWork(() -> {
-                ClientSetup.handleSmokeEffectPacket(msg);
+        public static void handle(SmokeEffectPacketWrapper msg, CustomPayloadEvent.Context context) {
+            context.enqueueWork(() -> {
+                ClientSetup.handleSmokeEffectPacket(msg.packet);
             });
-            ctx.setPacketHandled(true);
+            context.setPacketHandled(true);
         }
     }
 }

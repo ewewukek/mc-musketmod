@@ -5,6 +5,7 @@ import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Executor;
 
 import net.fabricmc.api.ModInitializer;
+import net.fabricmc.fabric.api.event.lifecycle.v1.ServerTickEvents;
 import net.fabricmc.fabric.api.itemgroup.v1.ItemGroupEvents;
 import net.fabricmc.fabric.api.networking.v1.PacketByteBufs;
 import net.fabricmc.fabric.api.networking.v1.PlayerLookup;
@@ -25,8 +26,6 @@ import net.minecraft.server.packs.resources.ResourceManager;
 import net.minecraft.util.Unit;
 import net.minecraft.util.profiling.ProfilerFiller;
 import net.minecraft.world.entity.EntityDimensions;
-import net.minecraft.world.entity.EntityType;
-import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.MobCategory;
 import net.minecraft.world.item.CreativeModeTabs;
 import net.minecraft.world.phys.Vec3;
@@ -35,41 +34,46 @@ public class MusketMod implements ModInitializer {
     public static final String MODID = "musketmod";
     public static final Path CONFIG_PATH = FabricLoader.getInstance().getConfigDir().resolve("musketmod.txt");
 
-    public static final EntityType<BulletEntity> BULLET_ENTITY_TYPE = FabricEntityTypeBuilder.<BulletEntity>create(MobCategory.MISC, BulletEntity::new)
-            .dimensions(EntityDimensions.fixed(0.5F, 0.5F))
-            .trackRangeBlocks(64).trackedUpdateRate(5)
-            .forceTrackedVelocityUpdates(false)
-            .build();
+    public static ResourceLocation resource(String path) {
+        return new ResourceLocation(MODID, path);
+    }
 
     @Override
     public void onInitialize() {
-        Config.reload();
+        Config.load();
 
-        Registry.register(BuiltInRegistries.ITEM, new ResourceLocation(MODID, "musket"), Items.MUSKET);
-        Registry.register(BuiltInRegistries.ITEM, new ResourceLocation(MODID, "musket_with_bayonet"), Items.MUSKET_WITH_BAYONET);
-        Registry.register(BuiltInRegistries.ITEM, new ResourceLocation(MODID, "pistol"), Items.PISTOL);
-        Registry.register(BuiltInRegistries.ITEM, new ResourceLocation(MODID, "cartridge"), Items.CARTRIDGE);
-
+        Items.register((path, item) -> {
+            Registry.register(BuiltInRegistries.ITEM, resource(path), item);
+        });
         ItemGroupEvents.modifyEntriesEvent(CreativeModeTabs.COMBAT).register(entries -> {
-            entries.accept(Items.MUSKET);
-            entries.accept(Items.MUSKET_WITH_BAYONET);
-            entries.accept(Items.PISTOL);
-            entries.accept(Items.CARTRIDGE);
+            Items.addToCreativeTab(CreativeModeTabs.COMBAT, (item) -> {
+                entries.accept(item);
+            });
+        });
+        ItemGroupEvents.modifyEntriesEvent(CreativeModeTabs.INGREDIENTS).register(entries -> {
+            Items.addToCreativeTab(CreativeModeTabs.INGREDIENTS, (item) -> {
+                entries.accept(item);
+            });
+        });
+        Sounds.register((sound) -> {
+            Registry.register(BuiltInRegistries.SOUND_EVENT, sound.getLocation(), sound);
         });
 
-        Registry.register(BuiltInRegistries.ENTITY_TYPE, new ResourceLocation(MODID, "bullet"), BULLET_ENTITY_TYPE);
+        BulletEntity.ENTITY_TYPE = FabricEntityTypeBuilder.<BulletEntity>create(MobCategory.MISC, BulletEntity::new)
+            .dimensions(EntityDimensions.fixed(0.5F, 0.5F))
+            .trackRangeBlocks(64).trackedUpdateRate(20)
+            .forceTrackedVelocityUpdates(false)
+            .build();
+        Registry.register(BuiltInRegistries.ENTITY_TYPE, resource("bullet"), BulletEntity.ENTITY_TYPE);
 
-        Registry.register(BuiltInRegistries.SOUND_EVENT, Sounds.MUSKET_LOAD_0.getLocation(), Sounds.MUSKET_LOAD_0);
-        Registry.register(BuiltInRegistries.SOUND_EVENT, Sounds.MUSKET_LOAD_1.getLocation(), Sounds.MUSKET_LOAD_1);
-        Registry.register(BuiltInRegistries.SOUND_EVENT, Sounds.MUSKET_LOAD_2.getLocation(), Sounds.MUSKET_LOAD_2);
-        Registry.register(BuiltInRegistries.SOUND_EVENT, Sounds.MUSKET_READY.getLocation(), Sounds.MUSKET_READY);
-        Registry.register(BuiltInRegistries.SOUND_EVENT, Sounds.MUSKET_FIRE.getLocation(), Sounds.MUSKET_FIRE);
-        Registry.register(BuiltInRegistries.SOUND_EVENT, Sounds.PISTOL_FIRE.getLocation(), Sounds.PISTOL_FIRE);
+        ServerTickEvents.END_WORLD_TICK.register((world) -> {
+            DeferredDamage.apply();
+        });
 
         ResourceManagerHelper.get(PackType.SERVER_DATA).registerReloadListener(new IdentifiableResourceReloadListener() {
             @Override
             public ResourceLocation getFabricId() {
-                return new ResourceLocation(MODID, "reload");
+                return resource("reload");
             }
 
             @Override
@@ -78,7 +82,7 @@ public class MusketMod implements ModInitializer {
                 Executor gameExecutor) {
 
                 return stage.wait(Unit.INSTANCE).thenRunAsync(() -> {
-                    Config.reload();
+                    Config.load();
                 }, gameExecutor);
             }
         });
@@ -86,7 +90,7 @@ public class MusketMod implements ModInitializer {
 
     public static final ResourceLocation SMOKE_EFFECT_PACKET_ID = new ResourceLocation(MODID, "smoke_effect");
 
-    public static void sendSmokeEffect(LivingEntity shooter, Vec3 origin, Vec3 direction) {
+    public static void sendSmokeEffect(ServerLevel level, Vec3 origin, Vec3 direction) {
         FriendlyByteBuf buf = PacketByteBufs.create();
         buf.writeFloat((float)origin.x);
         buf.writeFloat((float)origin.y);
@@ -95,9 +99,8 @@ public class MusketMod implements ModInitializer {
         buf.writeFloat((float)direction.y);
         buf.writeFloat((float)direction.z);
         BlockPos blockPos = BlockPos.containing(origin.x, origin.y, origin.z);
-        for (ServerPlayer serverPlayer : PlayerLookup.tracking((ServerLevel)shooter.level(), blockPos)) {
+        for (ServerPlayer serverPlayer : PlayerLookup.tracking(level, blockPos)) {
             ServerPlayNetworking.send(serverPlayer, SMOKE_EFFECT_PACKET_ID, buf);
         }
-
     }
 }

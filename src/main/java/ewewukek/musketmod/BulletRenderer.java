@@ -1,8 +1,5 @@
 package ewewukek.musketmod;
 
-import org.joml.Matrix3f;
-import org.joml.Matrix4f;
-
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.mojang.math.Axis;
@@ -15,10 +12,11 @@ import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.resources.ResourceLocation;
 
 public class BulletRenderer extends EntityRenderer<BulletEntity> {
-    public static final ResourceLocation TEXTURE = new ResourceLocation(MusketMod.MODID + ":textures/entity/bullet.png");
+    public static final ResourceLocation TEXTURE = MusketMod.resource("textures/entity/bullet.png");
+    public static final ResourceLocation TEXTURE_FIRE = MusketMod.resource("textures/entity/bullet_fire.png");
 
-    public BulletRenderer(EntityRendererProvider.Context ctx) {
-        super(ctx);
+    public BulletRenderer(EntityRendererProvider.Context context) {
+        super(context);
     }
 
     @Override
@@ -27,37 +25,43 @@ public class BulletRenderer extends EntityRenderer<BulletEntity> {
     }
 
     @Override
-    public void render(BulletEntity bullet, float yaw, float partialTicks, PoseStack matrixStack, MultiBufferSource render, int packedLight) {
+    public void render(BulletEntity bullet, float yaw, float dt, PoseStack poseStack, MultiBufferSource bufferSource, int light) {
         if (bullet.isFirstTick()) return;
 
-        matrixStack.pushPose();
+        poseStack.pushPose();
 
-        matrixStack.scale(0.1f, 0.1f, 0.1f);
+        if (bullet.pelletCount() == 1) {
+            poseStack.scale(0.1f, 0.1f, 0.1f);
+        } else {
+            poseStack.scale(bullet.isOnFire() ? 0.075f : 0.05f, 0.05f, 0.05f);
+        }
+
         // billboarding
-        matrixStack.mulPose(entityRenderDispatcher.cameraOrientation());
-        matrixStack.mulPose(Axis.YP.rotationDegrees(180));
+        poseStack.mulPose(entityRenderDispatcher.cameraOrientation());
+        poseStack.mulPose(Axis.YP.rotationDegrees(180));
 
-        PoseStack.Pose entry = matrixStack.last();
-        Matrix4f positionMatrix = entry.pose();
-        Matrix3f normalMatrix = entry.normal();
+        PoseStack.Pose pose = poseStack.last();
+        RenderType renderType = RenderType.entityCutoutNoCull(
+            bullet.isOnFire() ? TEXTURE_FIRE : TEXTURE);
+        VertexConsumer builder = bufferSource.getBuffer(renderType);
 
-        VertexConsumer builder = render.getBuffer(RenderType.entityCutout(getTextureLocation(bullet)));
+        addVertex(builder, pose, -1, -1, 0, 0, 1, 0, 0, 1, light);
+        addVertex(builder, pose,  1, -1, 0, 1, 1, 0, 0, 1, light);
+        addVertex(builder, pose,  1,  1, 0, 1, 0, 0, 0, 1, light);
+        addVertex(builder, pose, -1,  1, 0, 0, 0, 0, 0, 1, light);
 
-        addVertex(builder, positionMatrix, normalMatrix, -1, -1, 0, 0, 1, 0, 0, 1, packedLight);
-        addVertex(builder, positionMatrix, normalMatrix,  1, -1, 0, 1, 1, 0, 0, 1, packedLight);
-        addVertex(builder, positionMatrix, normalMatrix,  1,  1, 0, 1, 0, 0, 0, 1, packedLight);
-        addVertex(builder, positionMatrix, normalMatrix, -1,  1, 0, 0, 0, 0, 0, 1, packedLight);
+        poseStack.popPose();
 
-        matrixStack.popPose();
+        super.render(bullet, yaw, dt, poseStack, bufferSource, light);
     }
 
-    void addVertex(VertexConsumer builder, Matrix4f positionMatrix, Matrix3f normalMatrix, float x, float y, float z, float u, float v, float nx, float ny, float nz, int packedLight) {
-        builder.vertex(positionMatrix, x, y, z)
+    void addVertex(VertexConsumer builder, PoseStack.Pose pose, float x, float y, float z, float u, float v, float nx, float ny, float nz, int light) {
+        builder.vertex(pose.pose(), x, y, z)
                .color(255, 255, 255, 255)
                .uv(u, v)
                .overlayCoords(OverlayTexture.NO_OVERLAY)
-               .uv2(packedLight)
-               .normal(normalMatrix, nx, ny, nz)
+               .uv2(light)
+               .normal(pose.normal(), nx, ny, nz)
                .endVertex();
     }
 }

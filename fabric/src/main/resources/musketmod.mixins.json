@@ -3,8 +3,22 @@
   "package": "ewewukek.musketmod.mixin",
   "compatibilityLevel": "JAVA_17",
   "client": [
-    "MixinHeldItemRenderer",
-    "MixinPlayerEntityRenderer"
+    "AbstractClientPlayerMixin",
+    "ItemInHandRendererMixin",
+    "LocalPlayerMixin",
+    "MinecraftMixin",
+    "PlayerMixin",
+    "PlayerRendererMixin",
+    "SkeletonModelMixin"
+  ],
+  "mixins": [
+    "AbstractSkeletonMixin",
+    "EnchantmentHelperMixin",
+    "EnchantmentMixin",
+    "EntityMixin",
+    "LootDataManagerMixin",
+    "LootTableMixin",
+    "PillagerMixin"
   ],
   "injectors": {
     "defaultRequire": 1

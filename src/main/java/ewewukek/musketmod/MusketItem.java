@@ -9,28 +9,19 @@ import net.minecraft.world.entity.ai.attributes.Attribute;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
 
 public class MusketItem extends GunItem {
-    public static final float BAYONET_SPEED = -2.4f;
-
-    public static float bulletStdDev;
-    public static float bulletSpeed;
-    public static float damageMultiplierMin;
-    public static float damageMultiplierMax;
-
-    public static int durability;
-    public static int bayonetDamage;
-
     public final Multimap<Attribute, AttributeModifier> bayonetAttributeModifiers;
 
     public MusketItem(Item.Properties properties, boolean withBayonet) {
-        super(properties.defaultDurability(durability));
+        super(properties);
         if (withBayonet) {
             ImmutableMultimap.Builder<Attribute, AttributeModifier> builder = ImmutableMultimap.builder();
             builder.put(Attributes.ATTACK_DAMAGE, new AttributeModifier(
-                BASE_ATTACK_DAMAGE_UUID, "Weapon modifier", bayonetDamage, AttributeModifier.Operation.ADDITION));
+                BASE_ATTACK_DAMAGE_UUID, "Weapon modifier", Config.bayonetDamage - 1, AttributeModifier.Operation.ADDITION));
             builder.put(Attributes.ATTACK_SPEED, new AttributeModifier(
-                BASE_ATTACK_SPEED_UUID, "Weapon modifier", BAYONET_SPEED, AttributeModifier.Operation.ADDITION));
+                BASE_ATTACK_SPEED_UUID, "Weapon modifier", Config.bayonetSpeed - 4, AttributeModifier.Operation.ADDITION));
             bayonetAttributeModifiers = builder.build();
         } else {
             bayonetAttributeModifiers = null;
@@ -39,37 +30,22 @@ public class MusketItem extends GunItem {
 
     @Override
     public float bulletStdDev() {
-        return bulletStdDev;
+        return Config.musketBulletStdDev;
     }
 
     @Override
     public float bulletSpeed() {
-        return bulletSpeed;
+        return Config.musketBulletSpeed;
     }
 
     @Override
-    public float damageMultiplierMin() {
-        return damageMultiplierMin;
+    public float damage() {
+        return Config.musketDamage;
     }
 
     @Override
-    public float damageMultiplierMax() {
-        return damageMultiplierMax;
-    }
-
-    @Override
-    public SoundEvent fireSound() {
+    public SoundEvent fireSound(ItemStack stack) {
         return Sounds.MUSKET_FIRE;
-    }
-
-    @Override
-    public boolean twoHanded() {
-        return true;
-    }
-
-    @Override
-    public boolean ignoreInvulnerableTime() {
-        return false;
     }
 
     @Override

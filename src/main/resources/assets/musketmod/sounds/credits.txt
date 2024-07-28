@@ -5,6 +5,18 @@ musket_ready.ogg
     uses (CC0) https://opengameart.org/content/equipment-clicks-iii
 musket_load[0,1,2].ogg
     uses (CC0) https://freesound.org/people/ninjaotter/sounds/423288/
+blunderbuss_fire.ogg
+    based on (CC0) https://freesound.org/people/straget/sounds/410552/
+    and bits from (afair) https://www.youtube.com/watch?v=4Zyz63n3uU4
+blunderbuss_fire_flame.ogg
+    based on (CC0) https://freesound.org/people/straget/sounds/410552/
+    and bits from https://www.youtube.com/watch?v=jtY4aiDnoD8
 pistol_fire.ogg
     based on (CC0) https://freesound.org/people/straget/sounds/410552/
     with bits from https://www.youtube.com/watch?v=LAjOnNufato
+dispenser_fire.ogg
+    based on (CC0) https://freesound.org/people/unfa/sounds/609588/
+bullet_fly_by[1,2,3].ogg
+    based on (CC0) https://freesound.org/people/haydensayshi123/sounds/138680/
+bullet_water_splash1[1,2].ogg
+    based on (CC0) https://freesound.org/people/craigsmith/sounds/675947/

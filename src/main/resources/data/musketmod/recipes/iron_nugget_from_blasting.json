@@ -1,5 +1,8 @@
 {
   "type": "minecraft:blasting",
+  "category": "misc",
+  "cookingtime": 100,
+  "experience": 0.1,
   "ingredient": [
     {
       "item": "musketmod:musket"
@@ -8,10 +11,14 @@
       "item": "musketmod:musket_with_bayonet"
     },
     {
+      "item": "musketmod:musket_with_scope"
+    },
+    {
+      "item": "musketmod:blunderbuss"
+    },
+    {
       "item": "musketmod:pistol"
     }
   ],
-  "result": "minecraft:iron_nugget",
-  "experience": 0.1,
-  "cookingtime": 100
+  "result": "minecraft:iron_nugget"
 }

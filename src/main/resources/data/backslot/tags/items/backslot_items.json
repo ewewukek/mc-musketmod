@@ -1,0 +1,9 @@
+{
+  "replace": false,
+  "values": [
+    "musketmod:musket",
+    "musketmod:musket_with_bayonet",
+    "musketmod:musket_with_scope",
+    "musketmod:blunderbuss"
+  ]
+}

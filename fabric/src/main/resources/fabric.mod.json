@@ -16,15 +16,20 @@
     ],
     "client": [
       "ewewukek.musketmod.ClientSetup"
+    ],
+    "modmenu": [
+      "ewewukek.musketmod.ModMenuIntegration"
     ]
   },
+  "accessWidener": "musketmod.aw",
   "mixins": [
     "musketmod.mixins.json"
   ],
   "depends": {
+    "minecraft": "~1.20.1",
+    "java": ">=17",
     "fabricloader": ">=0.14.21",
     "fabric-api": "*",
-    "minecraft": "~1.20.1",
-    "java": ">=17"
+    "cloth-config": "*"
   }
 }

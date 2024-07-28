@@ -1,6 +1,7 @@
 plugins {
     id 'eclipse'
     id 'net.minecraftforge.gradle' version '[6.0,6.2)'
+    id 'org.spongepowered.mixin' version '0.7.+'
 }
 
 file("../gradle.properties").withInputStream {
@@ -10,7 +11,7 @@ file("../gradle.properties").withInputStream {
 }
 
 version = mod_version
-group = maven_group
+group = mod_group
 
 base {
     archivesName = "${mod_name}-${minecraft_version}-forge"
@@ -51,8 +52,36 @@ minecraft {
 sourceSets.main.java { srcDir '../src/main/java' }
 sourceSets.main.resources { srcDir '../src/main/resources' }
 
+repositories {
+    maven { url "https://maven.shedaniel.me/" }
+}
+
 dependencies {
     minecraft "net.minecraftforge:forge:${forge_version}"
+
+    // ./gradlew --console=plain dependencies | grep mixin
+    annotationProcessor 'org.spongepowered:mixin:0.8.7:processor'
+
+    implementation "me.shedaniel.cloth:cloth-config-forge:${cloth_config_version}"
+}
+
+sourceSets.main.refMap = 'mixins.musketmod.refmap.json'
+
+mixin {
+    add sourceSets.main
+    config 'musketmod.mixins.json'
+
+    // debug.verbose = true
+    // debug.export = true
+    dumpTargetOnFailure = true
+}
+
+jar {
+    manifest {
+        attributes([
+            MixinConfigs: 'musketmod.mixins.json',
+        ])
+    }
 }
 
 tasks.named('processResources', ProcessResources).configure {

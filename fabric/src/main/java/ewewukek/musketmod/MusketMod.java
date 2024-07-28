@@ -22,6 +22,7 @@ import net.minecraft.server.packs.PackType;
 import net.minecraft.server.packs.resources.ResourceManager;
 import net.minecraft.util.Unit;
 import net.minecraft.util.profiling.ProfilerFiller;
+import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.CreativeModeTabs;
 import net.minecraft.world.phys.Vec3;
@@ -70,6 +71,10 @@ public class MusketMod implements ModInitializer {
                 }, gameExecutor);
             }
         });
+    }
+
+    public static void disableVelocityUpdate(EntityType.Builder<?> builder) {
+        builder.alwaysUpdateVelocity(false);
     }
 
     public static void sendSmokeEffect(LivingEntity shooter, Vec3 origin, Vec3 direction) {

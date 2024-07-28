@@ -55,11 +55,12 @@ public class BulletEntity extends AbstractHurtingProjectile {
     private boolean packetSpeedReceived;
 
     public static void register(BiConsumer<String, EntityType<?>> helper) {
-        ENTITY_TYPE = EntityType.Builder.<BulletEntity>of(BulletEntity::new, MobCategory.MISC)
+        EntityType.Builder<BulletEntity> builder = EntityType.Builder.<BulletEntity>of(BulletEntity::new, MobCategory.MISC)
             .sized(0.5f, 0.5f)
             .clientTrackingRange(64)
-            .updateInterval(5)
-            .build("bullet");
+            .updateInterval(20);
+        MusketMod.disableVelocityUpdate(builder);
+        ENTITY_TYPE = builder.build("bullet");
         helper.accept("bullet", ENTITY_TYPE);
     }
 

@@ -1,6 +1,7 @@
 package ewewukek.musketmod;
 
 import java.util.Optional;
+import java.util.function.BiConsumer;
 
 import net.minecraft.core.Direction;
 import net.minecraft.core.particles.BlockParticleOption;
@@ -20,6 +21,7 @@ import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.damagesource.DamageType;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.MobCategory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.projectile.AbstractHurtingProjectile;
 import net.minecraft.world.level.ClipContext;
@@ -34,8 +36,8 @@ import net.minecraft.world.phys.Vec3;
 
 public class BulletEntity extends AbstractHurtingProjectile {
     public static final EntityDataAccessor<Float> INITIAL_SPEED = SynchedEntityData.defineId(BulletEntity.class, EntityDataSerializers.FLOAT);
-
     public static final ResourceKey<DamageType> BULLET_DAMAGE = ResourceKey.create(Registries.DAMAGE_TYPE, new ResourceLocation(MusketMod.MODID, "bullet"));
+    public static EntityType<BulletEntity> ENTITY_TYPE;
 
     public static final double MIN_DAMAGE = 0.5;
     public static final double GRAVITY = 0.05;
@@ -52,12 +54,21 @@ public class BulletEntity extends AbstractHurtingProjectile {
 
     private boolean packetSpeedReceived;
 
+    public static void register(BiConsumer<String, EntityType<?>> helper) {
+        ENTITY_TYPE = EntityType.Builder.<BulletEntity>of(BulletEntity::new, MobCategory.MISC)
+            .sized(0.5f, 0.5f)
+            .clientTrackingRange(64)
+            .updateInterval(5)
+            .build("bullet");
+        helper.accept("bullet", ENTITY_TYPE);
+    }
+
     public BulletEntity(EntityType<BulletEntity>entityType, Level world) {
         super(entityType, world);
     }
 
     public BulletEntity(Level world) {
-        this(MusketMod.BULLET_ENTITY_TYPE, world);
+        this(ENTITY_TYPE, world);
     }
 
     public boolean isFirstTick() {

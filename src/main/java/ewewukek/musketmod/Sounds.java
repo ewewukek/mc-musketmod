@@ -1,5 +1,7 @@
 package ewewukek.musketmod;
 
+import java.util.function.Consumer;
+
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundEvent;
 
@@ -10,4 +12,13 @@ public class Sounds {
     public static final SoundEvent MUSKET_READY = SoundEvent.createVariableRangeEvent(new ResourceLocation(MusketMod.MODID, "musket_ready"));
     public static final SoundEvent MUSKET_FIRE = SoundEvent.createVariableRangeEvent(new ResourceLocation(MusketMod.MODID, "musket_fire"));
     public static final SoundEvent PISTOL_FIRE = SoundEvent.createVariableRangeEvent(new ResourceLocation(MusketMod.MODID, "pistol_fire"));
+
+    public static void register(Consumer<SoundEvent> helper) {
+        helper.accept(MUSKET_LOAD_0);
+        helper.accept(MUSKET_LOAD_1);
+        helper.accept(MUSKET_LOAD_2);
+        helper.accept(MUSKET_READY);
+        helper.accept(MUSKET_FIRE);
+        helper.accept(PISTOL_FIRE);
+    }
 }

@@ -5,15 +5,10 @@ import java.util.Optional;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.model.HumanoidModel;
 import net.minecraft.client.model.PlayerModel;
-import net.minecraft.client.multiplayer.ClientLevel;
-import net.minecraft.client.renderer.item.ClampedItemPropertyFunction;
-import net.minecraft.client.renderer.item.ItemProperties;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.HumanoidArm;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.phys.Vec3;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.EventPriority;
 import net.neoforged.bus.api.IEventBus;
@@ -34,16 +29,11 @@ public class ClientSetup {
     }
 
     public void setup(final FMLClientSetupEvent event) {
-        ClampedItemPropertyFunction loaded = (stack, world, player, arg) -> {
-            return GunItem.isLoaded(stack) ? 1 : 0;
-        };
-        ItemProperties.register(Items.MUSKET, new ResourceLocation("loaded"), loaded);
-        ItemProperties.register(Items.MUSKET_WITH_BAYONET, new ResourceLocation("loaded"), loaded);
-        ItemProperties.register(Items.PISTOL, new ResourceLocation("loaded"), loaded);
+        ClientUtilities.registerItemProperties();
     }
 
     public void registerRenderers(final EntityRenderersEvent.RegisterRenderers event) {
-        event.registerEntityRenderer(MusketMod.BULLET_ENTITY_TYPE, BulletRenderer::new);
+        event.registerEntityRenderer(BulletEntity.ENTITY_TYPE, BulletRenderer::new);
     }
 
     public void renderHand(final RenderHandEvent event) {
@@ -73,12 +63,5 @@ public class ClientSetup {
             model.rightArmPose = offhandPose.isPresent() ? offhandPose.get() : model.rightArmPose;
             model.leftArmPose = mainHandPose.isPresent() ? mainHandPose.get() : model.leftArmPose;
         }
-    }
-
-    public static void handleSmokeEffectPacket(SmokeEffectPacket packet) {
-        ClientLevel level = Minecraft.getInstance().level;
-        Vec3 origin = new Vec3(packet.origin());
-        Vec3 direction = new Vec3(packet.direction());
-        GunItem.fireParticles(level, origin, direction);
     }
 }

@@ -13,18 +13,23 @@ import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.HumanoidArm;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
-import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.event.EntityRenderersEvent;
 import net.minecraftforge.client.event.RenderHandEvent;
 import net.minecraftforge.client.event.RenderLivingEvent;
+import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.eventbus.api.EventPriority;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.minecraftforge.fml.common.Mod;
+import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 
-@Mod.EventBusSubscriber(Dist.CLIENT)
 public class ClientSetup {
-    public static void init(final FMLClientSetupEvent event) {
+    public ClientSetup(IEventBus bus) {
+        bus.addListener(this::setup);
+        bus.addListener(this::registerRenderers);
+        MinecraftForge.EVENT_BUS.addListener(EventPriority.LOW, this::renderHand);
+        MinecraftForge.EVENT_BUS.addListener(this::renderPlayer);
+    }
+
+    public void setup(final FMLClientSetupEvent event) {
         ClampedItemPropertyFunction loaded = (stack, world, player, arg) -> {
             return GunItem.isLoaded(stack) ? 1 : 0;
         };
@@ -33,8 +38,11 @@ public class ClientSetup {
         ItemProperties.register(Items.PISTOL, new ResourceLocation("loaded"), loaded);
     }
 
-    @SubscribeEvent(priority = EventPriority.LOW)
-    public static void onRenderHandEvent(final RenderHandEvent event) {
+    public void registerRenderers(final EntityRenderersEvent.RegisterRenderers event) {
+        event.registerEntityRenderer(MusketMod.BULLET_ENTITY_TYPE, BulletRenderer::new);
+    }
+
+    public void renderHand(final RenderHandEvent event) {
         ItemStack stack = event.getItemStack();
         if (!stack.isEmpty() && stack.getItem() instanceof GunItem) {
             Minecraft mc = Minecraft.getInstance();
@@ -47,8 +55,7 @@ public class ClientSetup {
         }
     }
 
-    @SubscribeEvent
-    public static void onRenderLivingEventPre(final RenderLivingEvent.Pre<Player, PlayerModel<Player>> event) {
+    public void renderPlayer(final RenderLivingEvent.Pre<Player, PlayerModel<Player>> event) {
         if (!(event.getEntity() instanceof Player)
          || !(event.getRenderer().getModel() instanceof PlayerModel)) return;
         Player player = (Player)event.getEntity();
@@ -64,15 +71,8 @@ public class ClientSetup {
         }
     }
 
-    public static void handleSmokeEffectPacket(ClientLevel level, MusketMod.SmokeEffectPacket msg) {
-        GunItem.fireParticles(level, msg.origin, msg.direction);
-    }
-
-    @Mod.EventBusSubscriber(bus = Mod.EventBusSubscriber.Bus.MOD)
-    public static class RegistryEvents {
-        @SubscribeEvent
-        public static void onRegisterRenderers(EntityRenderersEvent.RegisterRenderers event) {
-            event.registerEntityRenderer(MusketMod.BULLET_ENTITY_TYPE, BulletRenderer::new);
-        }
+    public static void handleSmokeEffectPacket(MusketMod.SmokeEffectPacket packet) {
+        ClientLevel level = Minecraft.getInstance().level;
+        GunItem.fireParticles(level, packet.origin, packet.direction);
     }
 }

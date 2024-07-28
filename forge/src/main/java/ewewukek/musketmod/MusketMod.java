@@ -4,8 +4,6 @@ import java.nio.file.Path;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Executor;
 
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.core.component.DataComponentType;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.network.FriendlyByteBuf;
@@ -22,11 +20,11 @@ import net.minecraft.world.item.CreativeModeTabs;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.AddReloadListenerEvent;
 import net.minecraftforge.event.BuildCreativeModeTabContentsEvent;
 import net.minecraftforge.event.network.CustomPayloadEvent;
 import net.minecraftforge.eventbus.api.IEventBus;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.DistExecutor;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
@@ -84,8 +82,12 @@ public class MusketMod {
         SOUND_EVENTS.register(Sounds.PISTOL_FIRE.getLocation().getPath(), () -> Sounds.PISTOL_FIRE);
         SOUND_EVENTS.register(bus);
 
-        DistExecutor.unsafeRunWhenOn(Dist.CLIENT, () -> () ->
-            FMLJavaModLoadingContext.get().getModEventBus().addListener(ClientSetup::init));
+        DistExecutor.unsafeRunWhenOn(Dist.CLIENT, () -> () -> new ClientSetup(bus));
+
+        bus.addListener(this::register);
+        bus.addListener(this::creativeTabs);
+        MinecraftForge.EVENT_BUS.addListener(this::reload);
+
         NETWORK_CHANNEL.messageBuilder(SmokeEffectPacket.class)
             .encoder(SmokeEffectPacket::encode)
             .decoder(SmokeEffectPacket::decode)
@@ -93,47 +95,38 @@ public class MusketMod {
             .add();
     }
 
-    @Mod.EventBusSubscriber(bus = Mod.EventBusSubscriber.Bus.MOD)
-    public static class RegistryEvents {
-        @SubscribeEvent
-        public static void onRegisterEvent(final RegisterEvent event) {
-            event.register(ForgeRegistries.Keys.ENTITY_TYPES, helper -> {
-                BULLET_ENTITY_TYPE = EntityType.Builder.<BulletEntity>of(BulletEntity::new, MobCategory.MISC)
-                    .sized(0.5f, 0.5f)
-                    .setTrackingRange(64).setUpdateInterval(5)
-                    .setShouldReceiveVelocityUpdates(false)
-                    .build(MODID + ":bullet");
-                helper.register("bullet", BULLET_ENTITY_TYPE);
-            });
-        }
+    public void register(final RegisterEvent event) {
+        event.register(ForgeRegistries.Keys.ENTITY_TYPES, helper -> {
+            BULLET_ENTITY_TYPE = EntityType.Builder.<BulletEntity>of(BulletEntity::new, MobCategory.MISC)
+                .sized(0.5f, 0.5f)
+                .setTrackingRange(64).setUpdateInterval(5)
+                .setShouldReceiveVelocityUpdates(false)
+                .build(MODID + ":bullet");
+            helper.register(new ResourceLocation(MODID, "bullet"), BULLET_ENTITY_TYPE);
+        });
+    }
 
-        @SubscribeEvent
-        public static void buildContents(BuildCreativeModeTabContentsEvent event) {
-            if (event.getTabKey() == CreativeModeTabs.COMBAT) {
-                event.accept(Items.MUSKET);
-                event.accept(Items.MUSKET_WITH_BAYONET);
-                event.accept(Items.PISTOL);
-                event.accept(Items.CARTRIDGE);
-            }
+    public void creativeTabs(BuildCreativeModeTabContentsEvent event) {
+        if (event.getTabKey() == CreativeModeTabs.COMBAT) {
+            event.accept(Items.MUSKET);
+            event.accept(Items.MUSKET_WITH_BAYONET);
+            event.accept(Items.PISTOL);
+            event.accept(Items.CARTRIDGE);
         }
     }
 
-    @Mod.EventBusSubscriber(bus = Mod.EventBusSubscriber.Bus.FORGE)
-    public static class ServerEvents {
-        @SubscribeEvent
-        public static void onAddReloadListenerEvent(final AddReloadListenerEvent event) {
-            event.addListener(new PreparableReloadListener() {
-                @Override
-                public CompletableFuture<Void> reload(PreparationBarrier stage, ResourceManager resourceManager,
-                    ProfilerFiller preparationsProfiler, ProfilerFiller reloadProfiler, Executor backgroundExecutor,
-                    Executor gameExecutor) {
+    public void reload(final AddReloadListenerEvent event) {
+        event.addListener(new PreparableReloadListener() {
+            @Override
+            public CompletableFuture<Void> reload(PreparationBarrier stage, ResourceManager resourceManager,
+                ProfilerFiller preparationsProfiler, ProfilerFiller reloadProfiler, Executor backgroundExecutor,
+                Executor gameExecutor) {
 
-                    return stage.wait(Unit.INSTANCE).thenRunAsync(() -> {
-                        Config.reload();
-                    }, gameExecutor);
-                }
-            });
-        }
+                return stage.wait(Unit.INSTANCE).thenRunAsync(() -> {
+                    Config.reload();
+                }, gameExecutor);
+            }
+        });
     }
 
     public static void sendSmokeEffect(LivingEntity shooter, Vec3 origin, Vec3 direction) {
@@ -171,8 +164,7 @@ public class MusketMod {
 
         public static void handle(SmokeEffectPacket msg, CustomPayloadEvent.Context ctx) {
             ctx.enqueueWork(() -> {
-                ClientLevel level = Minecraft.getInstance().level;
-                ClientSetup.handleSmokeEffectPacket(level, msg);
+                ClientSetup.handleSmokeEffectPacket(msg);
             });
             ctx.setPacketHandled(true);
         }

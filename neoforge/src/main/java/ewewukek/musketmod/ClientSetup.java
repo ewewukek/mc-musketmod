@@ -15,6 +15,7 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.phys.Vec3;
 import net.neoforged.api.distmarker.Dist;
+import net.neoforged.bus.api.EventPriority;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.fml.common.Mod;
 import net.neoforged.fml.event.lifecycle.FMLClientSetupEvent;
@@ -28,7 +29,7 @@ public class ClientSetup {
     public ClientSetup(IEventBus bus) {
         bus.addListener(this::setup);
         bus.addListener(this::registerRenderers);
-        NeoForge.EVENT_BUS.addListener(this::renderHand);
+        NeoForge.EVENT_BUS.addListener(EventPriority.LOW, this::renderHand);
         NeoForge.EVENT_BUS.addListener(this::renderPlayer);
     }
 

@@ -1,9 +1,15 @@
 package ewewukek.musketmod;
 
 import java.nio.file.Path;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.Executor;
 
 import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.packs.resources.PreparableReloadListener;
+import net.minecraft.server.packs.resources.ResourceManager;
+import net.minecraft.util.Unit;
+import net.minecraft.util.profiling.ProfilerFiller;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.CreativeModeTabs;
 import net.minecraft.world.phys.Vec3;
@@ -11,6 +17,8 @@ import net.neoforged.bus.api.IEventBus;
 import net.neoforged.fml.ModContainer;
 import net.neoforged.fml.common.Mod;
 import net.neoforged.fml.loading.FMLPaths;
+import net.neoforged.neoforge.common.NeoForge;
+import net.neoforged.neoforge.event.AddReloadListenerEvent;
 import net.neoforged.neoforge.event.BuildCreativeModeTabContentsEvent;
 import net.neoforged.neoforge.network.PacketDistributor;
 import net.neoforged.neoforge.network.event.RegisterPayloadHandlersEvent;
@@ -28,6 +36,7 @@ public class MusketMod {
         bus.addListener(this::register);
         bus.addListener(this::creativeTabs);
         bus.addListener(this::registerPacket);
+        NeoForge.EVENT_BUS.addListener(this::reload);
     }
 
     public void register(final RegisterEvent event) {
@@ -66,6 +75,20 @@ public class MusketMod {
                 });
             }
         );
+    }
+
+    public void reload(final AddReloadListenerEvent event) {
+        event.addListener(new PreparableReloadListener() {
+            @Override
+            public CompletableFuture<Void> reload(PreparationBarrier stage, ResourceManager resourceManager,
+                ProfilerFiller preparationsProfiler, ProfilerFiller reloadProfiler, Executor backgroundExecutor,
+                Executor gameExecutor) {
+
+                return stage.wait(Unit.INSTANCE).thenRunAsync(() -> {
+                    Config.reload();
+                }, gameExecutor);
+            }
+        });
     }
 
     public static void sendSmokeEffect(LivingEntity shooter, Vec3 origin, Vec3 direction) {

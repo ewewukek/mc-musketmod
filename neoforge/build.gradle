@@ -1,0 +1,67 @@
+plugins {
+    id 'java-library'
+    id 'eclipse'
+    id 'net.neoforged.gradle.userdev' version '7.0.145'
+}
+
+tasks.named('wrapper', Wrapper).configure {
+    distributionType = Wrapper.DistributionType.BIN
+}
+
+file("../gradle.properties").withInputStream {
+    def props = new Properties()
+    props.load(it)
+    props.each { prop -> project.ext.set(prop.key, prop.value) }
+}
+
+version = mod_version
+group = maven_group
+
+base {
+    archivesName = "${mod_name}-${minecraft_version}-neoforge"
+}
+
+java.toolchain.languageVersion = JavaLanguageVersion.of(21)
+
+eclipse {
+    project { name = "${mod_name}-${minecraft_version}-neoforge" }
+    synchronizationTasks 'genEclipseRuns'
+}
+
+runs {
+    configureEach {
+        workingDirectory project.file('../run')
+        systemProperty 'forge.logging.markers', 'REGISTRIES'
+        systemProperty 'forge.logging.console.level', 'debug'
+        modSource project.sourceSets.main
+    }
+}
+
+sourceSets.main.java { srcDir '../src/main/java' }
+sourceSets.main.resources { srcDir '../src/main/resources' }
+
+sourceSets.each {
+    def dir = layout.buildDirectory.dir("sourcesSets/$it.name")
+    it.output.resourcesDir = dir
+    it.java.destinationDirectory = dir
+}
+
+configurations {
+    runtimeClasspath.extendsFrom localRuntime
+}
+
+dependencies {
+    implementation "net.neoforged:neoforge:${neo_version}"
+}
+
+tasks.withType(ProcessResources).configureEach {
+    filesMatching(['META-INF/neoforge.mods.toml']) {
+        expand [
+            mod_version: mod_version,
+        ]
+    }
+}
+
+tasks.withType(JavaCompile).configureEach {
+    options.encoding = 'UTF-8' // Use the UTF-8 charset for Java compilation
+}

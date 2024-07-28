@@ -9,20 +9,23 @@ import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.HumanoidArm;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
-import net.minecraftforge.client.event.EntityRenderersEvent;
-import net.minecraftforge.client.event.RenderHandEvent;
-import net.minecraftforge.client.event.RenderLivingEvent;
-import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.eventbus.api.EventPriority;
-import net.minecraftforge.eventbus.api.IEventBus;
-import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
+import net.neoforged.api.distmarker.Dist;
+import net.neoforged.bus.api.EventPriority;
+import net.neoforged.bus.api.IEventBus;
+import net.neoforged.fml.common.Mod;
+import net.neoforged.fml.event.lifecycle.FMLClientSetupEvent;
+import net.neoforged.neoforge.client.event.EntityRenderersEvent;
+import net.neoforged.neoforge.client.event.RenderHandEvent;
+import net.neoforged.neoforge.client.event.RenderLivingEvent;
+import net.neoforged.neoforge.common.NeoForge;
 
+@Mod(value = MusketMod.MODID, dist = Dist.CLIENT)
 public class ClientSetup {
     public ClientSetup(IEventBus bus) {
         bus.addListener(this::setup);
         bus.addListener(this::registerRenderers);
-        MinecraftForge.EVENT_BUS.addListener(EventPriority.LOW, this::renderHand);
-        MinecraftForge.EVENT_BUS.addListener(this::renderPlayer);
+        NeoForge.EVENT_BUS.addListener(EventPriority.LOW, this::renderHand);
+        NeoForge.EVENT_BUS.addListener(this::renderPlayer);
     }
 
     public void setup(final FMLClientSetupEvent event) {

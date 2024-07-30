@@ -13,49 +13,48 @@ import org.apache.logging.log4j.Logger;
 
 public class Config {
     private static final Logger logger = LogManager.getLogger(MusketMod.class);
-    public static final Config INSTANCE = new Config();
     public static final int VERSION = 3;
 
-    public double bulletMaxDistance;
+    public static double bulletMaxDistance;
 
-    public double musketBulletStdDev;
-    public double musketBulletSpeed;
-    public double musketDamageMin;
-    public double musketDamageMax;
-    public int musketDurability;
-    public int bayonetDamage;
+    public static double musketBulletStdDev;
+    public static double musketBulletSpeed;
+    public static double musketDamageMin;
+    public static double musketDamageMax;
+    public static int musketDurability;
+    public static int bayonetDamage;
 
-    public double pistolBulletStdDev;
-    public double pistolBulletSpeed;
-    public double pistolDamageMin;
-    public double pistolDamageMax;
-    public int pistolDurability;
+    public static double pistolBulletStdDev;
+    public static double pistolBulletSpeed;
+    public static double pistolDamageMin;
+    public static double pistolDamageMax;
+    public static int pistolDurability;
 
     public static void reload() {
-        INSTANCE.setDefaults();
-        INSTANCE.load();
+        setDefaults();
+        load();
 
-        BulletEntity.maxDistance = INSTANCE.bulletMaxDistance;
+        BulletEntity.maxDistance = bulletMaxDistance;
 
-        MusketItem.bulletStdDev = (float)Math.toRadians(INSTANCE.musketBulletStdDev);
-        MusketItem.bulletSpeed = (float)(INSTANCE.musketBulletSpeed / 20);
+        MusketItem.bulletStdDev = (float)Math.toRadians(musketBulletStdDev);
+        MusketItem.bulletSpeed = (float)(musketBulletSpeed / 20);
         double maxEnergy = MusketItem.bulletSpeed * MusketItem.bulletSpeed;
-        MusketItem.damageMultiplierMin = (float)(INSTANCE.musketDamageMin / maxEnergy);
-        MusketItem.damageMultiplierMax = (float)(INSTANCE.musketDamageMax / maxEnergy);
-        MusketItem.durability = INSTANCE.musketDurability;
-        MusketItem.bayonetDamage = INSTANCE.bayonetDamage;
+        MusketItem.damageMultiplierMin = (float)(musketDamageMin / maxEnergy);
+        MusketItem.damageMultiplierMax = (float)(musketDamageMax / maxEnergy);
+        MusketItem.durability = musketDurability;
+        MusketItem.bayonetDamage = bayonetDamage;
 
-        PistolItem.bulletStdDev = (float)Math.toRadians(INSTANCE.pistolBulletStdDev);
-        PistolItem.bulletSpeed = (float)(INSTANCE.pistolBulletSpeed / 20);
+        PistolItem.bulletStdDev = (float)Math.toRadians(pistolBulletStdDev);
+        PistolItem.bulletSpeed = (float)(pistolBulletSpeed / 20);
         maxEnergy = PistolItem.bulletSpeed * PistolItem.bulletSpeed;
-        PistolItem.damageMultiplierMin = (float)(INSTANCE.pistolDamageMin / maxEnergy);
-        PistolItem.damageMultiplierMax = (float)(INSTANCE.pistolDamageMax / maxEnergy);
-        PistolItem.durability = INSTANCE.pistolDurability;
+        PistolItem.damageMultiplierMin = (float)(pistolDamageMin / maxEnergy);
+        PistolItem.damageMultiplierMax = (float)(pistolDamageMax / maxEnergy);
+        PistolItem.durability = pistolDurability;
 
         logger.info("Configuration has been loaded");
     }
 
-    private void setDefaults() {
+    public static void setDefaults() {
         bulletMaxDistance = 256;
 
         musketBulletStdDev = 1;
@@ -72,7 +71,7 @@ public class Config {
         pistolDurability = 150;
     }
 
-    private void load() {
+    public static void load() {
         int version = 0;
         try (BufferedReader reader = Files.newBufferedReader(MusketMod.CONFIG_PATH)) {
             String line;
@@ -168,7 +167,7 @@ public class Config {
         }
     }
 
-    private void save() {
+    public static void save() {
         try (BufferedWriter writer = Files.newBufferedWriter(MusketMod.CONFIG_PATH)) {
             writer.write("version = "+VERSION+"\n");
             writer.write("\n");

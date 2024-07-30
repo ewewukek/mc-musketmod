@@ -16,19 +16,31 @@ public class Config {
     public static final int VERSION = 3;
 
     public static double bulletMaxDistance;
+    public static final double BULLET_MAX_DISTANCE = 256.0;
 
     public static double musketBulletStdDev;
+    public static final double MUSKET_BULLET_STD_DEV = 1.0;
     public static double musketBulletSpeed;
+    public static final double MUSKET_BULLET_SPEED = 180.0;
     public static double musketDamageMin;
+    public static final double MUSKET_DAMAGE_MIN = 20.5;
     public static double musketDamageMax;
+    public static final double MUSKET_DAMAGE_MAX = 21.0;
     public static int musketDurability;
+    public static final int MUSKET_DURABILITY = 250;
     public static int bayonetDamage;
+    public static final int BAYONET_DAMAGE = 4;
 
     public static double pistolBulletStdDev;
+    public static final double PISTOL_BULLET_STD_DEV = 1.5;
     public static double pistolBulletSpeed;
+    public static final double PISTOL_BULLET_SPEED = 140.0;
     public static double pistolDamageMin;
+    public static final double PISTOL_DAMAGE_MIN = 12.0;
     public static double pistolDamageMax;
+    public static final double PISTOL_DAMAGE_MAX = 12.5;
     public static int pistolDurability;
+    public static final int PISTOL_DURABILITY = 150;
 
     public static void reload() {
         setDefaults();
@@ -55,20 +67,20 @@ public class Config {
     }
 
     public static void setDefaults() {
-        bulletMaxDistance = 256;
+        bulletMaxDistance = BULLET_MAX_DISTANCE;
 
-        musketBulletStdDev = 1;
-        musketBulletSpeed = 180;
-        musketDamageMin = 20.5;
-        musketDamageMax = 21;
-        musketDurability = 250;
-        bayonetDamage = 4;
+        musketBulletStdDev = MUSKET_BULLET_STD_DEV;
+        musketBulletSpeed = MUSKET_BULLET_SPEED;
+        musketDamageMin = MUSKET_DAMAGE_MIN;
+        musketDamageMax = MUSKET_DAMAGE_MAX;
+        musketDurability = MUSKET_DURABILITY;
+        bayonetDamage = BAYONET_DAMAGE;
 
-        pistolBulletStdDev = 1.5;
-        pistolBulletSpeed = 140;
-        pistolDamageMin = 12;
-        pistolDamageMax = 12.5;
-        pistolDurability = 150;
+        pistolBulletStdDev = PISTOL_BULLET_STD_DEV;
+        pistolBulletSpeed = PISTOL_BULLET_SPEED;
+        pistolDamageMin = PISTOL_DAMAGE_MIN;
+        pistolDamageMax = PISTOL_DAMAGE_MAX;
+        pistolDurability = PISTOL_DURABILITY;
     }
 
     public static void load() {

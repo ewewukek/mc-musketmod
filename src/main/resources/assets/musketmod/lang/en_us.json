@@ -3,5 +3,14 @@
   "item.musketmod.cartridge": "Paper Cartridge",
   "item.musketmod.musket": "Musket",
   "item.musketmod.musket_with_bayonet": "Musket with bayonet",
-  "item.musketmod.pistol": "Flintlock Pistol"
+  "item.musketmod.pistol": "Flintlock Pistol",
+  "musketmod.options.title": "Musket Mod",
+  "musketmod.options.common": "Common settings",
+  "musketmod.options.bullet_max_distance": "Bullet max travel distance (blocks)",
+  "musketmod.options.bullet_std_dev": "Standard deviation of bullet spread (degrees)",
+  "musketmod.options.bullet_speed": "Muzzle velocity of bullet (blocks/second)",
+  "musketmod.options.damage_min": "Minimum damage at point-blank range",
+  "musketmod.options.damage_max": "Maximum damage at point-blank range",
+  "musketmod.options.durability": "Durability (applied on restart)",
+  "musketmod.options.bayonet_damage": "Added bayonet damage (applied on restart)"
 }

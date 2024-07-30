@@ -38,6 +38,7 @@ runs {
 }
 
 sourceSets.main.java { srcDir '../src/main/java' }
+sourceSets.main.java { srcDir '../src/modmenu/java' }
 sourceSets.main.resources { srcDir '../src/main/resources' }
 
 sourceSets.each {
@@ -50,8 +51,14 @@ configurations {
     runtimeClasspath.extendsFrom localRuntime
 }
 
+repositories {
+    maven { url "https://maven.shedaniel.me/" }
+}
+
 dependencies {
     implementation "net.neoforged:neoforge:${neo_version}"
+
+    implementation "me.shedaniel.cloth:cloth-config-neoforge:${cloth_config_version}"
 }
 
 tasks.withType(ProcessResources).configureEach {

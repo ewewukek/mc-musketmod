@@ -20,6 +20,7 @@ eclipse {
 }
 
 sourceSets.main.java { srcDir '../src/main/java' }
+sourceSets.main.java { srcDir '../src/modmenu/java' }
 sourceSets.main.resources { srcDir '../src/main/resources' }
 
 loom {
@@ -35,11 +36,21 @@ loom {
     }
 }
 
+repositories {
+    maven { url "https://maven.shedaniel.me/" }
+    maven { url "https://maven.terraformersmc.com/" }
+}
+
 dependencies {
     minecraft "com.mojang:minecraft:${minecraft_version}"
     mappings loom.officialMojangMappings()
     modImplementation "net.fabricmc:fabric-loader:${fabric_loader_version}"
     modImplementation "net.fabricmc.fabric-api:fabric-api:${fabric_version}"
+
+    modImplementation "com.terraformersmc:modmenu:${project.modmenu_version}"
+    modApi("me.shedaniel.cloth:cloth-config-fabric:${project.cloth_config_version}") {
+        exclude(group: "net.fabricmc.fabric-api")
+    }
 }
 
 processResources {

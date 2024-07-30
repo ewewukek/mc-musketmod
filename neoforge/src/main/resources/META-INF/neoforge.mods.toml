@@ -2,6 +2,7 @@ modLoader="javafml"
 loaderVersion="[4,)"
 license="MIT License"
 issueTrackerURL="https://github.com/ewewukek/mc-musketmod/issues"
+
 [[mods]]
 modId="musketmod"
 version="${mod_version}"
@@ -14,3 +15,10 @@ authors="ewewukek"
 description='''
 Small mod that adds craftable muskets and pistols.
 '''
+
+[[dependencies.musketmod]]
+modId="cloth_config"
+type="required"
+versionRange="[15.0,)"
+ordering="NONE"
+side="CLIENT"

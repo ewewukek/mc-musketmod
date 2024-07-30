@@ -16,8 +16,10 @@ import net.minecraft.world.item.CreativeModeTabs;
 import net.minecraft.world.phys.Vec3;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.fml.ModContainer;
+import net.neoforged.fml.ModLoadingContext;
 import net.neoforged.fml.common.Mod;
 import net.neoforged.fml.loading.FMLPaths;
+import net.neoforged.neoforge.client.gui.IConfigScreenFactory;
 import net.neoforged.neoforge.common.NeoForge;
 import net.neoforged.neoforge.event.AddReloadListenerEvent;
 import net.neoforged.neoforge.event.BuildCreativeModeTabContentsEvent;
@@ -33,6 +35,8 @@ public class MusketMod {
 
     public MusketMod(IEventBus bus, ModContainer modContainer) {
         Config.reload();
+        ModLoadingContext.get().registerExtensionPoint(IConfigScreenFactory.class,
+            () -> (container, parent) -> ClothConfigScreen.build(parent));
 
         bus.addListener(this::register);
         bus.addListener(this::creativeTabs);

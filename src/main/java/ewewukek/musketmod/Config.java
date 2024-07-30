@@ -18,11 +18,11 @@ public class Config {
 
     public double bulletMaxDistance;
 
-    public double bulletStdDev;
-    public double bulletSpeed;
-    public double damageMin;
-    public double damageMax;
-    public int durability;
+    public double musketBulletStdDev;
+    public double musketBulletSpeed;
+    public double musketDamageMin;
+    public double musketDamageMax;
+    public int musketDurability;
     public int bayonetDamage;
 
     public double pistolBulletStdDev;
@@ -31,19 +31,18 @@ public class Config {
     public double pistolDamageMax;
     public int pistolDurability;
 
-
     public static void reload() {
         INSTANCE.setDefaults();
         INSTANCE.load();
 
         BulletEntity.maxDistance = INSTANCE.bulletMaxDistance;
 
-        MusketItem.bulletStdDev = (float)Math.toRadians(INSTANCE.bulletStdDev);
-        MusketItem.bulletSpeed = (float)(INSTANCE.bulletSpeed / 20);
+        MusketItem.bulletStdDev = (float)Math.toRadians(INSTANCE.musketBulletStdDev);
+        MusketItem.bulletSpeed = (float)(INSTANCE.musketBulletSpeed / 20);
         double maxEnergy = MusketItem.bulletSpeed * MusketItem.bulletSpeed;
-        MusketItem.damageMultiplierMin = (float)(INSTANCE.damageMin / maxEnergy);
-        MusketItem.damageMultiplierMax = (float)(INSTANCE.damageMax / maxEnergy);
-        MusketItem.durability = INSTANCE.durability;
+        MusketItem.damageMultiplierMin = (float)(INSTANCE.musketDamageMin / maxEnergy);
+        MusketItem.damageMultiplierMax = (float)(INSTANCE.musketDamageMax / maxEnergy);
+        MusketItem.durability = INSTANCE.musketDurability;
         MusketItem.bayonetDamage = INSTANCE.bayonetDamage;
 
         PistolItem.bulletStdDev = (float)Math.toRadians(INSTANCE.pistolBulletStdDev);
@@ -59,11 +58,11 @@ public class Config {
     private void setDefaults() {
         bulletMaxDistance = 256;
 
-        bulletStdDev = 1;
-        bulletSpeed = 180;
-        damageMin = 20.5;
-        damageMax = 21;
-        durability = 250;
+        musketBulletStdDev = 1;
+        musketBulletSpeed = 180;
+        musketDamageMin = 20.5;
+        musketDamageMax = 21;
+        musketDurability = 250;
         bayonetDamage = 4;
 
         pistolBulletStdDev = 1.5;
@@ -110,20 +109,25 @@ public class Config {
                     case "bulletMaxDistance":
                         bulletMaxDistance = value;
                         break;
-                    case "bulletStdDev":
-                        bulletStdDev = value;
+                    case "bulletStdDev": // COMPAT
+                    case "musketBulletStdDev":
+                        musketBulletStdDev = value;
                         break;
-                    case "bulletSpeed":
-                        bulletSpeed = value;
+                    case "bulletSpeed": // COMPAT
+                    case "musketBulletSpeed":
+                        musketBulletSpeed = value;
                         break;
-                    case "damageMin":
-                        damageMin = value;
+                    case "damageMin": // COMPAT
+                    case "musketDamageMin":
+                        musketDamageMin = value;
                         break;
-                    case "damageMax":
-                        damageMax = value;
+                    case "damageMax": // COMPAT
+                    case "musketDamageMax":
+                        musketDamageMax = value;
                         break;
-                    case "durability":
-                        durability = (int)value;
+                    case "durability": // COMPAT
+                    case "musketDurability":
+                        musketDurability = (int)value;
                         break;
                     case "bayonetDamage":
                         bayonetDamage = (int)value;
@@ -158,7 +162,7 @@ public class Config {
         if (version < VERSION) {
             logger.info("Configuration file belongs to older version, updating");
             if (version < 2) {
-                if (damageMax == 21.5) damageMax = 21;
+                if (musketDamageMax == 21.5) musketDamageMax = 21;
             }
             save();
         }
@@ -174,15 +178,15 @@ public class Config {
             writer.write("# Musket\n");
             writer.write("\n");
             writer.write("# Standard deviation of bullet spread (in degrees)\n");
-            writer.write("bulletStdDev = "+bulletStdDev+"\n");
+            writer.write("musketBulletStdDev = "+musketBulletStdDev+"\n");
             writer.write("# Muzzle velocity of bullet (in blocks per second)\n");
-            writer.write("bulletSpeed = "+bulletSpeed+"\n");
+            writer.write("musketBulletSpeed = "+musketBulletSpeed+"\n");
             writer.write("# Minimum damage at point-blank range\n");
-            writer.write("damageMin = "+damageMin+"\n");
+            writer.write("musketDamageMin = "+musketDamageMin+"\n");
             writer.write("# Maximum damage at point-blank range\n");
-            writer.write("damageMax = "+damageMax+"\n");
+            writer.write("musketDamageMax = "+musketDamageMax+"\n");
             writer.write("# Durability (applied on restart)\n");
-            writer.write("durability = "+durability+"\n");
+            writer.write("musketDurability = "+musketDurability+"\n");
             writer.write("# Added bayonet damage (applied on restart)\n");
             writer.write("bayonetDamage = "+bayonetDamage+"\n");
             writer.write("\n");

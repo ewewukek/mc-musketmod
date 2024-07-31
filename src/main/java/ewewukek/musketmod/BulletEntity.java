@@ -3,6 +3,7 @@ package ewewukek.musketmod;
 import java.util.Optional;
 import java.util.function.BiConsumer;
 
+import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.particles.BlockParticleOption;
 import net.minecraft.core.particles.ParticleTypes;
@@ -27,6 +28,8 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.projectile.AbstractHurtingProjectile;
 import net.minecraft.world.level.ClipContext;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.TntBlock;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.material.FluidState;
 import net.minecraft.world.phys.AABB;
@@ -76,12 +79,16 @@ public class BulletEntity extends AbstractHurtingProjectile {
         return tickCounter == 0;
     }
 
-    public DamageSource causeMusketDamage(BulletEntity bullet, Entity attacker) {
-        return level().damageSources().source(BULLET_DAMAGE, bullet, attacker);
-    }
-
     public void discardOnNextTick() {
         tickCounter = LIFETIME;
+    }
+
+    public float calculateDamage() {
+        return damageMultiplier * (float)getDeltaMovement().lengthSqr();
+    }
+
+    public DamageSource causeMusketDamage(BulletEntity bullet, Entity attacker) {
+        return level().damageSources().source(BULLET_DAMAGE, bullet, attacker);
     }
 
     @Override
@@ -176,6 +183,17 @@ public class BulletEntity extends AbstractHurtingProjectile {
         if (hitResult.getType() != HitResult.Type.MISS) {
             if (!level.isClientSide) {
                 onHit(hitResult);
+                if (hitResult.getType() == HitResult.Type.BLOCK && calculateDamage() > MIN_DAMAGE) {
+                    BlockHitResult blockHitResult = (BlockHitResult)hitResult;
+                    BlockPos blockPos = blockHitResult.getBlockPos();
+                    BlockState blockState = level().getBlockState(blockPos);
+                    // should not get ignited twice
+                    // since first time would remove the block
+                    if (blockState.getBlock() == Blocks.TNT) {
+                        TntBlock.explode(level(), blockPos);
+                        level.removeBlock(blockPos, false);
+                    }
+                }
                 discardOnNextTick();
 
             } else if (hitResult.getType() == HitResult.Type.BLOCK) {
@@ -230,7 +248,7 @@ public class BulletEntity extends AbstractHurtingProjectile {
             Entity shooter = getOwner();
             DamageSource damagesource = causeMusketDamage(this, shooter != null ? shooter : this);
 
-            float damage = damageMultiplier * (float)getDeltaMovement().lengthSqr();
+            float damage = calculateDamage();
             if ((shooter instanceof Player) && (target instanceof Player)) {
                 damage *= Config.pvpDamageMultiplier;
             }

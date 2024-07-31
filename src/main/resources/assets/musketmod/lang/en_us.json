@@ -6,6 +6,7 @@
   "item.musketmod.pistol": "Flintlock Pistol",
   "musketmod.options.title": "Musket Mod",
   "musketmod.options.common": "Common settings",
+  "musketmod.options.pvp_damage_multiplier": "Damage multiplier for PvP",
   "musketmod.options.bullet_max_distance": "Bullet max travel distance (blocks)",
   "musketmod.options.bullet_std_dev": "Standard deviation of bullet spread (degrees)",
   "musketmod.options.bullet_speed": "Muzzle velocity of bullet (blocks/second)",

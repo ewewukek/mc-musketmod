@@ -22,6 +22,13 @@ public class ClothConfigScreen {
             .setDefaultValue(Config.BULLET_MAX_DISTANCE)
             .build());
 
+        commonCategory.addEntry(entryBuilder.startDoubleField(
+            Component.translatable("musketmod.options.pvp_damage_multiplier"), Config.pvpDamageMultiplier)
+            .setSaveConsumer(value -> Config.pvpDamageMultiplier = value)
+            .setMin(0.0)
+            .setDefaultValue(Config.PVP_DAMAGE_MULTIPLIER)
+            .build());
+
         ConfigCategory musketCategory = builder.getOrCreateCategory(Component.translatable("item.musketmod.musket"));
 
         musketCategory.addEntry(entryBuilder.startDoubleField(

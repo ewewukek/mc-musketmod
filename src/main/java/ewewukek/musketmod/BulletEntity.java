@@ -233,6 +233,9 @@ public class BulletEntity extends AbstractHurtingProjectile {
             DamageSource damagesource = causeMusketDamage(this, shooter != null ? shooter : this);
 
             float damage = damageMultiplier * (float)getDeltaMovement().lengthSqr();
+            if ((shooter instanceof Player) && (target instanceof Player)) {
+                damage *= Config.pvpDamageMultiplier;
+            }
             if (damage > MIN_DAMAGE) {
                 int oldInvulnerableTime = target.invulnerableTime;
                 if (ignoreInvulnerableTime) target.invulnerableTime = 0;

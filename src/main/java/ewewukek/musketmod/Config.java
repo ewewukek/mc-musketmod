@@ -13,10 +13,13 @@ import org.apache.logging.log4j.Logger;
 
 public class Config {
     private static final Logger logger = LogManager.getLogger(MusketMod.class);
-    public static final int VERSION = 3;
+    public static final int VERSION = 4;
 
     public static double bulletMaxDistance;
     public static final double BULLET_MAX_DISTANCE = 256.0;
+
+    public static double pvpDamageMultiplier;
+    public static final double PVP_DAMAGE_MULTIPLIER = 1.0;
 
     public static double musketBulletStdDev;
     public static final double MUSKET_BULLET_STD_DEV = 1.0;
@@ -68,6 +71,7 @@ public class Config {
 
     public static void setDefaults() {
         bulletMaxDistance = BULLET_MAX_DISTANCE;
+        pvpDamageMultiplier = PVP_DAMAGE_MULTIPLIER;
 
         musketBulletStdDev = MUSKET_BULLET_STD_DEV;
         musketBulletSpeed = MUSKET_BULLET_SPEED;
@@ -119,6 +123,9 @@ public class Config {
                         break;
                     case "bulletMaxDistance":
                         bulletMaxDistance = value;
+                        break;
+                    case "pvpDamageMultiplier":
+                        pvpDamageMultiplier = value;
                         break;
                     case "bulletStdDev": // COMPAT
                     case "musketBulletStdDev":
@@ -185,6 +192,8 @@ public class Config {
             writer.write("\n");
             writer.write("# Maximum bullet travel distance (in blocks)\n");
             writer.write("bulletMaxDistance = "+bulletMaxDistance+"\n");
+            writer.write("# Damage multiplier for pvp\n");
+            writer.write("pvpDamageMultiplier = "+pvpDamageMultiplier+"\n");
             writer.write("\n");
             writer.write("# Musket\n");
             writer.write("\n");

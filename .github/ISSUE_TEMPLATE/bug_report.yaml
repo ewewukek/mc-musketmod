@@ -1,0 +1,71 @@
+name: Bug Report
+description: Report an issue with supported versions of Musket Mod
+labels: ["bug"]
+body:
+  - type: markdown
+    id: md-description
+    attributes:
+      value: "Please enter the following contents"
+  - type: input
+    id: mc-version
+    attributes:
+      label: Minecraft Version
+      placeholder: eg. 1.18.2
+    validations:
+      required: true
+  - type: dropdown
+    id: ModLoader
+    attributes:
+      label: ModLoader
+      options:
+        - Forge
+        - Fabric
+        - Neoforge
+      multiple : true
+    validations :
+      required : true
+  - type: input
+    id: mod-version
+    attributes:
+      label: Musket Mod version
+      placeholder: eg. Musket Mod-1.21-Neoforge-1.4.8
+    validations:
+      required: true
+  - type: input
+    id: modList
+    attributes:
+      label: Modpack info or mod list(please reduce mod range)
+      description: |
+        If playing a modpack, post the link to it!
+        if not , use a paste site such as [gist](https://gist.github.com/) / [pastebin](https://pastebin.com/) / etc."
+        to list all the mods you use
+        please try to reduce the mod range before you open this issue
+    validations:
+      required: true
+  - type: input
+    id: log-file
+    attributes:
+      label: "The latest.log file and hs_err_pidXXX if exists"
+      description: "Please use a paste site such as [gist](https://gist.github.com/) / [pastebin](https://pastebin.com/) / etc."
+    validations:
+      required: true
+  - type: textarea
+    id: issue-description
+    attributes:
+      label: Issue description
+      placeholder: A description of the issue.
+    validations:
+      required: true
+  - type: textarea
+    id: reproduce
+    attributes:
+      label: Steps to reproduce
+      placeholder: |
+        1. First step
+        2. Second step
+        3. etc...
+  - type: textarea
+    id: other-information
+    attributes:
+      label: Other information
+      description: Any other relevant information that is related to this issue, such as other mods and their versions.

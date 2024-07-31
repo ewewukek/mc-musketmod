@@ -1,0 +1,30 @@
+name: Feature/Enhancement request
+description: Request a feature/enhancement with supported versions of Musket Mod
+labels: ["enhancement"]
+body:
+  - type: input
+    id: mc-version
+    attributes:
+      label: Minecraft Version
+      placeholder: eg. 1.18.2
+      description: Requested minecraft version, when applicable.
+  - type: dropdown
+    id: ModLoader
+    attributes:
+      label: ModLoader
+      options:
+        - Forge
+        - Fabric
+        - Neoforge
+      multiple : true
+      description: Requested mod loader, when applicable.
+  - type: textarea
+    id: request-information
+    attributes:
+      label: Request information
+      description: What you want added/changed, in detail.
+  - type: textarea
+    id: other-information
+    attributes:
+      label: Other information
+      description: Any other relevant information that is related to this issue, such as other mods that will be needed.

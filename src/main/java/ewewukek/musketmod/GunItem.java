@@ -198,8 +198,8 @@ public abstract class GunItem extends Item {
         RandomSource random = shooter.getRandom();
         Level level = shooter.level();
 
-        float angle = (float) Math.PI * 2 * random.nextFloat();
-        float gaussian = Math.abs((float) random.nextGaussian());
+        float angle = (float)Math.PI * 2 * random.nextFloat();
+        float gaussian = Math.abs((float)random.nextGaussian());
         if (gaussian > 4) gaussian = 4;
 
         float spread = (float)Math.toRadians(bulletStdDev()) * gaussian;

@@ -27,22 +27,22 @@ public class MusketItem extends GunItem {
 
     @Override
     public float bulletStdDev() {
-        return (float)Config.musketBulletStdDev;
+        return Config.musketBulletStdDev;
     }
 
     @Override
     public float bulletSpeed() {
-        return (float)Config.musketBulletSpeed;
+        return Config.musketBulletSpeed;
     }
 
     @Override
     public float damageMin() {
-        return (float)Config.musketDamageMin;
+        return Config.musketDamageMin;
     }
 
     @Override
     public float damageMax() {
-        return (float)Config.musketDamageMax;
+        return Config.musketDamageMax;
     }
 
     @Override

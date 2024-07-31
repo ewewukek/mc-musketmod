@@ -9,22 +9,22 @@ public class PistolItem extends GunItem {
 
     @Override
     public float bulletStdDev() {
-        return (float)Config.pistolBulletStdDev;
+        return Config.pistolBulletStdDev;
     }
 
     @Override
     public float bulletSpeed() {
-        return (float)Config.pistolBulletSpeed;
+        return Config.pistolBulletSpeed;
     }
 
     @Override
     public float damageMin() {
-        return (float)Config.pistolDamageMin;
+        return Config.pistolDamageMin;
     }
 
     @Override
     public float damageMax() {
-        return (float)Config.pistolDamageMax;
+        return Config.pistolDamageMax;
     }
 
     @Override

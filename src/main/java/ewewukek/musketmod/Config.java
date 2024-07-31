@@ -15,33 +15,33 @@ public class Config {
     private static final Logger logger = LogManager.getLogger(MusketMod.class);
     public static final int VERSION = 4;
 
-    public static double bulletMaxDistance;
-    public static final double BULLET_MAX_DISTANCE = 256.0;
+    public static float bulletMaxDistance;
+    public static final float BULLET_MAX_DISTANCE = 256.0f;
 
-    public static double pvpDamageMultiplier;
-    public static final double PVP_DAMAGE_MULTIPLIER = 1.0;
+    public static float pvpDamageMultiplier;
+    public static final float PVP_DAMAGE_MULTIPLIER = 1.0f;
 
-    public static double musketBulletStdDev;
-    public static final double MUSKET_BULLET_STD_DEV = 1.0;
-    public static double musketBulletSpeed;
-    public static final double MUSKET_BULLET_SPEED = 180.0;
-    public static double musketDamageMin;
-    public static final double MUSKET_DAMAGE_MIN = 20.5;
-    public static double musketDamageMax;
-    public static final double MUSKET_DAMAGE_MAX = 21.0;
+    public static float musketBulletStdDev;
+    public static final float MUSKET_BULLET_STD_DEV = 1.0f;
+    public static float musketBulletSpeed;
+    public static final float MUSKET_BULLET_SPEED = 180.0f;
+    public static float musketDamageMin;
+    public static final float MUSKET_DAMAGE_MIN = 20.5f;
+    public static float musketDamageMax;
+    public static final float MUSKET_DAMAGE_MAX = 21.0f;
     public static int musketDurability;
     public static final int MUSKET_DURABILITY = 250;
     public static int bayonetDamage;
     public static final int BAYONET_DAMAGE = 4;
 
-    public static double pistolBulletStdDev;
-    public static final double PISTOL_BULLET_STD_DEV = 1.5;
-    public static double pistolBulletSpeed;
-    public static final double PISTOL_BULLET_SPEED = 140.0;
-    public static double pistolDamageMin;
-    public static final double PISTOL_DAMAGE_MIN = 12.0;
-    public static double pistolDamageMax;
-    public static final double PISTOL_DAMAGE_MAX = 12.5;
+    public static float pistolBulletStdDev;
+    public static final float PISTOL_BULLET_STD_DEV = 1.5f;
+    public static float pistolBulletSpeed;
+    public static final float PISTOL_BULLET_SPEED = 140.0f;
+    public static float pistolDamageMin;
+    public static final float PISTOL_DAMAGE_MIN = 12.0f;
+    public static float pistolDamageMax;
+    public static final float PISTOL_DAMAGE_MAX = 12.5f;
     public static int pistolDurability;
     public static final int PISTOL_DURABILITY = 150;
 
@@ -93,11 +93,11 @@ public class Config {
                     }
                     String key = s.next().trim();
 
-                    if (!s.hasNextDouble()) {
+                    if (!s.hasNextFloat()) {
                         logger.warn(errorPrefix+"value is missing/wrong/not a number");
                         continue;
                     }
-                    double value = s.nextDouble();
+                    float value = s.nextFloat();
 
                     switch (key) {
                     case "version":

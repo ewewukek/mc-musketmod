@@ -23,6 +23,8 @@ body:
     attributes:
       label: Request information
       description: What you want added/changed, in detail.
+    validations :
+      required : true
   - type: textarea
     id: other-information
     attributes:

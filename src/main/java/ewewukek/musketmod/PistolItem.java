@@ -3,35 +3,28 @@ package ewewukek.musketmod;
 import net.minecraft.sounds.SoundEvent;
 
 public class PistolItem extends GunItem {
-    public static float bulletStdDev;
-    public static float bulletSpeed;
-    public static float damageMultiplierMin;
-    public static float damageMultiplierMax;
-
-    public static int durability;
-
     public PistolItem(Properties properties) {
-        super(properties.durability(durability));
+        super(properties.durability(Config.pistolDurability));
     }
 
     @Override
     public float bulletStdDev() {
-        return bulletStdDev;
+        return (float)Config.pistolBulletStdDev;
     }
 
     @Override
     public float bulletSpeed() {
-        return bulletSpeed;
+        return (float)Config.pistolBulletSpeed;
     }
 
     @Override
-    public float damageMultiplierMin() {
-        return damageMultiplierMin;
+    public float damageMin() {
+        return (float)Config.pistolDamageMin;
     }
 
     @Override
-    public float damageMultiplierMax() {
-        return damageMultiplierMax;
+    public float damageMax() {
+        return (float)Config.pistolDamageMax;
     }
 
     @Override

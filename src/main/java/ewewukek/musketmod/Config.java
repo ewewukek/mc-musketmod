@@ -48,24 +48,6 @@ public class Config {
     public static void reload() {
         setDefaults();
         load();
-
-        BulletEntity.maxDistance = bulletMaxDistance;
-
-        MusketItem.bulletStdDev = (float)Math.toRadians(musketBulletStdDev);
-        MusketItem.bulletSpeed = (float)(musketBulletSpeed / 20);
-        double maxEnergy = MusketItem.bulletSpeed * MusketItem.bulletSpeed;
-        MusketItem.damageMultiplierMin = (float)(musketDamageMin / maxEnergy);
-        MusketItem.damageMultiplierMax = (float)(musketDamageMax / maxEnergy);
-        MusketItem.durability = musketDurability;
-        MusketItem.bayonetDamage = bayonetDamage;
-
-        PistolItem.bulletStdDev = (float)Math.toRadians(pistolBulletStdDev);
-        PistolItem.bulletSpeed = (float)(pistolBulletSpeed / 20);
-        maxEnergy = PistolItem.bulletSpeed * PistolItem.bulletSpeed;
-        PistolItem.damageMultiplierMin = (float)(pistolDamageMin / maxEnergy);
-        PistolItem.damageMultiplierMax = (float)(pistolDamageMax / maxEnergy);
-        PistolItem.durability = pistolDurability;
-
         logger.info("Configuration has been loaded");
     }
 

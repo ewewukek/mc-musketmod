@@ -48,8 +48,8 @@ public abstract class GunItem extends Item {
 
     public abstract float bulletStdDev();
     public abstract float bulletSpeed();
-    public abstract float damageMultiplierMin();
-    public abstract float damageMultiplierMax();
+    public abstract float damageMin();
+    public abstract float damageMax();
     public abstract SoundEvent fireSound();
     public abstract boolean twoHanded();
     public abstract boolean ignoreInvulnerableTime();
@@ -202,7 +202,8 @@ public abstract class GunItem extends Item {
         float gaussian = Math.abs((float) random.nextGaussian());
         if (gaussian > 4) gaussian = 4;
 
-        float spread = bulletStdDev() * gaussian;
+        float spread = (float)Math.toRadians(bulletStdDev()) * gaussian;
+        float tickSpeed = bulletSpeed() / 20; // to blocks per tick
 
         // a plane perpendicular to direction
         Vec3 n1;
@@ -218,17 +219,20 @@ public abstract class GunItem extends Item {
         Vec3 motion = direction.scale(Mth.cos(spread))
             .add(n1.scale(Mth.sin(spread) * Mth.sin(angle))) // signs are not important for random angle
             .add(n2.scale(Mth.sin(spread) * Mth.cos(angle)))
-            .scale(bulletSpeed());
+            .scale(tickSpeed);
 
         Vec3 origin = new Vec3(shooter.getX(), shooter.getEyeY(), shooter.getZ());
 
         BulletEntity bullet = new BulletEntity(level);
         bullet.setOwner(shooter);
         bullet.setPos(origin);
-        bullet.setInitialSpeed(bulletSpeed());
+        bullet.setInitialSpeed(tickSpeed);
         bullet.setDeltaMovement(motion);
         float t = random.nextFloat();
-        bullet.damageMultiplier = t * damageMultiplierMin() + (1 - t) * damageMultiplierMax();
+        float maxEnergy = tickSpeed * tickSpeed;
+        float damageMultiplierMin = damageMin() / maxEnergy;
+        float damageMultiplierMax = damageMax() / maxEnergy;
+        bullet.damageMultiplier = t * damageMultiplierMin + (1 - t) * damageMultiplierMax;
         bullet.ignoreInvulnerableTime = ignoreInvulnerableTime();
 
         level.addFreshEntity(bullet);

@@ -10,22 +10,14 @@ import net.minecraft.world.item.component.ItemAttributeModifiers;
 public class MusketItem extends GunItem {
     public static final float BAYONET_SPEED = -2.4f;
 
-    public static float bulletStdDev;
-    public static float bulletSpeed;
-    public static float damageMultiplierMin;
-    public static float damageMultiplierMax;
-
-    public static int durability;
-    public static int bayonetDamage;
-
     public MusketItem(Item.Properties properties) {
-        super(properties.durability(durability));
+        super(properties.durability(Config.musketDurability));
     }
 
     public static ItemAttributeModifiers createBayonetAttributes() {
         return ItemAttributeModifiers.builder()
             .add(Attributes.ATTACK_DAMAGE, new AttributeModifier(
-                BASE_ATTACK_DAMAGE_ID, bayonetDamage, AttributeModifier.Operation.ADD_VALUE),
+                BASE_ATTACK_DAMAGE_ID, Config.bayonetDamage, AttributeModifier.Operation.ADD_VALUE),
                 EquipmentSlotGroup.MAINHAND)
             .add(Attributes.ATTACK_SPEED, new AttributeModifier(
                 BASE_ATTACK_SPEED_ID, BAYONET_SPEED, AttributeModifier.Operation.ADD_VALUE),
@@ -35,22 +27,22 @@ public class MusketItem extends GunItem {
 
     @Override
     public float bulletStdDev() {
-        return bulletStdDev;
+        return (float)Config.musketBulletStdDev;
     }
 
     @Override
     public float bulletSpeed() {
-        return bulletSpeed;
+        return (float)Config.musketBulletSpeed;
     }
 
     @Override
-    public float damageMultiplierMin() {
-        return damageMultiplierMin;
+    public float damageMin() {
+        return (float)Config.musketDamageMin;
     }
 
     @Override
-    public float damageMultiplierMax() {
-        return damageMultiplierMax;
+    public float damageMax() {
+        return (float)Config.musketDamageMax;
     }
 
     @Override

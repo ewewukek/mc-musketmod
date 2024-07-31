@@ -47,8 +47,6 @@ public class BulletEntity extends AbstractHurtingProjectile {
     public static final double WATER_FRICTION = 0.6;
     public static final short LIFETIME = 100;
 
-    public static double maxDistance;
-
     public float damageMultiplier;
     public boolean ignoreInvulnerableTime;
     public float distanceTravelled;
@@ -88,7 +86,7 @@ public class BulletEntity extends AbstractHurtingProjectile {
 
     @Override
     public void tick() {
-        if (++tickCounter >= LIFETIME || distanceTravelled > maxDistance) {
+        if (++tickCounter >= LIFETIME || distanceTravelled > Config.bulletMaxDistance) {
             discard();
             return;
         }

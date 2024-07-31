@@ -9,7 +9,7 @@ file("../gradle.properties").withInputStream {
 }
 
 version = mod_version
-group = maven_group
+group = mod_group
 
 base {
     archivesName = "${mod_name}-${minecraft_version}-fabric"

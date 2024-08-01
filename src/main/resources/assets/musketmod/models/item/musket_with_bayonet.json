@@ -33,6 +33,12 @@
     },
     "ground": {
       "scale": [1, 1, 0.5]
+    },
+    "_comment": "BackSlot compatibility",
+    "head": {
+      "rotation": [0, 0, 180],
+      "translation": [-1, 5, 0],
+      "scale": [2, 2, 1]
     }
   },
   "overrides": [

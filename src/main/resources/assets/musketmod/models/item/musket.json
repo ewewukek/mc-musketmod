@@ -23,6 +23,12 @@
       "rotation": [0, 90, -45],
       "translation": [0, 0.48, -0.96],
       "scale": [0.68, 0.68, 0.68]
+    },
+    "_comment": "BackSlot compatibility",
+    "head": {
+      "rotation": [0, 0, 180],
+      "translation": [-1, 5, 0],
+      "scale": [1, 1, 1]
     }
   },
   "overrides": [

@@ -15,7 +15,8 @@ Requires [Fabric API](https://modrinth.com/mod/fabric-api).
 
 ### Mechanics
 
-'Use' key loads and fires a weapon. Can't be done underwater.
+'Use' key loads and fires a weapon. Can't be done underwater.\
+Bullets slow down and deal less damage with distance.
 
 #### Musket
 ![](doc/musket_recipe.png?raw=true)
@@ -30,6 +31,15 @@ Can't be used from offhand.
 
 Deals 5 melee damage.
 
+#### Blunderbuss
+![](doc/blunderbuss_recipe.png?raw=true)
+
+Damage: 20.5 - 21.0\
+Durability: 200
+
+Fires 10 pellets with higher spread than musket.\
+For simplicity, uses same ammunition as musket.
+
 #### Pistol
 ![](doc/pistol_recipe.png?raw=true)
 
@@ -37,7 +47,7 @@ Damage: 12.0 - 12.5\
 Durability: 150
 
 Fires slower bullets. Can be used from both hands.\
-Only pistol in main hand is loaded. To load second, swap pistols in hands.
+When dual wielding, only the pistol in main hand is loaded. To load second, swap pistols in hands.
 
 #### Paper cartridge (ammunition)
 ![](doc/cartridge_recipe.png?raw=true)
@@ -46,7 +56,7 @@ Only pistol in main hand is loaded. To load second, swap pistols in hands.
 
 Stored in `GAME_DIRECTORY/config/musketmod.txt`
 
-Configurable values are durability, damage, bullet speed, maximum travel distance and accuracy.
+You can access settings from NeoForge's mods menu or via [Mod Menu](https://modrinth.com/mod/modmenu) on Fabric.
 
 Bullet spread follows normal distribution like in real life but it is awkward to configure. Here is a simple table that should help with that: [bulletStdDev](STDDEV.md "bulletStdDev")
 
@@ -56,7 +66,7 @@ Reload duration is not configurable with current implementation. It may change i
 
 You may include this mod in any modpack, private or public, along with any modifications.
 
-My sprites are free to use.
+My sprites are free to use for anyone. ([CC0](https://creativecommons.org/publicdomain/zero/1.0/))
 
 Sounds that I based mine on are listed here: [credits.txt](src/main/resources/assets/musketmod/sounds/credits.txt)
 

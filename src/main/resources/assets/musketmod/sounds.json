@@ -24,6 +24,11 @@
       "musketmod:musket_fire"
     ]
   },
+  "blunderbuss_fire": {
+    "sounds": [
+      "musketmod:blunderbuss_fire"
+    ]
+  },
   "pistol_fire": {
     "sounds": [
       "musketmod:pistol_fire"

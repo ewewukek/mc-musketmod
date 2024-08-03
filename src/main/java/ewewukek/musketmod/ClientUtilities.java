@@ -30,6 +30,7 @@ public class ClientUtilities {
         ResourceLocation location = ResourceLocation.fromNamespaceAndPath(MusketMod.MODID, "loaded");
         ItemProperties.register(Items.MUSKET, location, predicate);
         ItemProperties.register(Items.MUSKET_WITH_BAYONET, location, predicate);
+        ItemProperties.register(Items.BLUNDERBUSS, location, predicate);
         ItemProperties.register(Items.PISTOL, location, predicate);
     }
 

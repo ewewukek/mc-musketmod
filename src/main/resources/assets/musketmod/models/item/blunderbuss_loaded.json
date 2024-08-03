@@ -1,0 +1,6 @@
+{
+  "parent": "musketmod:item/blunderbuss",
+  "textures": {
+    "layer0": "musketmod:item/blunderbuss_loaded"
+  }
+}

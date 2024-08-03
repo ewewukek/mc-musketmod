@@ -11,6 +11,7 @@ public class Items {
     public static final Item MUSKET = new MusketItem(new Item.Properties());
     public static final Item MUSKET_WITH_BAYONET = new MusketItem(new Item.Properties()
         .attributes(MusketItem.createBayonetAttributes()));
+    public static final Item BLUNDERBUSS = new BlunderbussItem(new Item.Properties());
     public static final Item PISTOL = new PistolItem(new Item.Properties());
 
     public static void registerDataComponentTypes(BiConsumer<String, DataComponentType<?>> helper) {
@@ -21,6 +22,7 @@ public class Items {
     public static void register(BiConsumer<String, Item> helper) {
         helper.accept("musket", MUSKET);
         helper.accept("musket_with_bayonet", MUSKET_WITH_BAYONET);
+        helper.accept("blunderbuss", BLUNDERBUSS);
         helper.accept("pistol", PISTOL);
         helper.accept("cartridge", CARTRIDGE);
     }
@@ -28,6 +30,7 @@ public class Items {
     public static void addToCombatTab(Consumer<Item> helper) {
         helper.accept(MUSKET);
         helper.accept(MUSKET_WITH_BAYONET);
+        helper.accept(BLUNDERBUSS);
         helper.accept(PISTOL);
         helper.accept(CARTRIDGE);
     }

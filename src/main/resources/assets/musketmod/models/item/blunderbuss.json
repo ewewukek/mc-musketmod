@@ -1,0 +1,42 @@
+{
+  "parent": "item/generated",
+  "textures": {
+    "layer0": "musketmod:item/blunderbuss"
+  },
+  "display": {
+    "thirdperson_righthand": {
+      "rotation": [0, -105, 40],
+      "translation": [0, 1, 0],
+      "scale": [0.9, 0.9, 0.9]
+    },
+    "thirdperson_lefthand": {
+      "rotation": [0, 75, -40],
+      "translation": [0, 1, 0],
+      "scale": [0.9, 0.9, 0.9]
+    },
+    "firstperson_righthand": {
+      "rotation": [0, -90, 45],
+      "translation": [0, 0.48, -0.96],
+      "scale": [0.68, 0.68, 0.68]
+    },
+    "firstperson_lefthand": {
+      "rotation": [0, 90, -45],
+      "translation": [0, 0.48, -0.96],
+      "scale": [0.68, 0.68, 0.68]
+    },
+    "_comment": "BackSlot compatibility",
+    "head": {
+      "rotation": [0, 0, 180],
+      "translation": [-1, 5, 0],
+      "scale": [1, 1, 1]
+    }
+  },
+  "overrides": [
+    {
+      "predicate": {
+        "musketmod:loaded": 1
+      },
+      "model": "musketmod:item/blunderbuss_loaded"
+    }
+  ]
+}

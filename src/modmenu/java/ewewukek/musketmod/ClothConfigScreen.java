@@ -78,6 +78,46 @@ public class ClothConfigScreen {
             .setDefaultValue(Config.BAYONET_DAMAGE)
             .build());
 
+        ConfigCategory blunderbussCategory = builder.getOrCreateCategory(Component.translatable("item.musketmod.blunderbuss"));
+
+        blunderbussCategory.addEntry(entryBuilder.startFloatField(
+            Component.translatable("musketmod.options.bullet_std_dev"), Config.blunderbussBulletStdDev)
+            .setTooltip(Component.translatable("musketmod.options.tooltip.degrees"))
+            .setSaveConsumer(value -> Config.blunderbussBulletStdDev = value)
+            .setMin(0.0f)
+            .setDefaultValue(Config.BLUNDERBUSS_BULLET_STD_DEV)
+            .build());
+
+        blunderbussCategory.addEntry(entryBuilder.startFloatField(
+            Component.translatable("musketmod.options.bullet_speed"), Config.blunderbussBulletSpeed)
+            .setTooltip(Component.translatable("musketmod.options.tooltip.blocks_per_second"))
+            .setSaveConsumer(value -> Config.blunderbussBulletSpeed = value)
+            .setMin(1.0f)
+            .setDefaultValue(Config.BLUNDERBUSS_BULLET_SPEED)
+            .build());
+
+        blunderbussCategory.addEntry(entryBuilder.startFloatField(
+            Component.translatable("musketmod.options.damage_min"), Config.blunderbussDamageMin)
+            .setSaveConsumer(value -> Config.blunderbussDamageMin = value)
+            .setMin(0.5f)
+            .setDefaultValue(Config.BLUNDERBUSS_DAMAGE_MIN)
+            .build());
+
+        blunderbussCategory.addEntry(entryBuilder.startFloatField(
+            Component.translatable("musketmod.options.damage_max"), Config.blunderbussDamageMax)
+            .setSaveConsumer(value -> Config.blunderbussDamageMax = value)
+            .setMin(0.5f)
+            .setDefaultValue(Config.BLUNDERBUSS_DAMAGE_MAX)
+            .build());
+
+        blunderbussCategory.addEntry(entryBuilder.startIntField(
+            Component.translatable("musketmod.options.durability"), Config.blunderbussDurability)
+            .setTooltip(Component.translatable("musketmod.options.tooltip.restart"))
+            .setSaveConsumer(value -> Config.blunderbussDurability = value)
+            .setMin(1)
+            .setDefaultValue(Config.BLUNDERBUSS_DURABILITY)
+            .build());
+
         ConfigCategory pistolCategory = builder.getOrCreateCategory(Component.translatable("item.musketmod.pistol"));
 
         pistolCategory.addEntry(entryBuilder.startFloatField(

@@ -34,6 +34,17 @@ public class Config {
     public static int bayonetDamage;
     public static final int BAYONET_DAMAGE = 4;
 
+    public static float blunderbussBulletStdDev;
+    public static final float BLUNDERBUSS_BULLET_STD_DEV = 1.5f;
+    public static float blunderbussBulletSpeed;
+    public static final float BLUNDERBUSS_BULLET_SPEED = 160.0f;
+    public static float blunderbussDamageMin;
+    public static final float BLUNDERBUSS_DAMAGE_MIN = 20.5f;
+    public static float blunderbussDamageMax;
+    public static final float BLUNDERBUSS_DAMAGE_MAX = 21.0f;
+    public static int blunderbussDurability;
+    public static final int BLUNDERBUSS_DURABILITY = 200;
+
     public static float pistolBulletStdDev;
     public static final float PISTOL_BULLET_STD_DEV = 1.5f;
     public static float pistolBulletSpeed;
@@ -61,6 +72,12 @@ public class Config {
         musketDamageMax = MUSKET_DAMAGE_MAX;
         musketDurability = MUSKET_DURABILITY;
         bayonetDamage = BAYONET_DAMAGE;
+
+        blunderbussBulletStdDev = BLUNDERBUSS_BULLET_STD_DEV;
+        blunderbussBulletSpeed = BLUNDERBUSS_BULLET_SPEED;
+        blunderbussDamageMin = BLUNDERBUSS_DAMAGE_MIN;
+        blunderbussDamageMax = BLUNDERBUSS_DAMAGE_MAX;
+        blunderbussDurability = BLUNDERBUSS_DURABILITY;
 
         pistolBulletStdDev = PISTOL_BULLET_STD_DEV;
         pistolBulletSpeed = PISTOL_BULLET_SPEED;
@@ -132,6 +149,21 @@ public class Config {
                     case "bayonetDamage":
                         bayonetDamage = (int)value;
                         break;
+                    case "blunderbussBulletStdDev":
+                        blunderbussBulletStdDev = value;
+                        break;
+                    case "blunderbussBulletSpeed":
+                        blunderbussBulletSpeed = value;
+                        break;
+                    case "blunderbussDamageMin":
+                        blunderbussDamageMin = value;
+                        break;
+                    case "blunderbussDamageMax":
+                        blunderbussDamageMax = value;
+                        break;
+                    case "blunderbussDurability":
+                        blunderbussDurability = (int)value;
+                        break;
                     case "pistolBulletStdDev":
                         pistolBulletStdDev = value;
                         break;
@@ -191,6 +223,19 @@ public class Config {
             writer.write("musketDurability = "+musketDurability+"\n");
             writer.write("# Added bayonet damage (applied on restart)\n");
             writer.write("bayonetDamage = "+bayonetDamage+"\n");
+            writer.write("\n");
+            writer.write("# Blunderbuss\n");
+            writer.write("\n");
+            writer.write("# Standard deviation of bullet spread (in degrees)\n");
+            writer.write("blunderbussBulletStdDev = "+blunderbussBulletStdDev+"\n");
+            writer.write("# Muzzle velocity of bullet (in blocks per second)\n");
+            writer.write("blunderbussBulletSpeed = "+blunderbussBulletSpeed+"\n");
+            writer.write("# Minimum damage at point-blank range\n");
+            writer.write("blunderbussDamageMin = "+blunderbussDamageMin+"\n");
+            writer.write("# Maximum damage at point-blank range\n");
+            writer.write("blunderbussDamageMax = "+blunderbussDamageMax+"\n");
+            writer.write("# Durability (applied on restart)\n");
+            writer.write("blunderbussDurability = "+blunderbussDurability+"\n");
             writer.write("\n");
             writer.write("# Pistol\n");
             writer.write("\n");

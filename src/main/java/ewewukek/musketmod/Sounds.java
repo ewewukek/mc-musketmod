@@ -11,6 +11,7 @@ public class Sounds {
     public static final SoundEvent MUSKET_LOAD_2 = SoundEvent.createVariableRangeEvent(ResourceLocation.fromNamespaceAndPath(MusketMod.MODID, "musket_load2"));
     public static final SoundEvent MUSKET_READY = SoundEvent.createVariableRangeEvent(ResourceLocation.fromNamespaceAndPath(MusketMod.MODID, "musket_ready"));
     public static final SoundEvent MUSKET_FIRE = SoundEvent.createVariableRangeEvent(ResourceLocation.fromNamespaceAndPath(MusketMod.MODID, "musket_fire"));
+    public static final SoundEvent BLUNDERBUSS_FIRE = SoundEvent.createVariableRangeEvent(ResourceLocation.fromNamespaceAndPath(MusketMod.MODID, "blunderbuss_fire"));
     public static final SoundEvent PISTOL_FIRE = SoundEvent.createVariableRangeEvent(ResourceLocation.fromNamespaceAndPath(MusketMod.MODID, "pistol_fire"));
 
     public static void register(Consumer<SoundEvent> helper) {
@@ -19,6 +20,7 @@ public class Sounds {
         helper.accept(MUSKET_LOAD_2);
         helper.accept(MUSKET_READY);
         helper.accept(MUSKET_FIRE);
+        helper.accept(BLUNDERBUSS_FIRE);
         helper.accept(PISTOL_FIRE);
     }
 }

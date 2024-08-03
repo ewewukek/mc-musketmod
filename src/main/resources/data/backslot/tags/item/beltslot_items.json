@@ -1,4 +1,6 @@
 {
   "replace": false,
-  "values": ["musketmod:pistol"]
+  "values": [
+    "musketmod:pistol"
+  ]
 }

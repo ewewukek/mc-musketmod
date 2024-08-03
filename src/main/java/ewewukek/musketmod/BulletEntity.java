@@ -2,6 +2,7 @@ package ewewukek.musketmod;
 
 import java.util.Optional;
 
+import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.particles.BlockParticleOption;
 import net.minecraft.core.particles.ParticleTypes;
@@ -24,6 +25,8 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.projectile.AbstractHurtingProjectile;
 import net.minecraft.world.level.ClipContext;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.TntBlock;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.material.FluidState;
 import net.minecraft.world.phys.AABB;
@@ -164,6 +167,17 @@ public class BulletEntity extends AbstractHurtingProjectile {
         if (hitResult.getType() != HitResult.Type.MISS) {
             if (!level.isClientSide) {
                 onHit(hitResult);
+                if (hitResult.getType() == HitResult.Type.BLOCK && motion.length() > DAMAGE_SPEED_THRESHOLD) {
+                    BlockHitResult blockHitResult = (BlockHitResult)hitResult;
+                    BlockPos blockPos = blockHitResult.getBlockPos();
+                    BlockState blockState = level().getBlockState(blockPos);
+                    // should not get ignited twice
+                    // since first time would remove the block
+                    if (blockState.getBlock() == Blocks.TNT) {
+                        TntBlock.explode(level(), blockPos);
+                        level.removeBlock(blockPos, false);
+                    }
+                }
                 discardOnNextTick();
 
             } else if (hitResult.getType() == HitResult.Type.BLOCK) {

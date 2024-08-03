@@ -37,7 +37,7 @@ public class BulletEntity extends AbstractHurtingProjectile {
 
     public static final ResourceKey<DamageType> BULLET_DAMAGE = ResourceKey.create(Registries.DAMAGE_TYPE, new ResourceLocation(MusketMod.MODID, "bullet"));
 
-    public static final double MIN_DAMAGE = 0.5;
+    public static final double DAMAGE_SPEED_THRESHOLD = 1.0;
     public static final double GRAVITY = 0.05;
     public static final double AIR_FRICTION = 0.99;
     public static final double WATER_FRICTION = 0.6;
@@ -219,7 +219,7 @@ public class BulletEntity extends AbstractHurtingProjectile {
             DamageSource damagesource = causeMusketDamage(this, shooter != null ? shooter : this);
 
             float damage = damageMultiplier * (float)getDeltaMovement().lengthSqr();
-            if (damage > MIN_DAMAGE) {
+            if (getDeltaMovement().length() > DAMAGE_SPEED_THRESHOLD) {
                 int oldInvulnerableTime = target.invulnerableTime;
                 if (ignoreInvulnerableTime) target.invulnerableTime = 0;
                 boolean beenHurt = target.hurt(damagesource, damage);

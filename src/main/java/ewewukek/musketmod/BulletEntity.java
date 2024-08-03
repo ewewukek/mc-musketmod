@@ -46,7 +46,7 @@ public class BulletEntity extends AbstractHurtingProjectile {
     public static final ResourceKey<DamageType> BULLET_DAMAGE = ResourceKey.create(Registries.DAMAGE_TYPE, ResourceLocation.fromNamespaceAndPath(MusketMod.MODID, "bullet"));
     public static EntityType<BulletEntity> ENTITY_TYPE;
 
-    public static final double MIN_DAMAGE = 0.5;
+    public static final double DAMAGE_SPEED_THRESHOLD = 1.0;
     public static final double GRAVITY = 0.05;
     public static final double AIR_FRICTION = 0.99;
     public static final double WATER_FRICTION = 0.6;
@@ -194,7 +194,7 @@ public class BulletEntity extends AbstractHurtingProjectile {
         if (hitResult.getType() != HitResult.Type.MISS) {
             if (!level.isClientSide) {
                 onHit(hitResult);
-                if (hitResult.getType() == HitResult.Type.BLOCK && calculateDamage() > MIN_DAMAGE) {
+                if (hitResult.getType() == HitResult.Type.BLOCK && motion.length() > DAMAGE_SPEED_THRESHOLD) {
                     BlockHitResult blockHitResult = (BlockHitResult)hitResult;
                     BlockPos blockPos = blockHitResult.getBlockPos();
                     BlockState blockState = level().getBlockState(blockPos);
@@ -266,7 +266,7 @@ public class BulletEntity extends AbstractHurtingProjectile {
             if ((shooter instanceof Player) && (target instanceof Player)) {
                 damage *= Config.pvpDamageMultiplier;
             }
-            if (damage > MIN_DAMAGE) {
+            if (getDeltaMovement().length() > DAMAGE_SPEED_THRESHOLD) {
                 switch (getBulletType()) {
                 case BULLET:
                     int oldInvulnerableTime = target.invulnerableTime;

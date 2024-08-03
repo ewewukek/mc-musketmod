@@ -107,7 +107,9 @@ public class ClientUtilities {
                     }
                     matrixStack.translate(0, 0, 0.025 * t);
                 }
-                if (gunItem == Items.PISTOL) {
+                if (gunItem == Items.BLUNDERBUSS) {
+                    matrixStack.translate(0, 0, -0.06);
+                } else if (gunItem == Items.PISTOL) {
                     matrixStack.translate(0, 0, -0.12);
                 }
             }

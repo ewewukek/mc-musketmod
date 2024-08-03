@@ -36,6 +36,11 @@ public class MusketItem extends GunItem {
     }
 
     @Override
+    public int pelletCount() {
+        return 1;
+    }
+
+    @Override
     public float damageMin() {
         return Config.musketDamageMin;
     }

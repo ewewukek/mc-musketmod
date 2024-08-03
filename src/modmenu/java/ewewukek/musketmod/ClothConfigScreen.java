@@ -96,6 +96,13 @@ public class ClothConfigScreen {
             .setDefaultValue(Config.BLUNDERBUSS_BULLET_SPEED)
             .build());
 
+        blunderbussCategory.addEntry(entryBuilder.startIntField(
+            Component.translatable("musketmod.options.pellet_count"), Config.blunderbussPelletCount)
+            .setSaveConsumer(value -> Config.blunderbussPelletCount = value)
+            .setMin(1)
+            .setDefaultValue(Config.BLUNDERBUSS_PELLET_COUNT)
+            .build());
+
         blunderbussCategory.addEntry(entryBuilder.startFloatField(
             Component.translatable("musketmod.options.damage_min"), Config.blunderbussDamageMin)
             .setSaveConsumer(value -> Config.blunderbussDamageMin = value)

@@ -18,6 +18,11 @@ public class BlunderbussItem extends GunItem {
     }
 
     @Override
+    public int pelletCount() {
+        return Config.blunderbussPelletCount;
+    }
+
+    @Override
     public float damageMin() {
         return Config.blunderbussDamageMin;
     }

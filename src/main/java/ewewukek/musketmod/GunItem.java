@@ -48,6 +48,7 @@ public abstract class GunItem extends Item {
 
     public abstract float bulletStdDev();
     public abstract float bulletSpeed();
+    public abstract int pelletCount();
     public abstract float damageMin();
     public abstract float damageMax();
     public abstract SoundEvent fireSound();
@@ -198,12 +199,12 @@ public abstract class GunItem extends Item {
         RandomSource random = shooter.getRandom();
         Level level = shooter.level();
 
-        float angle = (float)Math.PI * 2 * random.nextFloat();
-        float gaussian = Math.abs((float)random.nextGaussian());
-        if (gaussian > 4) gaussian = 4;
-
-        float spread = (float)Math.toRadians(bulletStdDev()) * gaussian;
         float tickSpeed = bulletSpeed() / 20; // to blocks per tick
+        float maxEnergy = tickSpeed * tickSpeed * pelletCount();
+        float damageMultiplierMin = damageMin() / maxEnergy;
+        float damageMultiplierMax = damageMax() / maxEnergy;
+
+        Vec3 origin = new Vec3(shooter.getX(), shooter.getEyeY(), shooter.getZ());
 
         // a plane perpendicular to direction
         Vec3 n1;
@@ -216,26 +217,29 @@ public abstract class GunItem extends Item {
             n2 = direction.cross(n1);
         }
 
-        Vec3 motion = direction.scale(Mth.cos(spread))
-            .add(n1.scale(Mth.sin(spread) * Mth.sin(angle))) // signs are not important for random angle
-            .add(n2.scale(Mth.sin(spread) * Mth.cos(angle)))
-            .scale(tickSpeed);
+        for (int i = 0; i < pelletCount(); i++) {
+            float angle = (float)Math.PI * 2 * random.nextFloat();
+            float gaussian = Math.abs((float)random.nextGaussian());
+            if (gaussian > 4) gaussian = 4;
+            float spread = (float)Math.toRadians(bulletStdDev()) * gaussian;
 
-        Vec3 origin = new Vec3(shooter.getX(), shooter.getEyeY(), shooter.getZ());
+            Vec3 motion = direction.scale(Mth.cos(spread))
+                .add(n1.scale(Mth.sin(spread) * Mth.sin(angle))) // signs are not important for random angle
+                .add(n2.scale(Mth.sin(spread) * Mth.cos(angle)))
+                .scale(tickSpeed);
 
-        BulletEntity bullet = new BulletEntity(level);
-        bullet.setOwner(shooter);
-        bullet.setPos(origin);
-        bullet.setInitialSpeed(tickSpeed);
-        bullet.setDeltaMovement(motion);
-        float t = random.nextFloat();
-        float maxEnergy = tickSpeed * tickSpeed;
-        float damageMultiplierMin = damageMin() / maxEnergy;
-        float damageMultiplierMax = damageMax() / maxEnergy;
-        bullet.damageMultiplier = t * damageMultiplierMin + (1 - t) * damageMultiplierMax;
-        bullet.ignoreInvulnerableTime = ignoreInvulnerableTime();
+            BulletEntity bullet = new BulletEntity(level);
+            bullet.setOwner(shooter);
+            bullet.setPos(origin);
+            bullet.setInitialSpeed(tickSpeed);
+            bullet.setDeltaMovement(motion);
+            float t = random.nextFloat();
+            bullet.damageMultiplier = t * damageMultiplierMin + (1 - t) * damageMultiplierMax;
+            bullet.ignoreInvulnerableTime = ignoreInvulnerableTime();
 
-        level.addFreshEntity(bullet);
+            level.addFreshEntity(bullet);
+        }
+
         MusketMod.sendSmokeEffect(shooter, origin.add(smokeOriginOffset), direction);
     }
 

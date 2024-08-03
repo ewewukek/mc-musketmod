@@ -32,7 +32,7 @@ public class Config {
     public static int musketDurability;
     public static final int MUSKET_DURABILITY = 250;
     public static int bayonetDamage;
-    public static final int BAYONET_DAMAGE = 4;
+    public static final int BAYONET_DAMAGE = 5;
 
     public static float blunderbussBulletStdDev;
     public static final float BLUNDERBUSS_BULLET_STD_DEV = 1.5f;
@@ -199,6 +199,9 @@ public class Config {
         }
         if (version < VERSION) {
             logger.info("Configuration file belongs to older version, updating");
+            if (version < 4) {
+                if (bayonetDamage == 4) bayonetDamage = 5;
+            }
             if (version < 2) {
                 if (musketDamageMax == 21.5) musketDamageMax = 21;
             }
@@ -227,7 +230,7 @@ public class Config {
             writer.write("musketDamageMax = "+musketDamageMax+"\n");
             writer.write("# Durability (applied on restart)\n");
             writer.write("musketDurability = "+musketDurability+"\n");
-            writer.write("# Added bayonet damage (applied on restart)\n");
+            writer.write("# Bayonet damage (applied on restart)\n");
             writer.write("bayonetDamage = "+bayonetDamage+"\n");
             writer.write("\n");
             writer.write("# Blunderbuss\n");

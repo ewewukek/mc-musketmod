@@ -30,7 +30,15 @@ public class BulletRenderer extends EntityRenderer<BulletEntity> {
 
         poseStack.pushPose();
 
-        poseStack.scale(0.1f, 0.1f, 0.1f);
+        switch(bullet.getBulletType()) {
+        case BULLET:
+            poseStack.scale(0.1f, 0.1f, 0.1f);
+            break;
+        case PELLET:
+            poseStack.scale(0.05f, 0.05f, 0.05f);
+            break;
+        }
+
         // billboarding
         poseStack.mulPose(entityRenderDispatcher.cameraOrientation());
         poseStack.mulPose(Axis.YP.rotationDegrees(180));

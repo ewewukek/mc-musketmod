@@ -23,6 +23,11 @@ public class PistolItem extends GunItem {
     }
 
     @Override
+    public BulletType bulletType() {
+        return BulletType.BULLET;
+    }
+
+    @Override
     public float damageMin() {
         return Config.pistolDamageMin;
     }

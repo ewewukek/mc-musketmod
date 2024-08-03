@@ -49,6 +49,7 @@ public abstract class GunItem extends Item {
     public abstract float bulletStdDev();
     public abstract float bulletSpeed();
     public abstract int pelletCount();
+    public abstract BulletType bulletType();
     public abstract float damageMin();
     public abstract float damageMax();
     public abstract SoundEvent fireSound();
@@ -232,6 +233,7 @@ public abstract class GunItem extends Item {
             bullet.setOwner(shooter);
             bullet.setPos(origin);
             bullet.setInitialSpeed(tickSpeed);
+            bullet.setBulletType(bulletType());
             bullet.setDeltaMovement(motion);
             float t = random.nextFloat();
             bullet.damageMultiplier = t * damageMultiplierMin + (1 - t) * damageMultiplierMax;

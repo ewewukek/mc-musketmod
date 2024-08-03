@@ -23,6 +23,11 @@ public class BlunderbussItem extends GunItem {
     }
 
     @Override
+    public BulletType bulletType() {
+        return BulletType.PELLET;
+    }
+
+    @Override
     public float damageMin() {
         return Config.blunderbussDamageMin;
     }

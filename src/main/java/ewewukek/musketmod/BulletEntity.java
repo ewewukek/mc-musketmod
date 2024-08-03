@@ -41,6 +41,7 @@ import net.minecraft.world.phys.Vec3;
 public class BulletEntity extends AbstractHurtingProjectile {
     // workaround for ClientboundAddEntityPacket.LIMIT
     public static final EntityDataAccessor<Float> INITIAL_SPEED = SynchedEntityData.defineId(BulletEntity.class, EntityDataSerializers.FLOAT);
+    public static final EntityDataAccessor<Byte> BULLET_TYPE = SynchedEntityData.defineId(BulletEntity.class, EntityDataSerializers.BYTE);
     public static final ResourceKey<DamageType> BULLET_DAMAGE = ResourceKey.create(Registries.DAMAGE_TYPE, ResourceLocation.fromNamespaceAndPath(MusketMod.MODID, "bullet"));
     public static EntityType<BulletEntity> ENTITY_TYPE;
 
@@ -297,10 +298,19 @@ public class BulletEntity extends AbstractHurtingProjectile {
         entityData.set(INITIAL_SPEED, speed);
     }
 
+    public BulletType getBulletType() {
+        return BulletType.fromByte(entityData.get(BULLET_TYPE));
+    }
+
+    public void setBulletType(BulletType type) {
+        entityData.set(BULLET_TYPE, type.toByte());
+    }
+
     @Override
     protected void defineSynchedData(SynchedEntityData.Builder builder) {
         super.defineSynchedData(builder);
         builder.define(INITIAL_SPEED, 0.0f);
+        builder.define(BULLET_TYPE, (byte)0);
     }
 
     @Override
@@ -309,6 +319,7 @@ public class BulletEntity extends AbstractHurtingProjectile {
         damageMultiplier = compound.getFloat("damageMultiplier");
         ignoreInvulnerableTime = compound.getByte("ignoreInvulnerableTime") != 0;
         distanceTravelled = compound.getFloat("distanceTravelled");
+        entityData.set(BULLET_TYPE, compound.getByte("bulletType"));
     }
 
     @Override
@@ -317,6 +328,7 @@ public class BulletEntity extends AbstractHurtingProjectile {
         compound.putFloat("damageMultiplier", damageMultiplier);
         compound.putByte("ignoreInvulnerableTime", (byte)(ignoreInvulnerableTime ? 1 : 0));
         compound.putFloat("distanceTravelled", distanceTravelled);
+        compound.putByte("bulletType", entityData.get(BULLET_TYPE));
     }
 
     // workaround for ClientboundAddEntityPacket.LIMIT

@@ -33,6 +33,8 @@ public abstract class GunItem extends Item {
     public static final int LOADING_STAGE_3 = 20;
     public static final int RELOAD_DURATION = 30;
 
+    public static final float PARTICLE_COUNT = 5;
+
     public static final DataComponentType<Boolean> LOADED = new DataComponentType.Builder<Boolean>()
         .persistent(Codec.BOOL).networkSynchronized(ByteBufCodecs.BOOL).build();
     public static final DataComponentType<Byte> LOADING_STAGE = new DataComponentType.Builder<Byte>()
@@ -233,6 +235,7 @@ public abstract class GunItem extends Item {
             bullet.setOwner(shooter);
             bullet.setPos(origin);
             bullet.setInitialSpeed(tickSpeed);
+            bullet.setParticleCount(PARTICLE_COUNT / pelletCount());
             bullet.setBulletType(bulletType());
             bullet.setDeltaMovement(motion);
             float t = random.nextFloat();

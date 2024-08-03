@@ -41,6 +41,7 @@ import net.minecraft.world.phys.Vec3;
 public class BulletEntity extends AbstractHurtingProjectile {
     // workaround for ClientboundAddEntityPacket.LIMIT
     public static final EntityDataAccessor<Float> INITIAL_SPEED = SynchedEntityData.defineId(BulletEntity.class, EntityDataSerializers.FLOAT);
+    public static final EntityDataAccessor<Float> PARTICLE_COUNT = SynchedEntityData.defineId(BulletEntity.class, EntityDataSerializers.FLOAT);
     public static final EntityDataAccessor<Byte> BULLET_TYPE = SynchedEntityData.defineId(BulletEntity.class, EntityDataSerializers.BYTE);
     public static final ResourceKey<DamageType> BULLET_DAMAGE = ResourceKey.create(Registries.DAMAGE_TYPE, ResourceLocation.fromNamespaceAndPath(MusketMod.MODID, "bullet"));
     public static EntityType<BulletEntity> ENTITY_TYPE;
@@ -86,6 +87,15 @@ public class BulletEntity extends AbstractHurtingProjectile {
 
     public float calculateDamage() {
         return damageMultiplier * (float)getDeltaMovement().lengthSqr();
+    }
+
+    public int calculateParticleCount() {
+        double maxEnergy = Math.pow(entityData.get(INITIAL_SPEED), 2);
+        double energy = getDeltaMovement().lengthSqr();
+        if (maxEnergy < energy) maxEnergy = energy; // empty entityData
+        float count = entityData.get(PARTICLE_COUNT) * (float)(energy / maxEnergy);
+        float prob = count % 1;
+        return (int)count + (random.nextFloat() < prob ? 1 : 0);
     }
 
     public DamageSource causeMusketDamage(BulletEntity bullet, Entity attacker) {
@@ -157,11 +167,11 @@ public class BulletEntity extends AbstractHurtingProjectile {
                     setDeltaMovement(motion);
 
                     if (fluidHitResult.getType() != HitResult.Type.MISS) {
-                        int impactParticleCount = (int)(getDeltaMovement().lengthSqr() / 10);
-                        if (impactParticleCount > 0) {
+                        int particleCount = calculateParticleCount();
+                        if (particleCount > 0) {
                             Vec3 pos = fluidHitResult.getLocation();
                             double yv = fluidHitResult.getDirection() == Direction.UP ? 0.02 : 0;
-                            for (int i = 0; i < impactParticleCount; ++i) {
+                            for (int i = 0; i < particleCount; ++i) {
                                 level.addParticle(
                                     ParticleTypes.SPLASH,
                                     pos.x, pos.y, pos.z,
@@ -198,12 +208,12 @@ public class BulletEntity extends AbstractHurtingProjectile {
                 discardOnNextTick();
 
             } else if (hitResult.getType() == HitResult.Type.BLOCK) {
-                int impactParticleCount = (int)(getDeltaMovement().lengthSqr() / 20);
-                if (impactParticleCount > 0) {
+                int particleCount = calculateParticleCount();
+                if (particleCount > 0) {
                     BlockState blockstate = level.getBlockState(((BlockHitResult)hitResult).getBlockPos());
                     BlockParticleOption particleOption = new BlockParticleOption(ParticleTypes.BLOCK, blockstate);
                     Vec3 pos = hitResult.getLocation();
-                    for (int i = 0; i < impactParticleCount; ++i) {
+                    for (int i = 0; i < particleCount; ++i) {
                         level.addParticle(
                             particleOption,
                             pos.x, pos.y, pos.z,
@@ -221,10 +231,13 @@ public class BulletEntity extends AbstractHurtingProjectile {
             double len = motion.length();
             Vec3 step = motion.scale(1 / len);
             Vec3 pos = waterPos.add(step.scale(0.5));
+            float prob = 1.5f * calculateParticleCount() / GunItem.PARTICLE_COUNT;
             while (len > 0.5) {
                 pos = pos.add(step);
                 len -= 1;
-                level.addParticle(ParticleTypes.BUBBLE, pos.x, pos.y, pos.z, 0, 0, 0);
+                if (random.nextFloat() < prob) {
+                    level.addParticle(ParticleTypes.BUBBLE, pos.x, pos.y, pos.z, 0, 0, 0);
+                }
             }
         } else {
             motion = motion.scale(AIR_FRICTION);
@@ -307,6 +320,10 @@ public class BulletEntity extends AbstractHurtingProjectile {
         entityData.set(INITIAL_SPEED, speed);
     }
 
+    public void setParticleCount(float count) {
+        entityData.set(PARTICLE_COUNT, count);
+    }
+
     public BulletType getBulletType() {
         return BulletType.fromByte(entityData.get(BULLET_TYPE));
     }
@@ -319,6 +336,7 @@ public class BulletEntity extends AbstractHurtingProjectile {
     protected void defineSynchedData(SynchedEntityData.Builder builder) {
         super.defineSynchedData(builder);
         builder.define(INITIAL_SPEED, 0.0f);
+        builder.define(PARTICLE_COUNT, 0.0f);
         builder.define(BULLET_TYPE, (byte)0);
     }
 
@@ -328,6 +346,7 @@ public class BulletEntity extends AbstractHurtingProjectile {
         damageMultiplier = compound.getFloat("damageMultiplier");
         ignoreInvulnerableTime = compound.getByte("ignoreInvulnerableTime") != 0;
         distanceTravelled = compound.getFloat("distanceTravelled");
+        entityData.set(PARTICLE_COUNT, compound.getFloat("particleCount"));
         entityData.set(BULLET_TYPE, compound.getByte("bulletType"));
     }
 
@@ -337,6 +356,7 @@ public class BulletEntity extends AbstractHurtingProjectile {
         compound.putFloat("damageMultiplier", damageMultiplier);
         compound.putByte("ignoreInvulnerableTime", (byte)(ignoreInvulnerableTime ? 1 : 0));
         compound.putFloat("distanceTravelled", distanceTravelled);
+        compound.putFloat("particleCount", entityData.get(PARTICLE_COUNT));
         compound.putByte("bulletType", entityData.get(BULLET_TYPE));
     }
 

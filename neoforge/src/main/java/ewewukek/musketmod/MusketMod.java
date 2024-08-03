@@ -23,6 +23,7 @@ import net.neoforged.neoforge.client.gui.IConfigScreenFactory;
 import net.neoforged.neoforge.common.NeoForge;
 import net.neoforged.neoforge.event.AddReloadListenerEvent;
 import net.neoforged.neoforge.event.BuildCreativeModeTabContentsEvent;
+import net.neoforged.neoforge.event.tick.LevelTickEvent;
 import net.neoforged.neoforge.network.PacketDistributor;
 import net.neoforged.neoforge.network.event.RegisterPayloadHandlersEvent;
 import net.neoforged.neoforge.network.registration.PayloadRegistrar;
@@ -41,6 +42,7 @@ public class MusketMod {
         bus.addListener(this::register);
         bus.addListener(this::creativeTabs);
         bus.addListener(this::registerPacket);
+        NeoForge.EVENT_BUS.addListener(this::worldTick);
         NeoForge.EVENT_BUS.addListener(this::reload);
     }
 
@@ -66,6 +68,12 @@ public class MusketMod {
             Items.addToCombatTab((item) -> {
                 event.accept(item);
             });
+        }
+    }
+
+    public void worldTick(final LevelTickEvent.Post event) {
+        if (!event.getLevel().isClientSide) {
+            DeferredDamage.apply();
         }
     }
 

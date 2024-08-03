@@ -247,17 +247,26 @@ public class BulletEntity extends AbstractHurtingProjectile {
         }
         if (target != null) {
             Entity shooter = getOwner();
-            DamageSource damagesource = causeMusketDamage(this, shooter != null ? shooter : this);
+            DamageSource damageSource = causeMusketDamage(this, shooter != null ? shooter : this);
 
             float damage = calculateDamage();
             if ((shooter instanceof Player) && (target instanceof Player)) {
                 damage *= Config.pvpDamageMultiplier;
             }
             if (damage > MIN_DAMAGE) {
-                int oldInvulnerableTime = target.invulnerableTime;
-                if (ignoreInvulnerableTime) target.invulnerableTime = 0;
-                boolean beenHurt = target.hurt(damagesource, damage);
-                if (ignoreInvulnerableTime && !beenHurt) target.invulnerableTime = oldInvulnerableTime;
+                switch (getBulletType()) {
+                case BULLET:
+                    int oldInvulnerableTime = target.invulnerableTime;
+                    if (ignoreInvulnerableTime) target.invulnerableTime = 0;
+                    boolean beenHurt = target.hurt(damageSource, damage);
+                    if (ignoreInvulnerableTime && !beenHurt) target.invulnerableTime = oldInvulnerableTime;
+                    break;
+                case PELLET:
+                    // replacing invulnerableTime works for pellets too
+                    // but causes hurt sound to play for each pellet hit
+                    DeferredDamage.hurt(target, damageSource, damage);
+                    break;
+                }
             }
         }
     }

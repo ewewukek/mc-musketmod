@@ -19,9 +19,11 @@ import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.AddReloadListenerEvent;
 import net.minecraftforge.event.BuildCreativeModeTabContentsEvent;
+import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.event.network.CustomPayloadEvent;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.fml.DistExecutor;
+import net.minecraftforge.fml.LogicalSide;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import net.minecraftforge.fml.loading.FMLPaths;
@@ -51,6 +53,7 @@ public class MusketMod {
         IEventBus bus = FMLJavaModLoadingContext.get().getModEventBus();
         bus.addListener(this::register);
         bus.addListener(this::creativeTabs);
+        MinecraftForge.EVENT_BUS.addListener(this::worldTick);
         MinecraftForge.EVENT_BUS.addListener(this::reload);
 
         DistExecutor.unsafeRunWhenOn(Dist.CLIENT, () -> () -> new ClientSetup(bus));
@@ -84,6 +87,12 @@ public class MusketMod {
             Items.addToCombatTab((item) -> {
                 event.accept(item);
             });
+        }
+    }
+
+    public void worldTick(final TickEvent.LevelTickEvent event) {
+        if (event.side == LogicalSide.SERVER && event.phase == TickEvent.LevelTickEvent.Phase.END) {
+            DeferredDamage.apply();
         }
     }
 

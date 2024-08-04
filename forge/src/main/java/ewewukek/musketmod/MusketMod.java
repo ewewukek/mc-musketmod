@@ -7,12 +7,12 @@ import java.util.concurrent.Executor;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.packs.resources.PreparableReloadListener;
 import net.minecraft.server.packs.resources.ResourceManager;
 import net.minecraft.util.Unit;
 import net.minecraft.util.profiling.ProfilerFiller;
 import net.minecraft.world.entity.EntityType;
-import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.CreativeModeTabs;
 import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.api.distmarker.Dist;
@@ -114,10 +114,10 @@ public class MusketMod {
         builder.setShouldReceiveVelocityUpdates(false);
     }
 
-    public static void sendSmokeEffect(LivingEntity shooter, Vec3 origin, Vec3 direction) {
+    public static void sendSmokeEffect(ServerLevel level, Vec3 origin, Vec3 direction) {
         PacketDistributor.TargetPoint point = new PacketDistributor.TargetPoint(
             origin.x, origin.y, origin.z,
-            64.0, shooter.level().dimension());
+            64.0, level.dimension());
         NETWORK_CHANNEL.send(new SmokeEffectPacketWrapper(SmokeEffectPacket.fromVec3(origin, direction)),
             PacketDistributor.NEAR.with(point));
     }

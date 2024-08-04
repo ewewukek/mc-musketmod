@@ -7,6 +7,7 @@ import net.minecraft.core.component.DataComponentType;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.codec.ByteBufCodecs;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.tags.FluidTags;
 import net.minecraft.util.RandomSource;
@@ -214,7 +215,7 @@ public abstract class GunItem extends Item {
             level.addFreshEntity(bullet);
         }
 
-        MusketMod.sendSmokeEffect(shooter, origin.add(smokeOriginOffset), direction);
+        MusketMod.sendSmokeEffect((ServerLevel)level, origin.add(smokeOriginOffset), direction);
     }
 
     public static void fireParticles(Level world, Vec3 origin, Vec3 direction) {

@@ -4,15 +4,17 @@ import java.nio.file.Path;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Executor;
 
+import net.minecraft.core.BlockPos;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.packs.resources.PreparableReloadListener;
 import net.minecraft.server.packs.resources.ResourceManager;
 import net.minecraft.util.Unit;
 import net.minecraft.util.profiling.ProfilerFiller;
 import net.minecraft.world.entity.EntityType;
-import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.CreativeModeTabs;
+import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.phys.Vec3;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.fml.ModContainer;
@@ -108,8 +110,9 @@ public class MusketMod {
         builder.setShouldReceiveVelocityUpdates(false);
     }
 
-    public static void sendSmokeEffect(LivingEntity shooter, Vec3 origin, Vec3 direction) {
+    public static void sendSmokeEffect(ServerLevel level, Vec3 origin, Vec3 direction) {
         SmokeEffectPacket packet = SmokeEffectPacket.fromVec3(origin, direction);
-        PacketDistributor.sendToPlayersTrackingEntityAndSelf(shooter, packet);
+        BlockPos blockPos = BlockPos.containing(origin.x, origin.y, origin.z);
+        PacketDistributor.sendToPlayersTrackingChunk(level, new ChunkPos(blockPos), packet);
     }
 }

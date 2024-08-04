@@ -24,7 +24,6 @@ import net.minecraft.server.packs.resources.ResourceManager;
 import net.minecraft.util.Unit;
 import net.minecraft.util.profiling.ProfilerFiller;
 import net.minecraft.world.entity.EntityType;
-import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.CreativeModeTabs;
 import net.minecraft.world.phys.Vec3;
 
@@ -82,10 +81,10 @@ public class MusketMod implements ModInitializer {
         builder.alwaysUpdateVelocity(false);
     }
 
-    public static void sendSmokeEffect(LivingEntity shooter, Vec3 origin, Vec3 direction) {
+    public static void sendSmokeEffect(ServerLevel level, Vec3 origin, Vec3 direction) {
         SmokeEffectPacket packet = SmokeEffectPacket.fromVec3(origin, direction);
         BlockPos blockPos = BlockPos.containing(origin.x, origin.y, origin.z);
-        for (ServerPlayer serverPlayer : PlayerLookup.tracking((ServerLevel)shooter.level(), blockPos)) {
+        for (ServerPlayer serverPlayer : PlayerLookup.tracking(level, blockPos)) {
             ServerPlayNetworking.send(serverPlayer, packet);
         }
     }

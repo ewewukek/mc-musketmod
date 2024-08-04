@@ -19,6 +19,7 @@ import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerEntity;
 import net.minecraft.tags.FluidTags;
+import net.minecraft.util.Mth;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.damagesource.DamageType;
 import net.minecraft.world.entity.Entity;
@@ -100,6 +101,43 @@ public class BulletEntity extends AbstractHurtingProjectile {
 
     public DamageSource causeMusketDamage(BulletEntity bullet, Entity attacker) {
         return level().damageSources().source(BULLET_DAMAGE, bullet, attacker);
+    }
+
+    public void setVelocity(float bulletSpeed, Vec3 direction, float spreadStdDev) {
+        // a plane perpendicular to direction
+        Vec3 n1;
+        Vec3 n2;
+        if (Math.abs(direction.x) < 1e-5 && Math.abs(direction.z) < 1e-5) {
+            n1 = new Vec3(1, 0, 0);
+            n2 = new Vec3(0, 0, 1);
+        } else {
+            n1 = new Vec3(-direction.z, 0, direction.x).normalize();
+            n2 = direction.cross(n1);
+        }
+
+        float gaussian = Math.abs((float)random.nextGaussian());
+        if (gaussian > 4) gaussian = 4;
+        float spread = (float)Math.toRadians(spreadStdDev) * gaussian;
+        float angle = (float)Math.PI * 2 * random.nextFloat();
+        float tickSpeed = bulletSpeed / 20; // to blocks per tick
+
+        // signs are not important for random angle
+        Vec3 motion = direction.scale(Mth.cos(spread))
+            .add(n1.scale(Mth.sin(spread) * Mth.sin(angle)))
+            .add(n2.scale(Mth.sin(spread) * Mth.cos(angle)))
+            .scale(tickSpeed);
+
+        setInitialSpeed(tickSpeed);
+        setDeltaMovement(motion);
+    }
+
+    public void setDamage(float bulletSpeed, float damageMin, float damageMax) {
+        float tickSpeed = bulletSpeed / 20; // to blocks per tick
+        float maxEnergy = tickSpeed * tickSpeed;
+        float damageMultiplierMin = damageMin / maxEnergy;
+        float damageMultiplierMax = damageMax / maxEnergy;
+        float t = random.nextFloat();
+        damageMultiplier = t * damageMultiplierMin + (1 - t) * damageMultiplierMax;
     }
 
     @Override

@@ -9,7 +9,6 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.tags.FluidTags;
-import net.minecraft.util.Mth;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResultHolder;
@@ -199,47 +198,17 @@ public abstract class GunItem extends Item {
     }
 
     public void fire(LivingEntity shooter, Vec3 direction, Vec3 smokeOriginOffset) {
-        RandomSource random = shooter.getRandom();
         Level level = shooter.level();
-
-        float tickSpeed = bulletSpeed() / 20; // to blocks per tick
-        float maxEnergy = tickSpeed * tickSpeed * pelletCount();
-        float damageMultiplierMin = damageMin() / maxEnergy;
-        float damageMultiplierMax = damageMax() / maxEnergy;
-
         Vec3 origin = new Vec3(shooter.getX(), shooter.getEyeY(), shooter.getZ());
 
-        // a plane perpendicular to direction
-        Vec3 n1;
-        Vec3 n2;
-        if (Math.abs(direction.x) < 1e-5 && Math.abs(direction.z) < 1e-5) {
-            n1 = new Vec3(1, 0, 0);
-            n2 = new Vec3(0, 0, 1);
-        } else {
-            n1 = new Vec3(-direction.z, 0, direction.x).normalize();
-            n2 = direction.cross(n1);
-        }
-
         for (int i = 0; i < pelletCount(); i++) {
-            float angle = (float)Math.PI * 2 * random.nextFloat();
-            float gaussian = Math.abs((float)random.nextGaussian());
-            if (gaussian > 4) gaussian = 4;
-            float spread = (float)Math.toRadians(bulletStdDev()) * gaussian;
-
-            Vec3 motion = direction.scale(Mth.cos(spread))
-                .add(n1.scale(Mth.sin(spread) * Mth.sin(angle))) // signs are not important for random angle
-                .add(n2.scale(Mth.sin(spread) * Mth.cos(angle)))
-                .scale(tickSpeed);
-
             BulletEntity bullet = new BulletEntity(level);
             bullet.setOwner(shooter);
             bullet.setPos(origin);
-            bullet.setInitialSpeed(tickSpeed);
             bullet.setParticleCount(PARTICLE_COUNT / pelletCount());
             bullet.setBulletType(bulletType());
-            bullet.setDeltaMovement(motion);
-            float t = random.nextFloat();
-            bullet.damageMultiplier = t * damageMultiplierMin + (1 - t) * damageMultiplierMax;
+            bullet.setVelocity(bulletSpeed(), direction, bulletStdDev());
+            bullet.setDamage(bulletSpeed(), damageMin() / pelletCount(), damageMax() / pelletCount());
             bullet.ignoreInvulnerableTime = ignoreInvulnerableTime();
 
             level.addFreshEntity(bullet);

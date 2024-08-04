@@ -10,6 +10,7 @@ import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.tags.FluidTags;
+import net.minecraft.util.Mth;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResultHolder;
@@ -133,6 +134,29 @@ public abstract class GunItem extends Item {
         }
     }
 
+    public static Vec3 addSpread(Vec3 direction, RandomSource random, float spreadStdDev) {
+        // a plane perpendicular to direction
+        Vec3 n1;
+        Vec3 n2;
+        if (Math.abs(direction.x) < 1e-5 && Math.abs(direction.z) < 1e-5) {
+            n1 = new Vec3(1, 0, 0);
+            n2 = new Vec3(0, 0, 1);
+        } else {
+            n1 = new Vec3(-direction.z, 0, direction.x).normalize();
+            n2 = direction.cross(n1);
+        }
+
+        float gaussian = Math.abs((float)random.nextGaussian());
+        if (gaussian > 4) gaussian = 4;
+        float spread = (float)Math.toRadians(spreadStdDev) * gaussian;
+        float angle = (float)Math.PI * 2 * random.nextFloat();
+
+        // signs are not important for random angle
+        return direction.scale(Mth.cos(spread))
+            .add(n1.scale(Mth.sin(spread) * Mth.sin(angle)))
+            .add(n2.scale(Mth.sin(spread) * Mth.cos(angle)));
+    }
+
     @Override
     public void releaseUsing(ItemStack stack, Level worldIn, LivingEntity entityLiving, int timeLeft) {
         setLoadingStage(stack, 0);
@@ -212,7 +236,8 @@ public abstract class GunItem extends Item {
             bullet.setPos(origin);
             bullet.setParticleCount(PARTICLE_COUNT / pelletCount());
             bullet.setBulletType(bulletType());
-            bullet.setVelocity(bulletSpeed(), direction, bulletStdDev());
+            direction = addSpread(direction, shooter.getRandom(), bulletStdDev());
+            bullet.setVelocity(bulletSpeed(), direction);
             bullet.setDamage(bulletSpeed(), damageMin() / pelletCount(), damageMax() / pelletCount());
             bullet.ignoreInvulnerableTime = ignoreInvulnerableTime();
 

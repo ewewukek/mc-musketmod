@@ -165,6 +165,38 @@ public class ClothConfigScreen {
             .setDefaultValue(Config.PISTOL_DURABILITY)
             .build());
 
+        ConfigCategory dispenserCategory = builder.getOrCreateCategory(Component.translatable("block.minecraft.dispenser"));
+
+        dispenserCategory.addEntry(entryBuilder.startFloatField(
+            Component.translatable("musketmod.options.bullet_std_dev"), Config.dispenserBulletStdDev)
+            .setTooltip(Component.translatable("musketmod.options.tooltip.degrees"))
+            .setSaveConsumer(value -> Config.dispenserBulletStdDev = value)
+            .setMin(0.0f)
+            .setDefaultValue(Config.DISPENSER_BULLET_STD_DEV)
+            .build());
+
+        dispenserCategory.addEntry(entryBuilder.startFloatField(
+            Component.translatable("musketmod.options.bullet_speed"), Config.dispenserBulletSpeed)
+            .setTooltip(Component.translatable("musketmod.options.tooltip.blocks_per_second"))
+            .setSaveConsumer(value -> Config.dispenserBulletSpeed = value)
+            .setMin(1.0f)
+            .setDefaultValue(Config.DISPENSER_BULLET_SPEED)
+            .build());
+
+        dispenserCategory.addEntry(entryBuilder.startFloatField(
+            Component.translatable("musketmod.options.damage_min"), Config.dispenserDamageMin)
+            .setSaveConsumer(value -> Config.dispenserDamageMin = value)
+            .setMin(0.5f)
+            .setDefaultValue(Config.DISPENSER_DAMAGE_MIN)
+            .build());
+
+        dispenserCategory.addEntry(entryBuilder.startFloatField(
+            Component.translatable("musketmod.options.damage_max"), Config.dispenserDamageMax)
+            .setSaveConsumer(value -> Config.dispenserDamageMax = value)
+            .setMin(0.5f)
+            .setDefaultValue(Config.DISPENSER_DAMAGE_MAX)
+            .build());
+
         builder.setSavingRunnable(() -> {
             Config.save();
         });

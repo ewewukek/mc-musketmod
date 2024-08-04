@@ -5,6 +5,7 @@
   "item.musketmod.musket_with_bayonet": "Musket with bayonet",
   "item.musketmod.blunderbuss": "Blunderbuss",
   "item.musketmod.pistol": "Flintlock Pistol",
+  "entity.musketmod.bullet": "Bullet",
   "musketmod.options.title": "Musket Mod",
   "musketmod.options.common": "Common settings",
   "musketmod.options.tooltip.blocks": "(blocks)",

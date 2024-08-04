@@ -58,6 +58,15 @@ public class Config {
     public static int pistolDurability;
     public static final int PISTOL_DURABILITY = 150;
 
+    public static float dispenserBulletStdDev;
+    public static final float DISPENSER_BULLET_STD_DEV = 2.0f;
+    public static float dispenserBulletSpeed;
+    public static final float DISPENSER_BULLET_SPEED = 120.0f;
+    public static float dispenserDamageMin;
+    public static final float DISPENSER_DAMAGE_MIN = 10.0f;
+    public static float dispenserDamageMax;
+    public static final float DISPENSER_DAMAGE_MAX = 10.5f;
+
     public static void reload() {
         setDefaults();
         load();
@@ -87,6 +96,11 @@ public class Config {
         pistolDamageMin = PISTOL_DAMAGE_MIN;
         pistolDamageMax = PISTOL_DAMAGE_MAX;
         pistolDurability = PISTOL_DURABILITY;
+
+        dispenserBulletStdDev = DISPENSER_BULLET_STD_DEV;
+        dispenserBulletSpeed = DISPENSER_BULLET_SPEED;
+        dispenserDamageMin = DISPENSER_DAMAGE_MIN;
+        dispenserDamageMax = DISPENSER_DAMAGE_MAX;
     }
 
     public static void load() {
@@ -185,6 +199,18 @@ public class Config {
                     case "pistolDurability":
                         pistolDurability = (int)value;
                         break;
+                    case "dispenserBulletStdDev":
+                        dispenserBulletStdDev = value;
+                        break;
+                    case "dispenserBulletSpeed":
+                        dispenserBulletSpeed = value;
+                        break;
+                    case "dispenserDamageMin":
+                        dispenserDamageMin = value;
+                        break;
+                    case "dispenserDamageMax":
+                        dispenserDamageMax = value;
+                        break;
                     default:
                         logger.warn(errorPrefix+"unrecognized parameter name: "+key);
                     }
@@ -260,6 +286,17 @@ public class Config {
             writer.write("pistolDamageMax = "+pistolDamageMax+"\n");
             writer.write("# Durability (applied on restart)\n");
             writer.write("pistolDurability = "+pistolDurability+"\n");
+            writer.write("\n");
+            writer.write("# Dispenser\n");
+            writer.write("\n");
+            writer.write("# Standard deviation of bullet spread (in degrees)\n");
+            writer.write("dispenserBulletStdDev = "+dispenserBulletStdDev+"\n");
+            writer.write("# Muzzle velocity of bullet (in blocks per second)\n");
+            writer.write("dispenserBulletSpeed = "+dispenserBulletSpeed+"\n");
+            writer.write("# Minimum damage at point-blank range\n");
+            writer.write("dispenserDamageMin = "+dispenserDamageMin+"\n");
+            writer.write("# Maximum damage at point-blank range\n");
+            writer.write("dispenserDamageMax = "+dispenserDamageMax+"\n");
 
         } catch (IOException e) {
             logger.warn("Could not save configuration file: ", e);

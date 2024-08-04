@@ -11,3 +11,5 @@ blunderbuss_fire.ogg
 pistol_fire.ogg
     based on (CC0) https://freesound.org/people/straget/sounds/410552/
     with bits from https://www.youtube.com/watch?v=LAjOnNufato
+dispenser_fire.ogg
+    based on (CC0) https://freesound.org/people/unfa/sounds/609588/

@@ -17,9 +17,10 @@ public class Config {
 
     public static float bulletMaxDistance;
     public static final float BULLET_MAX_DISTANCE = 256.0f;
-
     public static float pvpDamageMultiplier;
     public static final float PVP_DAMAGE_MULTIPLIER = 1.0f;
+    public static float mobDamageMultiplier;
+    public static final float MOB_DAMAGE_MULTIPLIER = 0.5f;
 
     public static float musketBulletStdDev;
     public static final float MUSKET_BULLET_STD_DEV = 1.0f;
@@ -76,6 +77,7 @@ public class Config {
     public static void setDefaults() {
         bulletMaxDistance = BULLET_MAX_DISTANCE;
         pvpDamageMultiplier = PVP_DAMAGE_MULTIPLIER;
+        mobDamageMultiplier = MOB_DAMAGE_MULTIPLIER;
 
         musketBulletStdDev = MUSKET_BULLET_STD_DEV;
         musketBulletSpeed = MUSKET_BULLET_SPEED;
@@ -142,6 +144,9 @@ public class Config {
                         break;
                     case "pvpDamageMultiplier":
                         pvpDamageMultiplier = value;
+                        break;
+                    case "mobDamageMultiplier":
+                        mobDamageMultiplier = value;
                         break;
                     case "bulletStdDev": // COMPAT
                     case "musketBulletStdDev":
@@ -243,6 +248,8 @@ public class Config {
             writer.write("bulletMaxDistance = "+bulletMaxDistance+"\n");
             writer.write("# Damage multiplier for pvp\n");
             writer.write("pvpDamageMultiplier = "+pvpDamageMultiplier+"\n");
+            writer.write("# Damage multiplier for monsters\n");
+            writer.write("mobDamageMultiplier = "+mobDamageMultiplier+"\n");
             writer.write("\n");
             writer.write("# Musket\n");
             writer.write("\n");

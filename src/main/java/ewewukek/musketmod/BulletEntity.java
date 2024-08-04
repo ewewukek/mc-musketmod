@@ -278,8 +278,12 @@ public class BulletEntity extends AbstractHurtingProjectile {
             DamageSource damageSource = causeMusketDamage(this, shooter != null ? shooter : this);
 
             float damage = calculateDamage();
-            if ((shooter instanceof Player) && (target instanceof Player)) {
-                damage *= Config.pvpDamageMultiplier;
+            if (shooter instanceof Player) {
+                if (target instanceof Player) {
+                    damage *= Config.pvpDamageMultiplier;
+                }
+            } else {
+                damage *= Config.mobDamageMultiplier;
             }
             if (getDeltaMovement().length() > DAMAGE_SPEED_THRESHOLD) {
                 switch (getBulletType()) {

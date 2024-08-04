@@ -30,6 +30,13 @@ public class ClothConfigScreen {
             .setDefaultValue(Config.PVP_DAMAGE_MULTIPLIER)
             .build());
 
+        commonCategory.addEntry(entryBuilder.startFloatField(
+            Component.translatable("musketmod.options.mob_damage_multiplier"), Config.mobDamageMultiplier)
+            .setSaveConsumer(value -> Config.mobDamageMultiplier = value)
+            .setMin(0.0f)
+            .setDefaultValue(Config.MOB_DAMAGE_MULTIPLIER)
+            .build());
+
         ConfigCategory musketCategory = builder.getOrCreateCategory(Component.translatable("item.musketmod.musket"));
 
         musketCategory.addEntry(entryBuilder.startFloatField(

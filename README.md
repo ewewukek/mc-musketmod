@@ -1,6 +1,6 @@
 ### Musket Mod
 
-Small mod that adds craftable muskets and pistols.
+Small mod that adds craftable flintlock weapons.
 
 [Download from CurseForge](https://www.curseforge.com/minecraft/mc-mods/ewewukeks-musket-mod/files/all)\
 [Download from modrinth](https://modrinth.com/mod/ewewukeks-musket-mod/versions)
@@ -9,9 +9,13 @@ Small mod that adds craftable muskets and pistols.
 
 No additional dependencies required.
 
+### Neoforge
+
+Requires [Cloth Config API](https://modrinth.com/mod/cloth-config).
+
 ### Fabric
 
-Requires [Fabric API](https://modrinth.com/mod/fabric-api).
+Requires [Fabric API](https://modrinth.com/mod/fabric-api) and [Cloth Config API](https://modrinth.com/mod/cloth-config).
 
 ### Mechanics
 
@@ -51,6 +55,8 @@ When dual wielding, only the pistol in main hand is loaded. To load second, swap
 
 #### Paper cartridge (ammunition)
 ![](doc/cartridge_recipe.png?raw=true)
+
+Can be fired from Dispenser dealing 10.0 - 10.5 damage.
 
 ### Configuration:
 

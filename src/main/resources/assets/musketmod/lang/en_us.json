@@ -14,6 +14,7 @@
   "musketmod.options.tooltip.restart": "(applied on restart)",
   "musketmod.options.pvp_damage_multiplier": "Damage multiplier for PvP",
   "musketmod.options.mob_damage_multiplier": "Damage multiplier for monsters",
+  "musketmod.options.pistol_pillager_chance": "Probability of Pillager having a pistol",
   "musketmod.options.bullet_max_distance": "Bullet max travel distance",
   "musketmod.options.bullet_std_dev": "Standard deviation of bullet spread",
   "musketmod.options.bullet_speed": "Muzzle velocity of bullet",

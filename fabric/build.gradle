@@ -24,6 +24,8 @@ sourceSets.main.java { srcDir '../src/modmenu/java' }
 sourceSets.main.resources { srcDir '../src/main/resources' }
 
 loom {
+	accessWidenerPath = file("src/main/resources/musketmod.aw")
+
     runs {
         client {
             runDir = '../run'

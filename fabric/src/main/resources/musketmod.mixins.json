@@ -6,6 +6,9 @@
     "MixinHeldItemRenderer",
     "MixinPlayerEntityRenderer"
   ],
+  "mixins": [
+    "PillagerMixin"
+  ],
   "injectors": {
     "defaultRequire": 1
   }

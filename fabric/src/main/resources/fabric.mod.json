@@ -21,6 +21,7 @@
       "ewewukek.musketmod.ModMenuIntegration"
     ]
   },
+  "accessWidener": "musketmod.aw",
   "mixins": [
     "musketmod.mixins.json"
   ],

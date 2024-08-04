@@ -72,6 +72,13 @@ public abstract class GunItem extends Item {
         return true;
     }
 
+    public Vec3 smokeOffsetFor(LivingEntity entity, HumanoidArm arm) {
+        boolean isRightHand = arm == HumanoidArm.RIGHT;
+        Vec3 side = Vec3.directionFromRotation(0, entity.getYRot() + (isRightHand ? 90 : -90));
+        Vec3 down = Vec3.directionFromRotation(entity.getXRot() + 90, entity.getYRot());
+        return side.add(down).scale(0.15);
+    }
+
     @Override
     public InteractionResultHolder<ItemStack> use(Level worldIn, Player player, InteractionHand hand) {
         if (!canUseFrom(player, hand)) return super.use(worldIn, player, hand);
@@ -101,10 +108,7 @@ public abstract class GunItem extends Item {
             if (!worldIn.isClientSide) {
                 Vec3 front = Vec3.directionFromRotation(player.getXRot(), player.getYRot());
                 HumanoidArm arm = hand == InteractionHand.MAIN_HAND ? player.getMainArm() : player.getMainArm().getOpposite();
-                boolean isRightHand = arm == HumanoidArm.RIGHT;
-                Vec3 side = Vec3.directionFromRotation(0, player.getYRot() + (isRightHand ? 90 : -90));
-                Vec3 down = Vec3.directionFromRotation(player.getXRot() + 90, player.getYRot());
-                fire(player, front, side.add(down).scale(0.15));
+                fire(player, front, smokeOffsetFor(player, arm));
             }
             player.playSound(fireSound(), 3.5f, 1);
 

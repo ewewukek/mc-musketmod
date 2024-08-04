@@ -59,18 +59,36 @@ public abstract class GunItem extends Item {
     public abstract boolean twoHanded();
     public abstract boolean ignoreInvulnerableTime();
 
-    public boolean canUseFrom(Player player, InteractionHand hand) {
+    public boolean canUseFrom(LivingEntity entity, InteractionHand hand) {
         if (hand == InteractionHand.MAIN_HAND) {
             return true;
         }
         if (twoHanded()) {
             return false;
         }
-        ItemStack mainHandStack = player.getItemInHand(InteractionHand.MAIN_HAND);
-        if (!mainHandStack.isEmpty() && mainHandStack.getItem() instanceof GunItem) {
-            return !((GunItem)mainHandStack.getItem()).twoHanded();
+        // pistol in offhand is unusable if musket is equipped in main hand
+        ItemStack stack = entity.getMainHandItem();
+        if (!stack.isEmpty() && stack.getItem() instanceof GunItem) {
+            return !((GunItem)stack.getItem()).twoHanded();
         }
         return true;
+    }
+
+    public static boolean isInHand(LivingEntity entity, InteractionHand hand) {
+        ItemStack stack = entity.getItemInHand(hand);
+        if (stack.isEmpty()) return false;
+        if (stack.getItem() instanceof GunItem gun) {
+            return gun.canUseFrom(entity, hand);
+        }
+        return false;
+    }
+
+    public static boolean isHoldingGun(LivingEntity entity) {
+        return isInHand(entity, InteractionHand.MAIN_HAND) || isInHand(entity, InteractionHand.OFF_HAND);
+    }
+
+    public static InteractionHand getHoldingHand(LivingEntity entity) {
+        return isInHand(entity, InteractionHand.MAIN_HAND) ? InteractionHand.MAIN_HAND : InteractionHand.OFF_HAND;
     }
 
     public Vec3 smokeOffsetFor(LivingEntity entity, HumanoidArm arm) {
@@ -155,6 +173,41 @@ public abstract class GunItem extends Item {
         return direction.scale(Mth.cos(spread))
             .add(n1.scale(Mth.sin(spread) * Mth.sin(angle)))
             .add(n2.scale(Mth.sin(spread) * Mth.cos(angle)));
+    }
+
+    public Vec3 aimAt(LivingEntity entity, LivingEntity target, float inaccuracyStdDev, boolean predictTargetMovement) {
+        double dist = entity.distanceTo(target);
+        double ticks = 20 * dist / bulletSpeed();
+        double bulletDrop = 0.5 * ticks * ticks * BulletEntity.GRAVITY;
+        Vec3 pos = new Vec3(
+            target.getX(),
+            0.5 * (target.getEyeY() + target.getY(0.5)),
+            target.getZ()
+           );
+        if (predictTargetMovement) {
+            pos = pos.add(target.getDeltaMovement().scale(ticks));
+        }
+        Vec3 direction = new Vec3(
+            pos.x() - entity.getX(),
+            pos.y() + bulletDrop - entity.getEyeY(),
+            pos.z() - entity.getZ()
+        ).normalize();
+        if (inaccuracyStdDev > 0) {
+            direction = addSpread(direction, entity.getRandom(), inaccuracyStdDev);
+        }
+        return direction;
+    }
+
+    public void mobUse(LivingEntity entity, InteractionHand hand, Vec3 direction) {
+        Level level = entity.level();
+        if (level.isClientSide) return;
+
+        ItemStack stack = entity.getItemInHand(hand);
+        if (!isLoaded(stack)) return;
+
+        fire(entity, direction, smokeOffsetFor(entity, entity.getMainArm()));
+        entity.playSound(fireSound(), 3.5f, 1);
+        setLoaded(stack, false);
     }
 
     @Override

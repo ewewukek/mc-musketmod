@@ -1,5 +1,7 @@
 package ewewukek.musketmod;
 
+import org.jetbrains.annotations.Nullable;
+
 import com.mojang.serialization.Codec;
 
 import net.minecraft.core.BlockPos;
@@ -84,11 +86,14 @@ public abstract class GunItem extends Item {
     }
 
     public static boolean isHoldingGun(LivingEntity entity) {
-        return isInHand(entity, InteractionHand.MAIN_HAND) || isInHand(entity, InteractionHand.OFF_HAND);
+        return getHoldingHand(entity) != null;
     }
 
+    @Nullable
     public static InteractionHand getHoldingHand(LivingEntity entity) {
-        return isInHand(entity, InteractionHand.MAIN_HAND) ? InteractionHand.MAIN_HAND : InteractionHand.OFF_HAND;
+        if (isInHand(entity, InteractionHand.MAIN_HAND)) return InteractionHand.MAIN_HAND;
+        if (isInHand(entity, InteractionHand.OFF_HAND)) return InteractionHand.OFF_HAND;
+        return null;
     }
 
     public Vec3 smokeOffsetFor(LivingEntity entity, HumanoidArm arm) {

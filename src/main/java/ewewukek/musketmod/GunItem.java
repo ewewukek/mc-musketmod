@@ -205,11 +205,9 @@ public abstract class GunItem extends Item {
         return direction;
     }
 
-    public void mobUse(LivingEntity entity, InteractionHand hand, Vec3 direction) {
+    public void mobUse(LivingEntity entity, ItemStack stack, Vec3 direction) {
         Level level = entity.level();
         if (level.isClientSide) return;
-
-        ItemStack stack = entity.getItemInHand(hand);
         if (!isLoaded(stack)) return;
 
         fire(entity, direction, smokeOffsetFor(entity, entity.getMainArm()));

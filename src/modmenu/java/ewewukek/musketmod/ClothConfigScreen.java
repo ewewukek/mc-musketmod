@@ -44,6 +44,13 @@ public class ClothConfigScreen {
             .setDefaultValue(Config.PISTOL_PILLAGER_CHANCE)
             .build());
 
+        commonCategory.addEntry(entryBuilder.startFloatField(
+            Component.translatable("musketmod.options.musket_skeleton_chance"), Config.musketSkeletonChance)
+            .setSaveConsumer(value -> Config.musketSkeletonChance = value)
+            .setMin(0.0f)
+            .setDefaultValue(Config.MUSKET_SKELETON_CHANCE)
+            .build());
+
         ConfigCategory musketCategory = builder.getOrCreateCategory(Component.translatable("item.musketmod.musket"));
 
         musketCategory.addEntry(entryBuilder.startFloatField(

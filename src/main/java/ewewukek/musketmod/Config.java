@@ -23,6 +23,8 @@ public class Config {
     public static final float MOB_DAMAGE_MULTIPLIER = 0.5f;
     public static float pistolPillagerChance;
     public static final float PISTOL_PILLAGER_CHANCE = 0.2f;
+    public static float musketSkeletonChance;
+    public static final float MUSKET_SKELETON_CHANCE = 0.05f;
 
     public static float musketBulletStdDev;
     public static final float MUSKET_BULLET_STD_DEV = 1.0f;
@@ -81,6 +83,7 @@ public class Config {
         pvpDamageMultiplier = PVP_DAMAGE_MULTIPLIER;
         mobDamageMultiplier = MOB_DAMAGE_MULTIPLIER;
         pistolPillagerChance = PISTOL_PILLAGER_CHANCE;
+        musketSkeletonChance = MUSKET_SKELETON_CHANCE;
 
         musketBulletStdDev = MUSKET_BULLET_STD_DEV;
         musketBulletSpeed = MUSKET_BULLET_SPEED;
@@ -153,6 +156,9 @@ public class Config {
                         break;
                     case "pistolPillagerChance":
                         pistolPillagerChance = value;
+                        break;
+                    case "musketSkeletonChance":
+                        musketSkeletonChance = value;
                         break;
                     case "bulletStdDev": // COMPAT
                     case "musketBulletStdDev":
@@ -258,6 +264,8 @@ public class Config {
             writer.write("mobDamageMultiplier = "+mobDamageMultiplier+"\n");
             writer.write("# Probability of Pillager having a pistol\n");
             writer.write("pistolPillagerChance = "+pistolPillagerChance+"\n");
+            writer.write("# Probability of Skeleton having a musket\n");
+            writer.write("musketSkeletonChance = "+musketSkeletonChance+"\n");
             writer.write("\n");
             writer.write("# Musket\n");
             writer.write("\n");

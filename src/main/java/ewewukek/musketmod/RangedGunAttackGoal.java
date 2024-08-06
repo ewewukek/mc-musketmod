@@ -52,13 +52,16 @@ public class RangedGunAttackGoal<T extends Monster> extends Goal {
         }
     }
 
-    public void fire(float inaccuracyStdDev, boolean predictTargetMovement) {
+    public void fire(float spread) {
         InteractionHand hand = GunItem.getHoldingHand(mob);
         if (hand == null) return;
         ItemStack gun = mob.getItemInHand(hand);
         if (GunItem.isLoaded(gun)) {
             GunItem item = (GunItem)gun.getItem();
-            Vec3 direction = item.aimAt(mob, mob.getTarget(), inaccuracyStdDev, predictTargetMovement);
+            Vec3 direction = item.aimAt(mob, mob.getTarget());
+            if (spread > 0) {
+                direction = GunItem.addUniformSpread(direction, mob.getRandom(), spread);
+            }
             item.mobUse(mob, hand, direction);
         }
     }

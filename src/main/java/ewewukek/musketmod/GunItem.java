@@ -158,6 +158,18 @@ public abstract class GunItem extends Item {
     }
 
     public static Vec3 addSpread(Vec3 direction, RandomSource random, float spreadStdDev) {
+        float gaussian = Math.abs((float)random.nextGaussian());
+        if (gaussian > 4) gaussian = 4;
+        float error = (float)Math.toRadians(spreadStdDev) * gaussian;
+        return applyError(direction, random, error);
+    }
+
+    public static Vec3 addUniformSpread(Vec3 direction, RandomSource random, float spread) {
+        float error = (float)Math.toRadians(spread) * random.nextFloat();
+        return applyError(direction, random, error);
+    }
+
+    public static Vec3 applyError(Vec3 direction, RandomSource random, float coneAngle) {
         // a plane perpendicular to direction
         Vec3 n1;
         Vec3 n2;
@@ -169,18 +181,14 @@ public abstract class GunItem extends Item {
             n2 = direction.cross(n1);
         }
 
-        float gaussian = Math.abs((float)random.nextGaussian());
-        if (gaussian > 4) gaussian = 4;
-        float spread = (float)Math.toRadians(spreadStdDev) * gaussian;
         float angle = (float)Math.PI * 2 * random.nextFloat();
-
         // signs are not important for random angle
-        return direction.scale(Mth.cos(spread))
-            .add(n1.scale(Mth.sin(spread) * Mth.sin(angle)))
-            .add(n2.scale(Mth.sin(spread) * Mth.cos(angle)));
+        return direction.scale(Mth.cos(coneAngle))
+            .add(n1.scale(Mth.sin(coneAngle) * Mth.sin(angle)))
+            .add(n2.scale(Mth.sin(coneAngle) * Mth.cos(angle)));
     }
 
-    public Vec3 aimAt(LivingEntity entity, LivingEntity target, float inaccuracyStdDev, boolean predictTargetMovement) {
+    public Vec3 aimAt(LivingEntity entity, LivingEntity target) {
         double dist = entity.distanceTo(target);
         double ticks = 20 * dist / bulletSpeed();
         double bulletDrop = 0.5 * ticks * ticks * BulletEntity.GRAVITY;
@@ -189,17 +197,11 @@ public abstract class GunItem extends Item {
             0.5 * (target.getEyeY() + target.getY(0.5)),
             target.getZ()
            );
-        if (predictTargetMovement) {
-            pos = pos.add(target.getDeltaMovement().scale(ticks));
-        }
         Vec3 direction = new Vec3(
             pos.x() - entity.getX(),
             pos.y() + bulletDrop - entity.getEyeY(),
             pos.z() - entity.getZ()
         ).normalize();
-        if (inaccuracyStdDev > 0) {
-            direction = addSpread(direction, entity.getRandom(), inaccuracyStdDev);
-        }
         return direction;
     }
 

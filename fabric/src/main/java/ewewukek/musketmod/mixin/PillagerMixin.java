@@ -71,7 +71,7 @@ public class PillagerMixin {
                     } else {
                         attackDelay--;
                         if (attackDelay == 0) {
-                            fire(0.0f, false);
+                            fire(2.0f);
                         }
                     }
                 } else if (!walk) {

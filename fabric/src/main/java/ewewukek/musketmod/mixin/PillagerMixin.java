@@ -38,6 +38,7 @@ public class PillagerMixin {
                 super.tick();
 
                 LivingEntity target = mob.getTarget();
+                if (target == null) return;
 
                 boolean canSee = mob.getSensing().hasLineOfSight(target);
                 boolean wasSeeing = seeTime > 0;
@@ -55,7 +56,8 @@ public class PillagerMixin {
                 if (walk) {
                     updatePathDelay--;
                     if (updatePathDelay <= 0) {
-                        mob.getNavigation().moveTo(target, isLoading() ? speedModifier * 0.5 : speedModifier);
+                        boolean canRun = !isReady() && !isLoading();
+                        mob.getNavigation().moveTo(target, canRun ? speedModifier : speedModifier * 0.5);
                         updatePathDelay = RangedCrossbowAttackGoal.PATHFINDING_DELAY_RANGE.sample(mob.getRandom());
                     }
                 } else {
@@ -66,17 +68,19 @@ public class PillagerMixin {
                 mob.getLookControl().setLookAt(target, 30.0f, 30.0f);
 
                 if (isReady()) {
-                    if (attackDelay == 0) {
-                        attackDelay = 20 + mob.getRandom().nextInt(20);
-                    } else {
+                    if (attackDelay > 0) {
                         attackDelay--;
-                        if (attackDelay == 0) {
-                            fire(2.0f);
-                        }
+                    } else if (canSee) {
+                        fire(2.0f);
                     }
                 } else if (!walk) {
                     reload();
                 }
+            }
+
+            @Override
+            public void onReady() {
+                attackDelay = 20 + mob.getRandom().nextInt(20);
             }
 
             @Override

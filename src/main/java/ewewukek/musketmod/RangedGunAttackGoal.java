@@ -3,6 +3,7 @@ package ewewukek.musketmod;
 import java.util.EnumSet;
 
 import net.minecraft.world.InteractionHand;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ai.goal.Goal;
 import net.minecraft.world.entity.monster.Monster;
 import net.minecraft.world.item.ItemStack;
@@ -39,6 +40,9 @@ public class RangedGunAttackGoal<T extends Monster> extends Goal {
 
     public boolean isLoading() {
         return isLoading;
+    }
+
+    public void onReady() {
     }
 
     public void reload() {
@@ -78,6 +82,7 @@ public class RangedGunAttackGoal<T extends Monster> extends Goal {
                 if (GunItem.isLoaded(mob.getUseItem())) {
                     mob.releaseUsingItem();
                     isLoading = false;
+                    onReady();
                 }
             } else {
                 isLoading = false;

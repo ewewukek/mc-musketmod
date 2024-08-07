@@ -1,0 +1,13 @@
+{
+  "required": true,
+  "package": "ewewukek.musketmod.mixin",
+  "compatibilityLevel": "JAVA_21",
+  "refmap": "mixins.musketmod.refmap.json",
+  "mixins": [
+    "AbstractSkeletonMixin",
+    "PillagerMixin"
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  }
+}

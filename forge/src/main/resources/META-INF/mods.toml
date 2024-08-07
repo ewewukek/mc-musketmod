@@ -2,6 +2,7 @@ modLoader="javafml"
 loaderVersion="[0,)"
 license="MIT License"
 issueTrackerURL="https://github.com/ewewukek/mc-musketmod/issues"
+
 [[mods]]
 modId="musketmod"
 version="${mod_version}"

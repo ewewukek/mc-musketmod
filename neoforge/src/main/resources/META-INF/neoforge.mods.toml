@@ -22,3 +22,6 @@ type="required"
 versionRange="[15.0,)"
 ordering="NONE"
 side="CLIENT"
+
+[[mixins]]
+config = "musketmod.mixins.json"

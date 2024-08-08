@@ -5,7 +5,8 @@
   "refmap": "mixins.musketmod.refmap.json",
   "mixins": [
     "AbstractSkeletonMixin",
-    "PillagerMixin"
+    "PillagerMixin",
+    "EntityMixin"
   ],
   "injectors": {
     "defaultRequire": 1

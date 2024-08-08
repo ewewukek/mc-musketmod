@@ -4,7 +4,8 @@
   "compatibilityLevel": "JAVA_21",
   "mixins": [
     "AbstractSkeletonMixin",
-    "PillagerMixin"
+    "PillagerMixin",
+    "EntityMixin"
   ],
   "injectors": {
     "defaultRequire": 1

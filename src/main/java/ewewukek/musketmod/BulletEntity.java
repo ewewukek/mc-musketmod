@@ -6,6 +6,7 @@ import java.util.function.BiConsumer;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.particles.BlockParticleOption;
+import net.minecraft.core.particles.ParticleOptions;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.nbt.CompoundTag;
@@ -182,20 +183,8 @@ public class BulletEntity extends AbstractHurtingProjectile {
                     setDeltaMovement(motion);
 
                     if (level.isClientSide && fluidHitResult.getType() != HitResult.Type.MISS) {
-                        int particleCount = calculateParticleCount();
-                        if (particleCount > 0) {
-                            Vec3 pos = fluidHitResult.getLocation();
-                            double yv = fluidHitResult.getDirection() == Direction.UP ? 0.02 : 0;
-                            for (int i = 0; i < particleCount; ++i) {
-                                level.addParticle(
-                                    ParticleTypes.SPLASH,
-                                    pos.x, pos.y, pos.z,
-                                    random.nextGaussian() * 0.01,
-                                    random.nextGaussian() * 0.01 + yv,
-                                    random.nextGaussian() * 0.01
-                                );
-                            }
-                        }
+                        double yv = fluidHitResult.getDirection() == Direction.UP ? 0.02 : 0;
+                        createHitParticles(ParticleTypes.SPLASH, waterPos, new Vec3(0.0, yv, 0.0));
                     }
                 } else if (fluid.is(FluidTags.LAVA)) {
                     if (hitResult.getType() == HitResult.Type.MISS || distanceToFluid < distanceToHit) {
@@ -223,21 +212,10 @@ public class BulletEntity extends AbstractHurtingProjectile {
                 discardOnNextTick();
 
             } else if (hitResult.getType() == HitResult.Type.BLOCK) {
-                int particleCount = calculateParticleCount();
-                if (particleCount > 0) {
-                    BlockState blockstate = level.getBlockState(((BlockHitResult)hitResult).getBlockPos());
-                    BlockParticleOption particleOption = new BlockParticleOption(ParticleTypes.BLOCK, blockstate);
-                    Vec3 pos = hitResult.getLocation();
-                    for (int i = 0; i < particleCount; ++i) {
-                        level.addParticle(
-                            particleOption,
-                            pos.x, pos.y, pos.z,
-                            random.nextGaussian() * 0.01,
-                            random.nextGaussian() * 0.01,
-                            random.nextGaussian() * 0.01
-                        );
-                    }
-                }
+                Vec3 pos = hitResult.getLocation();
+                BlockState blockState = level.getBlockState(((BlockHitResult)hitResult).getBlockPos());
+                BlockParticleOption particle = new BlockParticleOption(ParticleTypes.BLOCK, blockState);
+                createHitParticles(particle, pos, Vec3.ZERO);
                 discard();
             }
         }
@@ -332,6 +310,21 @@ public class BulletEntity extends AbstractHurtingProjectile {
         }
 
         return resultEntity != null ? new EntityHitResult(resultEntity, resultVec) : null;
+    }
+
+    public void createHitParticles(ParticleOptions particle, Vec3 position, Vec3 velocity) {
+        int particleCount = calculateParticleCount();
+        if (particleCount > 0) {
+            for (int i = 0; i < particleCount; ++i) {
+                level().addParticle(
+                    particle,
+                    position.x, position.y, position.z,
+                    velocity.x + 0.01 * random.nextGaussian(),
+                    velocity.y + 0.01 * random.nextGaussian(),
+                    velocity.z + 0.01 * random.nextGaussian()
+                );
+            }
+        }
     }
 
     public void setInitialSpeed(float speed) {

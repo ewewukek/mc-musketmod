@@ -181,7 +181,7 @@ public class BulletEntity extends AbstractHurtingProjectile {
                     to = from.add(motion);
                     setDeltaMovement(motion);
 
-                    if (fluidHitResult.getType() != HitResult.Type.MISS) {
+                    if (level.isClientSide && fluidHitResult.getType() != HitResult.Type.MISS) {
                         int particleCount = calculateParticleCount();
                         if (particleCount > 0) {
                             Vec3 pos = fluidHitResult.getLocation();
@@ -242,7 +242,7 @@ public class BulletEntity extends AbstractHurtingProjectile {
             }
         }
 
-        if (wasTouchingWater) {
+        if (level.isClientSide && wasTouchingWater) {
             double len = motion.length();
             Vec3 step = motion.scale(1 / len);
             Vec3 pos = waterPos.add(step.scale(0.5));
@@ -254,10 +254,9 @@ public class BulletEntity extends AbstractHurtingProjectile {
                     level.addParticle(ParticleTypes.BUBBLE, pos.x, pos.y, pos.z, 0, 0, 0);
                 }
             }
-        } else {
-            motion = motion.scale(AIR_FRICTION);
         }
 
+        if (!wasTouchingWater) motion = motion.scale(AIR_FRICTION);
         setDeltaMovement(motion.subtract(0, GRAVITY, 0));
         setPos(to);
         distanceTravelled += to.subtract(from).length();

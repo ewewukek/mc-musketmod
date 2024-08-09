@@ -34,7 +34,7 @@ public class AbstractSkeletonMixin {
 
             @Override
             public boolean canContinueToUse() {
-                return (isTargetValid() || !mob.getNavigation().isDone()) && isHoldingGun();
+                return (isTargetValid() || !mob.getNavigation().isDone()) && canUseGun();
             }
 
             @Override

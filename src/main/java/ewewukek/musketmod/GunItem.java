@@ -110,7 +110,7 @@ public abstract class GunItem extends Item {
         ItemStack stack = player.getItemInHand(hand);
         boolean creative = player.getAbilities().instabuild;
 
-        if (player.isEyeInFluid(FluidTags.WATER) && !creative) {
+        if (!creative && (player.isEyeInFluid(FluidTags.WATER) || player.isEyeInFluid(FluidTags.LAVA))) {
             return InteractionResultHolder.fail(stack);
         }
 

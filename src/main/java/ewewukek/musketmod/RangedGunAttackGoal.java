@@ -2,6 +2,7 @@ package ewewukek.musketmod;
 
 import java.util.EnumSet;
 
+import net.minecraft.tags.FluidTags;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.ai.goal.Goal;
 import net.minecraft.world.entity.monster.Monster;
@@ -19,15 +20,19 @@ public class RangedGunAttackGoal<T extends Monster> extends Goal {
 
     @Override
     public boolean canUse() {
-        return isTargetValid() && isHoldingGun();
+        return isTargetValid() && canUseGun();
     }
 
     public boolean isTargetValid() {
         return mob.getTarget() != null && mob.getTarget().isAlive();
     }
 
-    public boolean isHoldingGun() {
-        return GunItem.isHoldingGun(mob);
+    public boolean canUseGun() {
+        return GunItem.isHoldingGun(mob) && !isInFluid();
+    }
+
+    private boolean isInFluid() {
+        return mob.isEyeInFluid(FluidTags.WATER) || mob.isEyeInFluid(FluidTags.LAVA);
     }
 
     public boolean isReady() {
@@ -48,7 +53,7 @@ public class RangedGunAttackGoal<T extends Monster> extends Goal {
         InteractionHand hand = GunItem.getHoldingHand(mob);
         if (hand == null) return;
         ItemStack gun = mob.getItemInHand(hand);
-        if (!isLoading && !GunItem.isLoaded(gun) ) {
+        if (!isLoading && !GunItem.isLoaded(gun)) {
             GunItem.setLoadingStage(gun, 1);
             mob.startUsingItem(hand);
             isLoading = true;

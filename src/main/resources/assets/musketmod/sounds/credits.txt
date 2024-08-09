@@ -13,3 +13,7 @@ pistol_fire.ogg
     with bits from https://www.youtube.com/watch?v=LAjOnNufato
 dispenser_fire.ogg
     based on (CC0) https://freesound.org/people/unfa/sounds/609588/
+bullet_fly_by[1,2,3].ogg
+    based on (CC0) https://freesound.org/people/haydensayshi123/sounds/138680/
+bullet_water_splash1[1,2].ogg
+    based on (CC0) https://freesound.org/people/craigsmith/sounds/675947/

@@ -38,5 +38,18 @@
     "sounds": [
       "musketmod:dispenser_fire"
     ]
+  },
+  "bullet_fly_by": {
+    "sounds": [
+      "musketmod:bullet_fly_by1",
+      "musketmod:bullet_fly_by2",
+      "musketmod:bullet_fly_by3"
+    ]
+  },
+  "bullet_water_hit": {
+    "sounds": [
+      "musketmod:bullet_water_hit1",
+      "musketmod:bullet_water_hit2"
+    ]
   }
 }

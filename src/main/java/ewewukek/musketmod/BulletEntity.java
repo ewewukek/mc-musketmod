@@ -2,6 +2,7 @@ package ewewukek.musketmod;
 
 import java.util.Optional;
 import java.util.function.BiConsumer;
+import java.util.function.Predicate;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -19,6 +20,7 @@ import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerEntity;
+import net.minecraft.sounds.SoundEvent;
 import net.minecraft.tags.FluidTags;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.damagesource.DamageType;
@@ -90,11 +92,15 @@ public class BulletEntity extends AbstractHurtingProjectile {
         return damageMultiplier * (float)getDeltaMovement().lengthSqr();
     }
 
-    public int calculateParticleCount() {
+    public float calculateEnergyFraction() {
         double maxEnergy = Math.pow(entityData.get(INITIAL_SPEED), 2);
         double energy = getDeltaMovement().lengthSqr();
         if (maxEnergy < energy) maxEnergy = energy; // empty entityData
-        float count = entityData.get(PARTICLE_COUNT) * (float)(energy / maxEnergy);
+        return (float)(energy / maxEnergy);
+    }
+
+    public int calculateParticleCount() {
+        float count = entityData.get(PARTICLE_COUNT) * calculateEnergyFraction();
         float prob = count % 1;
         return (int)count + (random.nextFloat() < prob ? 1 : 0);
     }
@@ -185,6 +191,7 @@ public class BulletEntity extends AbstractHurtingProjectile {
                     if (level.isClientSide && fluidHitResult.getType() != HitResult.Type.MISS) {
                         double yv = fluidHitResult.getDirection() == Direction.UP ? 0.02 : 0;
                         createHitParticles(ParticleTypes.SPLASH, waterPos, new Vec3(0.0, yv, 0.0));
+                        playHitSound(Sounds.BULLET_WATER_HIT, waterPos);
                     }
                 } else if (fluid.is(FluidTags.LAVA)) {
                     if (hitResult.getType() == HitResult.Type.MISS || distanceToFluid < distanceToHit) {
@@ -216,7 +223,27 @@ public class BulletEntity extends AbstractHurtingProjectile {
                 BlockState blockState = level.getBlockState(((BlockHitResult)hitResult).getBlockPos());
                 BlockParticleOption particle = new BlockParticleOption(ParticleTypes.BLOCK, blockState);
                 createHitParticles(particle, pos, Vec3.ZERO);
+                playHitSound(blockState.getSoundType().getBreakSound(), pos);
                 discard();
+            }
+        } else if (level.isClientSide && !wasTouchingWater && getBulletType() == BulletType.BULLET) {
+            AABB aabbSelection = getBoundingBox().expandTowards(motion).inflate(8.0);
+            double length = motion.length();
+            Vec3 dir = motion.scale(1.0 / length);
+            float volume = calculateEnergyFraction();
+            Predicate<Entity> predicate = entity -> entity instanceof Player;
+            for (Entity entity : level().getEntities(this, aabbSelection, predicate)) {
+                Vec3 pos = new Vec3(entity.getX(), entity.getEyeY(), entity.getZ());
+                Vec3 diff = pos.subtract(from);
+                double proj = dir.dot(diff);
+                if (proj > 0 && proj < length) {
+                    Vec3 projPos = from.add(dir.scale(proj));
+                    level().playLocalSound(
+                        projPos.x, projPos.y, projPos.z,
+                        Sounds.BULLET_FLY_BY, getSoundSource(),
+                        volume, 0.92f + 0.16f * random.nextFloat(), false
+                    );
+                }
             }
         }
 
@@ -324,6 +351,17 @@ public class BulletEntity extends AbstractHurtingProjectile {
                     velocity.z + 0.01 * random.nextGaussian()
                 );
             }
+        }
+    }
+
+    public void playHitSound(SoundEvent sound, Vec3 position) {
+        if (getBulletType() == BulletType.BULLET) {
+            level().playLocalSound(
+                position.x, position.y, position.z,
+                sound, getSoundSource(),
+                calculateEnergyFraction(),
+                0.95f + 0.1f * random.nextFloat(), false
+            );
         }
     }
 

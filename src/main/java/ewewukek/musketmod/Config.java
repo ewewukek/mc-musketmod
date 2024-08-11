@@ -39,6 +39,11 @@ public class Config {
     public static int bayonetDamage;
     public static final int BAYONET_DAMAGE = 5;
 
+    public static float scopedMusketBulletStdDev;
+    public static final float SCOPED_MUSKET_BULLET_STD_DEV = 0.2f;
+    public static int scopedMusketDurability;
+    public static final int SCOPED_MUSKET_DURABILITY = 150;
+
     public static float blunderbussBulletStdDev;
     public static final float BLUNDERBUSS_BULLET_STD_DEV = 1.5f;
     public static float blunderbussBulletSpeed;
@@ -91,6 +96,9 @@ public class Config {
         musketDamageMax = MUSKET_DAMAGE_MAX;
         musketDurability = MUSKET_DURABILITY;
         bayonetDamage = BAYONET_DAMAGE;
+
+        scopedMusketBulletStdDev = SCOPED_MUSKET_BULLET_STD_DEV;
+        scopedMusketDurability = SCOPED_MUSKET_DURABILITY;
 
         blunderbussBulletStdDev = BLUNDERBUSS_BULLET_STD_DEV;
         blunderbussBulletSpeed = BLUNDERBUSS_BULLET_SPEED;
@@ -182,6 +190,12 @@ public class Config {
                         break;
                     case "bayonetDamage":
                         bayonetDamage = (int)value;
+                        break;
+                    case "scopedMusketBulletStdDev":
+                        scopedMusketBulletStdDev = value;
+                        break;
+                    case "scopedMusketDurability":
+                        scopedMusketDurability = (int)value;
                         break;
                     case "blunderbussBulletStdDev":
                         blunderbussBulletStdDev = value;
@@ -281,6 +295,13 @@ public class Config {
             writer.write("musketDurability = "+musketDurability+"\n");
             writer.write("# Bayonet damage (applied on restart)\n");
             writer.write("bayonetDamage = "+bayonetDamage+"\n");
+            writer.write("\n");
+            writer.write("# Musket with scope\n");
+            writer.write("\n");
+            writer.write("# Standard deviation of bullet spread (in degrees)\n");
+            writer.write("scopedMusketBulletStdDev = "+scopedMusketBulletStdDev+"\n");
+            writer.write("# Durability (applied on restart)\n");
+            writer.write("scopedMusketDurability = "+scopedMusketDurability+"\n");
             writer.write("\n");
             writer.write("# Blunderbuss\n");
             writer.write("\n");

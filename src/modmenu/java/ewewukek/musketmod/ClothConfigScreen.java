@@ -99,6 +99,24 @@ public class ClothConfigScreen {
             .setDefaultValue(Config.BAYONET_DAMAGE)
             .build());
 
+        ConfigCategory scopedMusketCategory = builder.getOrCreateCategory(Component.translatable("item.musketmod.musket_with_scope"));
+
+        scopedMusketCategory.addEntry(entryBuilder.startFloatField(
+            Component.translatable("musketmod.options.bullet_std_dev"), Config.scopedMusketBulletStdDev)
+            .setTooltip(Component.translatable("musketmod.options.tooltip.degrees"))
+            .setSaveConsumer(value -> Config.scopedMusketBulletStdDev = value)
+            .setMin(0.0f)
+            .setDefaultValue(Config.SCOPED_MUSKET_BULLET_STD_DEV)
+            .build());
+
+        scopedMusketCategory.addEntry(entryBuilder.startIntField(
+            Component.translatable("musketmod.options.durability"), Config.scopedMusketDurability)
+            .setTooltip(Component.translatable("musketmod.options.tooltip.restart"))
+            .setSaveConsumer(value -> Config.scopedMusketDurability = value)
+            .setMin(1)
+            .setDefaultValue(Config.SCOPED_MUSKET_DURABILITY)
+            .build());
+
         ConfigCategory blunderbussCategory = builder.getOrCreateCategory(Component.translatable("item.musketmod.blunderbuss"));
 
         blunderbussCategory.addEntry(entryBuilder.startFloatField(

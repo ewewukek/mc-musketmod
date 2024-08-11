@@ -48,6 +48,11 @@ public class ScopedMusketItem extends GunItem {
     }
 
     @Override
+    public int hitDurabilityDamage() {
+        return 2;
+    }
+
+    @Override
     public boolean ignoreInvulnerableTime() {
         return false;
     }

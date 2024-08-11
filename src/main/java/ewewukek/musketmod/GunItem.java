@@ -59,6 +59,7 @@ public abstract class GunItem extends Item {
     public abstract float damageMax();
     public abstract SoundEvent fireSound();
     public abstract boolean twoHanded();
+    public abstract int hitDurabilityDamage();
     public abstract boolean ignoreInvulnerableTime();
 
     public boolean canUseFrom(LivingEntity entity, InteractionHand hand) {
@@ -263,14 +264,14 @@ public abstract class GunItem extends Item {
 
     @Override
     public boolean hurtEnemy(ItemStack stack, LivingEntity enemy, LivingEntity entityIn) {
-        stack.hurtAndBreak(1, entityIn, EquipmentSlot.MAINHAND);
+        stack.hurtAndBreak(hitDurabilityDamage(), entityIn, EquipmentSlot.MAINHAND);
         return false;
     }
 
     @Override
     public boolean mineBlock(ItemStack stack, Level worldIn, BlockState state, BlockPos pos, LivingEntity entityIn) {
         if (state.getDestroySpeed(worldIn, pos) != 0) {
-            stack.hurtAndBreak(1, entityIn, EquipmentSlot.MAINHAND);
+            stack.hurtAndBreak(hitDurabilityDamage(), entityIn, EquipmentSlot.MAINHAND);
         }
         return false;
     }

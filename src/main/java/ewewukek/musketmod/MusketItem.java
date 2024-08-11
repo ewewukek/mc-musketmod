@@ -66,6 +66,11 @@ public class MusketItem extends GunItem {
     }
 
     @Override
+    public int hitDurabilityDamage() {
+        return 1;
+    }
+
+    @Override
     public boolean ignoreInvulnerableTime() {
         return false;
     }

@@ -231,7 +231,7 @@ public class BulletEntity extends AbstractHurtingProjectile {
             double length = motion.length();
             Vec3 dir = motion.scale(1.0 / length);
             float volume = calculateEnergyFraction();
-            Predicate<Entity> predicate = entity -> entity instanceof Player;
+            Predicate<Entity> predicate = entity -> (entity instanceof Player) && !entity.equals(getOwner());
             for (Entity entity : level().getEntities(this, aabbSelection, predicate)) {
                 Vec3 pos = new Vec3(entity.getX(), entity.getEyeY(), entity.getZ());
                 Vec3 diff = pos.subtract(from);

@@ -368,6 +368,10 @@ public abstract class GunItem extends Item {
         }
     }
 
+    public static boolean isReady(ItemStack stack) {
+        return isLoaded(stack) && getLoadingStage(stack) == 0;
+    }
+
     public static boolean isLoaded(ItemStack stack) {
         Boolean loaded = stack.get(LOADED);
         return loaded != null && loaded;

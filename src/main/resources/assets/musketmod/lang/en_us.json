@@ -24,5 +24,6 @@
   "musketmod.options.damage_min": "Minimum damage at point-blank range",
   "musketmod.options.damage_max": "Maximum damage at point-blank range",
   "musketmod.options.durability": "Durability",
-  "musketmod.options.bayonet_damage": "Added bayonet damage"
+  "musketmod.options.bayonet_damage": "Bayonet damage",
+  "musketmod.options.scope_zoom": "Scope zoom factor"
 }

@@ -3,8 +3,11 @@
   "package": "ewewukek.musketmod.mixin",
   "compatibilityLevel": "JAVA_21",
   "client": [
+    "AbstractClientPlayerMixin",
+    "MinecraftMixin",
     "MixinHeldItemRenderer",
-    "MixinPlayerEntityRenderer"
+    "MixinPlayerEntityRenderer",
+    "PlayerMixin"
   ],
   "mixins": [
     "AbstractSkeletonMixin",

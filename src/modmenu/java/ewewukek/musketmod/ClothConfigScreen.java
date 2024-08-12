@@ -109,6 +109,13 @@ public class ClothConfigScreen {
             .setDefaultValue(Config.SCOPED_MUSKET_BULLET_STD_DEV)
             .build());
 
+        scopedMusketCategory.addEntry(entryBuilder.startFloatField(
+            Component.translatable("musketmod.options.scope_zoom"), Config.scopeZoom)
+            .setSaveConsumer(value -> Config.scopeZoom = value)
+            .setMin(1.0f).setMax(10.0f)
+            .setDefaultValue(Config.SCOPE_ZOOM)
+            .build());
+
         scopedMusketCategory.addEntry(entryBuilder.startIntField(
             Component.translatable("musketmod.options.durability"), Config.scopedMusketDurability)
             .setTooltip(Component.translatable("musketmod.options.tooltip.restart"))

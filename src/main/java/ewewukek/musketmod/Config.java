@@ -43,6 +43,8 @@ public class Config {
     public static final float SCOPED_MUSKET_BULLET_STD_DEV = 0.2f;
     public static int scopedMusketDurability;
     public static final int SCOPED_MUSKET_DURABILITY = 150;
+    public static float scopeZoom;
+    public static final float SCOPE_ZOOM = 4.0f;
 
     public static float blunderbussBulletStdDev;
     public static final float BLUNDERBUSS_BULLET_STD_DEV = 1.5f;
@@ -99,6 +101,7 @@ public class Config {
 
         scopedMusketBulletStdDev = SCOPED_MUSKET_BULLET_STD_DEV;
         scopedMusketDurability = SCOPED_MUSKET_DURABILITY;
+        scopeZoom = SCOPE_ZOOM;
 
         blunderbussBulletStdDev = BLUNDERBUSS_BULLET_STD_DEV;
         blunderbussBulletSpeed = BLUNDERBUSS_BULLET_SPEED;
@@ -196,6 +199,9 @@ public class Config {
                         break;
                     case "scopedMusketDurability":
                         scopedMusketDurability = (int)value;
+                        break;
+                    case "scopeZoom":
+                        scopeZoom = value;
                         break;
                     case "blunderbussBulletStdDev":
                         blunderbussBulletStdDev = value;
@@ -302,6 +308,8 @@ public class Config {
             writer.write("scopedMusketBulletStdDev = "+scopedMusketBulletStdDev+"\n");
             writer.write("# Durability (applied on restart)\n");
             writer.write("scopedMusketDurability = "+scopedMusketDurability+"\n");
+            writer.write("# Scope zoom factor\n");
+            writer.write("scopeZoom = "+scopeZoom+"\n");
             writer.write("\n");
             writer.write("# Blunderbuss\n");
             writer.write("\n");

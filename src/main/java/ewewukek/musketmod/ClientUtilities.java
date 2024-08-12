@@ -57,6 +57,10 @@ public class ClientUtilities {
     public static boolean disableOffhandEquipAnimation;
 
     public static void renderGunInHand(ItemInHandRenderer renderer, AbstractClientPlayer player, InteractionHand hand, float partialTicks, float interpolatedPitch, float swingProgress, float equipProgress, ItemStack stack, PoseStack matrixStack, MultiBufferSource render, int packedLight) {
+        if (player.isScoping()) {
+            return;
+        }
+
         HumanoidArm handside = hand == InteractionHand.MAIN_HAND ? player.getMainArm() : player.getMainArm().getOpposite();
         boolean isRightHand = handside == HumanoidArm.RIGHT;
         float sign = isRightHand ? 1 : -1;

@@ -3,6 +3,9 @@ package ewewukek.musketmod;
 import net.minecraft.sounds.SoundEvent;
 
 public class ScopedMusketItem extends GunItem {
+    // for client-side logic
+    public static boolean isScoping;
+
     public ScopedMusketItem(Properties properties) {
         super(properties.durability(Config.scopedMusketDurability));
     }

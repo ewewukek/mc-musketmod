@@ -19,7 +19,8 @@ public class MinecraftMixin {
     target = "Lnet/minecraft/client/Minecraft;startUseItem()V"))
     private void handleKeyUseDown(Minecraft client) {
         ItemStack stack = client.player.getMainHandItem();
-        if (stack.getItem() == Items.MUSKET_WITH_SCOPE && GunItem.isReady(stack)) {
+        if (client.options.getCameraType().isFirstPerson()
+        && stack.getItem() == Items.MUSKET_WITH_SCOPE && GunItem.isReady(stack)) {
             setScoping(client, true);
         } else if (!ScopedMusketItem.isScoping) {
             client.startUseItem();
@@ -30,7 +31,8 @@ public class MinecraftMixin {
     target = "Lnet/minecraft/client/Minecraft;startAttack()Z"))
     private boolean handleKeyAttack(Minecraft client) {
         ItemStack stack = client.player.getMainHandItem();
-        if (stack.getItem() == Items.MUSKET_WITH_SCOPE && ScopedMusketItem.isScoping) {
+        if (client.options.getCameraType().isFirstPerson()
+        && stack.getItem() == Items.MUSKET_WITH_SCOPE && ScopedMusketItem.isScoping) {
             client.startUseItem();
         } else {
             return client.startAttack();
@@ -41,7 +43,7 @@ public class MinecraftMixin {
     @Inject(method = "handleKeybinds", at = @At("HEAD"))
     private void finishReloading(CallbackInfo ci) {
         Minecraft client = (Minecraft)(Object)this;
-        if (client.player.isUsingItem()) {
+        if (client.options.getCameraType().isFirstPerson() && client.player.isUsingItem()) {
             ItemStack stack = client.player.getUseItem();
             if (stack.getItem() == Items.MUSKET_WITH_SCOPE && GunItem.isLoaded(stack)
             && client.player.getTicksUsingItem() >= GunItem.RELOAD_DURATION + 10) {

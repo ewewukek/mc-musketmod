@@ -38,6 +38,18 @@ public class MinecraftMixin {
         return true;
     }
 
+    @Inject(method = "handleKeybinds", at = @At("HEAD"))
+    private void finishReloading(CallbackInfo ci) {
+        Minecraft client = (Minecraft)(Object)this;
+        if (client.player.isUsingItem()) {
+            ItemStack stack = client.player.getUseItem();
+            if (stack.getItem() == Items.MUSKET_WITH_SCOPE && GunItem.isLoaded(stack)
+            && client.player.getTicksUsingItem() >= GunItem.RELOAD_DURATION + 10) {
+                client.gameMode.releaseUsingItem(client.player);
+            }
+        }
+    }
+
     @Inject(method = "handleKeybinds", at = @At("TAIL"))
     private void handleKeyUseUp(CallbackInfo ci) {
         Minecraft client = (Minecraft)(Object)this;

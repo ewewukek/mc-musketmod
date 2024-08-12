@@ -36,16 +36,6 @@ public class MusketItem extends GunItem {
     }
 
     @Override
-    public int pelletCount() {
-        return 1;
-    }
-
-    @Override
-    public BulletType bulletType() {
-        return BulletType.BULLET;
-    }
-
-    @Override
     public float damageMin() {
         return Config.musketDamageMin;
     }
@@ -58,20 +48,5 @@ public class MusketItem extends GunItem {
     @Override
     public SoundEvent fireSound() {
         return Sounds.MUSKET_FIRE;
-    }
-
-    @Override
-    public boolean twoHanded() {
-        return true;
-    }
-
-    @Override
-    public int hitDurabilityDamage() {
-        return 1;
-    }
-
-    @Override
-    public boolean ignoreInvulnerableTime() {
-        return false;
     }
 }

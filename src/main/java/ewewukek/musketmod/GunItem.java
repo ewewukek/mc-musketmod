@@ -53,14 +53,29 @@ public abstract class GunItem extends Item {
 
     public abstract float bulletStdDev();
     public abstract float bulletSpeed();
-    public abstract int pelletCount();
-    public abstract BulletType bulletType();
     public abstract float damageMin();
     public abstract float damageMax();
     public abstract SoundEvent fireSound();
-    public abstract boolean twoHanded();
-    public abstract int hitDurabilityDamage();
-    public abstract boolean ignoreInvulnerableTime();
+
+    public int pelletCount() {
+        return 1;
+    }
+
+    public BulletType bulletType() {
+        return BulletType.BULLET;
+    }
+
+    public boolean twoHanded() {
+        return true;
+    }
+
+    public int hitDurabilityDamage() {
+        return 1;
+    }
+
+    public boolean ignoreInvulnerableTime() {
+        return false;
+    }
 
     public boolean canUseFrom(LivingEntity entity, InteractionHand hand) {
         if (hand == InteractionHand.MAIN_HAND) {

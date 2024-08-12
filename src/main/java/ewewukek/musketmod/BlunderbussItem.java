@@ -41,19 +41,4 @@ public class BlunderbussItem extends GunItem {
     public SoundEvent fireSound() {
         return Sounds.BLUNDERBUSS_FIRE;
     }
-
-    @Override
-    public boolean twoHanded() {
-        return true;
-    }
-
-    @Override
-    public int hitDurabilityDamage() {
-        return 1;
-    }
-
-    @Override
-    public boolean ignoreInvulnerableTime() {
-        return true;
-    }
 }

@@ -4,7 +4,7 @@ import net.minecraft.sounds.SoundEvent;
 
 public class BlunderbussItem extends GunItem {
     public BlunderbussItem(Properties properties) {
-        super(properties.durability(Config.blunderbussDurability));
+        super(properties);
     }
 
     @Override

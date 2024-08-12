@@ -4,7 +4,7 @@ import net.minecraft.sounds.SoundEvent;
 
 public class PistolItem extends GunItem {
     public PistolItem(Properties properties) {
-        super(properties.durability(Config.pistolDurability));
+        super(properties);
     }
 
     @Override

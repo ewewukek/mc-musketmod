@@ -7,12 +7,17 @@ import net.minecraft.core.component.DataComponentType;
 import net.minecraft.world.item.Item;
 
 public class Items {
-    public static final Item MUSKET = new MusketItem(new Item.Properties());
+    public static final Item MUSKET = new MusketItem(new Item.Properties()
+        .durability(Config.musketDurability));
     public static final Item MUSKET_WITH_BAYONET = new MusketItem(new Item.Properties()
+        .durability(Config.musketDurability)
         .attributes(MusketItem.createBayonetAttributes()));
-    public static final Item MUSKET_WITH_SCOPE = new ScopedMusketItem(new Item.Properties());
-    public static final Item BLUNDERBUSS = new BlunderbussItem(new Item.Properties());
-    public static final Item PISTOL = new PistolItem(new Item.Properties());
+    public static final Item MUSKET_WITH_SCOPE = new ScopedMusketItem(new Item.Properties()
+        .durability(Config.scopedMusketDurability));
+    public static final Item BLUNDERBUSS = new BlunderbussItem(new Item.Properties()
+        .durability(Config.blunderbussDurability));
+    public static final Item PISTOL = new PistolItem(new Item.Properties()
+        .durability(Config.pistolDurability));
     public static final Item CARTRIDGE = new CartridgeItem(new Item.Properties());
 
     public static void registerDataComponentTypes(BiConsumer<String, DataComponentType<?>> helper) {

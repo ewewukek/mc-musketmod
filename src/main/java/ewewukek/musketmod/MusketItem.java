@@ -11,7 +11,7 @@ public class MusketItem extends GunItem {
     public static final float BAYONET_SPEED = -2.4f;
 
     public MusketItem(Item.Properties properties) {
-        super(properties.durability(Config.musketDurability));
+        super(properties);
     }
 
     public static ItemAttributeModifiers createBayonetAttributes() {

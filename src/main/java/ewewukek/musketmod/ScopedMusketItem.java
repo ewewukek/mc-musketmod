@@ -7,7 +7,7 @@ public class ScopedMusketItem extends GunItem {
     public static boolean isScoping;
 
     public ScopedMusketItem(Properties properties) {
-        super(properties.durability(Config.scopedMusketDurability));
+        super(properties);
     }
 
     @Override

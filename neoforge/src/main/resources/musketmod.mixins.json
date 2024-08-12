@@ -9,8 +9,8 @@
   ],
   "mixins": [
     "AbstractSkeletonMixin",
-    "PillagerMixin",
-    "EntityMixin"
+    "EntityMixin",
+    "PillagerMixin"
   ],
   "injectors": {
     "defaultRequire": 1

@@ -14,7 +14,7 @@ import net.minecraft.client.renderer.entity.player.PlayerRenderer;
 import net.minecraft.world.InteractionHand;
 
 @Mixin(PlayerRenderer.class)
-public class MixinPlayerEntityRenderer {
+public class PlayerRendererMixin {
     @Inject(
         method = "getArmPose",
         at = @At("HEAD"),

@@ -16,7 +16,7 @@ import net.minecraft.world.InteractionHand;
 import net.minecraft.world.item.ItemStack;
 
 @Mixin(ItemInHandRenderer.class)
-public class MixinHeldItemRenderer {
+public class ItemInHandRendererMixin {
     @Inject(
         method = "renderArmWithItem",
         at = @At(value ="HEAD"),

@@ -36,15 +36,16 @@ public class Config {
     public static final float MUSKET_DAMAGE_MAX = 21.0f;
     public static int musketDurability;
     public static final int MUSKET_DURABILITY = 250;
+
     public static int bayonetDamage;
     public static final int BAYONET_DAMAGE = 5;
 
     public static float scopedMusketBulletStdDev;
     public static final float SCOPED_MUSKET_BULLET_STD_DEV = 0.2f;
-    public static int scopedMusketDurability;
-    public static final int SCOPED_MUSKET_DURABILITY = 150;
     public static float scopeZoom;
     public static final float SCOPE_ZOOM = 4.0f;
+    public static int scopedMusketDurability;
+    public static final int SCOPED_MUSKET_DURABILITY = 150;
 
     public static float blunderbussBulletStdDev;
     public static final float BLUNDERBUSS_BULLET_STD_DEV = 1.5f;
@@ -97,11 +98,12 @@ public class Config {
         musketDamageMin = MUSKET_DAMAGE_MIN;
         musketDamageMax = MUSKET_DAMAGE_MAX;
         musketDurability = MUSKET_DURABILITY;
+
         bayonetDamage = BAYONET_DAMAGE;
 
         scopedMusketBulletStdDev = SCOPED_MUSKET_BULLET_STD_DEV;
-        scopedMusketDurability = SCOPED_MUSKET_DURABILITY;
         scopeZoom = SCOPE_ZOOM;
+        scopedMusketDurability = SCOPED_MUSKET_DURABILITY;
 
         blunderbussBulletStdDev = BLUNDERBUSS_BULLET_STD_DEV;
         blunderbussBulletSpeed = BLUNDERBUSS_BULLET_SPEED;
@@ -156,6 +158,7 @@ public class Config {
                     case "version":
                         version = (int)value;
                         break;
+
                     case "bulletMaxDistance":
                         bulletMaxDistance = value;
                         break;
@@ -171,6 +174,7 @@ public class Config {
                     case "musketSkeletonChance":
                         musketSkeletonChance = value;
                         break;
+
                     case "bulletStdDev": // COMPAT
                     case "musketBulletStdDev":
                         musketBulletStdDev = value;
@@ -191,18 +195,21 @@ public class Config {
                     case "musketDurability":
                         musketDurability = (int)value;
                         break;
+
                     case "bayonetDamage":
                         bayonetDamage = (int)value;
                         break;
+
                     case "scopedMusketBulletStdDev":
                         scopedMusketBulletStdDev = value;
-                        break;
-                    case "scopedMusketDurability":
-                        scopedMusketDurability = (int)value;
                         break;
                     case "scopeZoom":
                         scopeZoom = value;
                         break;
+                    case "scopedMusketDurability":
+                        scopedMusketDurability = (int)value;
+                        break;
+
                     case "blunderbussBulletStdDev":
                         blunderbussBulletStdDev = value;
                         break;
@@ -221,6 +228,7 @@ public class Config {
                     case "blunderbussDurability":
                         blunderbussDurability = (int)value;
                         break;
+
                     case "pistolBulletStdDev":
                         pistolBulletStdDev = value;
                         break;
@@ -236,6 +244,7 @@ public class Config {
                     case "pistolDurability":
                         pistolDurability = (int)value;
                         break;
+
                     case "dispenserBulletStdDev":
                         dispenserBulletStdDev = value;
                         break;
@@ -276,6 +285,7 @@ public class Config {
         try (BufferedWriter writer = Files.newBufferedWriter(MusketMod.CONFIG_PATH)) {
             writer.write("version = "+VERSION+"\n");
             writer.write("\n");
+
             writer.write("# Maximum bullet travel distance (in blocks)\n");
             writer.write("bulletMaxDistance = "+bulletMaxDistance+"\n");
             writer.write("# Damage multiplier for pvp\n");
@@ -287,6 +297,7 @@ public class Config {
             writer.write("# Probability of Skeleton having a musket\n");
             writer.write("musketSkeletonChance = "+musketSkeletonChance+"\n");
             writer.write("\n");
+
             writer.write("# Musket\n");
             writer.write("\n");
             writer.write("# Standard deviation of bullet spread (in degrees)\n");
@@ -299,18 +310,24 @@ public class Config {
             writer.write("musketDamageMax = "+musketDamageMax+"\n");
             writer.write("# Durability (applied on restart)\n");
             writer.write("musketDurability = "+musketDurability+"\n");
+            writer.write("\n");
+
+            writer.write("# Musket with bayonet\n");
+            writer.write("\n");
             writer.write("# Bayonet damage (applied on restart)\n");
             writer.write("bayonetDamage = "+bayonetDamage+"\n");
             writer.write("\n");
+
             writer.write("# Musket with scope\n");
             writer.write("\n");
             writer.write("# Standard deviation of bullet spread (in degrees)\n");
             writer.write("scopedMusketBulletStdDev = "+scopedMusketBulletStdDev+"\n");
-            writer.write("# Durability (applied on restart)\n");
-            writer.write("scopedMusketDurability = "+scopedMusketDurability+"\n");
             writer.write("# Scope zoom factor\n");
             writer.write("scopeZoom = "+scopeZoom+"\n");
+            writer.write("# Durability (applied on restart)\n");
+            writer.write("scopedMusketDurability = "+scopedMusketDurability+"\n");
             writer.write("\n");
+
             writer.write("# Blunderbuss\n");
             writer.write("\n");
             writer.write("# Standard deviation of bullet spread (in degrees)\n");
@@ -326,6 +343,7 @@ public class Config {
             writer.write("# Durability (applied on restart)\n");
             writer.write("blunderbussDurability = "+blunderbussDurability+"\n");
             writer.write("\n");
+
             writer.write("# Pistol\n");
             writer.write("\n");
             writer.write("# Standard deviation of bullet spread (in degrees)\n");
@@ -339,6 +357,7 @@ public class Config {
             writer.write("# Durability (applied on restart)\n");
             writer.write("pistolDurability = "+pistolDurability+"\n");
             writer.write("\n");
+
             writer.write("# Dispenser\n");
             writer.write("\n");
             writer.write("# Standard deviation of bullet spread (in degrees)\n");

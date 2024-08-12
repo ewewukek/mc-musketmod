@@ -71,8 +71,8 @@ mixin {
     add sourceSets.main
     config 'musketmod.mixins.json'
 
-    debug.verbose = true
-    debug.export = true
+    // debug.verbose = true
+    // debug.export = true
     dumpTargetOnFailure = true
 }
 

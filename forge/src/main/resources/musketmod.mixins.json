@@ -3,6 +3,11 @@
   "package": "ewewukek.musketmod.mixin",
   "compatibilityLevel": "JAVA_21",
   "refmap": "mixins.musketmod.refmap.json",
+  "client": [
+    "AbstractClientPlayerMixin",
+    "MinecraftMixin",
+    "PlayerMixin"
+  ],
   "mixins": [
     "AbstractSkeletonMixin",
     "PillagerMixin",

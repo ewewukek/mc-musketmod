@@ -415,7 +415,7 @@ public class BulletEntity extends AbstractHurtingProjectile {
             position.x(), position.y(), position.z(),
             entity.getLastSentXRot(), entity.getLastSentYRot(),
             getType(), owner != null ? owner.getId() : 0,
-            entity.getLastSentMovement().scale(4.0 / entityData.get(INITIAL_SPEED)),
+            entity.getLastSentMovement().scale(3.9 / entityData.get(INITIAL_SPEED)),
             0
         );
     }
@@ -423,8 +423,8 @@ public class BulletEntity extends AbstractHurtingProjectile {
     @Override
     public void recreateFromPacket(ClientboundAddEntityPacket packet) {
         super.recreateFromPacket(packet);
-        Vec3 packet_velocity = new Vec3(packet.getXa(), packet.getYa(), packet.getZa());
-        setDeltaMovement(packet_velocity.scale(1.0 / 4.0));
+        Vec3 packetVelocity = new Vec3(packet.getXa(), packet.getYa(), packet.getZa());
+        setDeltaMovement(packetVelocity.scale(1.0 / 3.9));
     }
 
     @Override

@@ -15,8 +15,8 @@ public class BulletRenderer extends EntityRenderer<BulletEntity> {
     public static final ResourceLocation TEXTURE = ResourceLocation.fromNamespaceAndPath(MusketMod.MODID, "textures/entity/bullet.png");
     public static final RenderType RENDER_TYPE = RenderType.entityCutoutNoCull(TEXTURE);
 
-    public BulletRenderer(EntityRendererProvider.Context ctx) {
-        super(ctx);
+    public BulletRenderer(EntityRendererProvider.Context context) {
+        super(context);
     }
 
     @Override
@@ -25,7 +25,7 @@ public class BulletRenderer extends EntityRenderer<BulletEntity> {
     }
 
     @Override
-    public void render(BulletEntity bullet, float yaw, float partialTicks, PoseStack poseStack, MultiBufferSource render, int light) {
+    public void render(BulletEntity bullet, float yaw, float dt, PoseStack poseStack, MultiBufferSource bufferSource, int light) {
         if (bullet.isFirstTick()) return;
 
         poseStack.pushPose();
@@ -44,7 +44,7 @@ public class BulletRenderer extends EntityRenderer<BulletEntity> {
         poseStack.mulPose(Axis.YP.rotationDegrees(180));
 
         PoseStack.Pose pose = poseStack.last();
-        VertexConsumer builder = render.getBuffer(RENDER_TYPE);
+        VertexConsumer builder = bufferSource.getBuffer(RENDER_TYPE);
 
         addVertex(builder, pose, -1, -1, 0, 0, 1, 0, 0, 1, light);
         addVertex(builder, pose,  1, -1, 0, 1, 1, 0, 0, 1, light);
@@ -53,7 +53,7 @@ public class BulletRenderer extends EntityRenderer<BulletEntity> {
 
         poseStack.popPose();
 
-        super.render(bullet, yaw, partialTicks, poseStack, render, light);
+        super.render(bullet, yaw, dt, poseStack, bufferSource, light);
     }
 
     void addVertex(VertexConsumer builder, PoseStack.Pose pose, float x, float y, float z, float u, float v, float nx, float ny, float nz, int light) {

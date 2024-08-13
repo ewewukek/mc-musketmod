@@ -48,7 +48,7 @@ public class MusketMod {
         .simpleChannel();
 
     public MusketMod() {
-        Config.reload();
+        Config.load();
 
         IEventBus bus = FMLJavaModLoadingContext.get().getModEventBus();
         bus.addListener(this::register);
@@ -104,7 +104,7 @@ public class MusketMod {
                 Executor gameExecutor) {
 
                 return stage.wait(Unit.INSTANCE).thenRunAsync(() -> {
-                    Config.reload();
+                    Config.load();
                 }, gameExecutor);
             }
         });

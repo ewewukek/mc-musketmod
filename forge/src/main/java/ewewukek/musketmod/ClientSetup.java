@@ -47,12 +47,10 @@ public class ClientSetup {
     }
 
     public void renderPlayer(final RenderLivingEvent.Pre<Player, PlayerModel<Player>> event) {
-        if (!(event.getEntity() instanceof Player)
-         || !(event.getRenderer().getModel() instanceof PlayerModel)) return;
-        Player player = (Player)event.getEntity();
+        if (!(event.getEntity() instanceof Player player)
+         || !(event.getRenderer().getModel() instanceof PlayerModel<Player> model)) return;
         Optional<HumanoidModel.ArmPose> mainHandPose = ClientUtilities.getArmPose(player, InteractionHand.MAIN_HAND);
         Optional<HumanoidModel.ArmPose> offhandPose = ClientUtilities.getArmPose(player, InteractionHand.OFF_HAND);
-        PlayerModel<Player> model = event.getRenderer().getModel();
         if (player.getMainArm() == HumanoidArm.RIGHT) {
             model.rightArmPose = mainHandPose.isPresent() ? mainHandPose.get() : model.rightArmPose;
             model.leftArmPose = offhandPose.isPresent() ? offhandPose.get() : model.leftArmPose;

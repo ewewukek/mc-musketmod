@@ -15,6 +15,7 @@ import net.minecraft.util.profiling.ProfilerFiller;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.item.CreativeModeTabs;
 import net.minecraft.world.level.ChunkPos;
+import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.fml.ModContainer;
@@ -37,7 +38,7 @@ public class MusketMod {
     public static final Path CONFIG_PATH = FMLPaths.CONFIGDIR.get().resolve("musketmod.txt");
 
     public MusketMod(IEventBus bus, ModContainer modContainer) {
-        Config.reload();
+        Config.load();
         ModLoadingContext.get().registerExtensionPoint(IConfigScreenFactory.class,
             () -> (container, parent) -> ClothConfigScreen.build(parent));
 
@@ -74,7 +75,8 @@ public class MusketMod {
     }
 
     public void worldTick(final LevelTickEvent.Post event) {
-        if (!event.getLevel().isClientSide) {
+        Level level = event.getLevel();
+        if (!level.isClientSide) {
             DeferredDamage.apply();
         }
     }
@@ -100,7 +102,7 @@ public class MusketMod {
                 Executor gameExecutor) {
 
                 return stage.wait(Unit.INSTANCE).thenRunAsync(() -> {
-                    Config.reload();
+                    Config.load();
                 }, gameExecutor);
             }
         });

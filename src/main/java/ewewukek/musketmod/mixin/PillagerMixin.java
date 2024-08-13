@@ -1,7 +1,5 @@
 package ewewukek.musketmod.mixin;
 
-import java.util.EnumSet;
-
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
@@ -15,7 +13,6 @@ import ewewukek.musketmod.RangedGunAttackGoal;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.entity.ai.goal.Goal;
 import net.minecraft.world.entity.ai.goal.RangedCrossbowAttackGoal;
 import net.minecraft.world.entity.monster.AbstractIllager;
 import net.minecraft.world.entity.monster.Pillager;
@@ -26,7 +23,7 @@ public class PillagerMixin {
     @Inject(method = "registerGoals", at = @At("TAIL"))
     private void registerGoals(CallbackInfo ci) {
         Pillager pillager = (Pillager)(Object)this;
-        pillager.goalSelector.addGoal(3, new RangedGunAttackGoal<>(pillager, EnumSet.of(Goal.Flag.MOVE, Goal.Flag.LOOK)) {
+        pillager.goalSelector.addGoal(3, new RangedGunAttackGoal<>(pillager) {
             private static final double speedModifier = 1.0;
             private static final float attackRadius = 8.0f;
             private int seeTime;

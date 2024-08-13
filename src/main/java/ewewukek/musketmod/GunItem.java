@@ -86,8 +86,8 @@ public abstract class GunItem extends Item {
         }
         // pistol in offhand is unusable if musket is equipped in main hand
         ItemStack stack = entity.getMainHandItem();
-        if (!stack.isEmpty() && stack.getItem() instanceof GunItem) {
-            return !((GunItem)stack.getItem()).twoHanded();
+        if (!stack.isEmpty() && stack.getItem() instanceof GunItem gun) {
+            return !gun.twoHanded();
         }
         return true;
     }
@@ -120,8 +120,8 @@ public abstract class GunItem extends Item {
     }
 
     @Override
-    public InteractionResultHolder<ItemStack> use(Level worldIn, Player player, InteractionHand hand) {
-        if (!canUseFrom(player, hand)) return super.use(worldIn, player, hand);
+    public InteractionResultHolder<ItemStack> use(Level level, Player player, InteractionHand hand) {
+        if (!canUseFrom(player, hand)) return super.use(level, player, hand);
 
         ItemStack stack = player.getItemInHand(hand);
         boolean creative = player.getAbilities().instabuild;
@@ -133,8 +133,7 @@ public abstract class GunItem extends Item {
         // shoot from left hand if both are loaded
         if (hand == InteractionHand.MAIN_HAND && !twoHanded() && isLoaded(stack)) {
             ItemStack offhandStack = player.getItemInHand(InteractionHand.OFF_HAND);
-            if (!offhandStack.isEmpty() && offhandStack.getItem() instanceof GunItem) {
-                GunItem offhandGun = (GunItem)offhandStack.getItem();
+            if (!offhandStack.isEmpty() && offhandStack.getItem() instanceof GunItem offhandGun) {
                 if (!offhandGun.twoHanded() && isLoaded(offhandStack)) {
                     return InteractionResultHolder.pass(stack);
                 }
@@ -145,10 +144,10 @@ public abstract class GunItem extends Item {
         boolean loaded = isLoaded(stack);
 
         if (loaded) {
-            if (!worldIn.isClientSide) {
-                Vec3 front = Vec3.directionFromRotation(player.getXRot(), player.getYRot());
+            if (!level.isClientSide) {
+                Vec3 direction = Vec3.directionFromRotation(player.getXRot(), player.getYRot());
                 HumanoidArm arm = hand == InteractionHand.MAIN_HAND ? player.getMainArm() : player.getMainArm().getOpposite();
-                fire(player, front, smokeOffsetFor(player, arm));
+                fire(player, direction, smokeOffsetFor(player, arm));
             }
             player.playSound(fireSound(), 3.5f, 1);
 
@@ -156,7 +155,7 @@ public abstract class GunItem extends Item {
             stack.hurtAndBreak(1, player, Player.getSlotForHand(hand));
 
             player.releaseUsingItem();
-            if (worldIn.isClientSide) setActiveStack(hand, stack);
+            if (level.isClientSide) setActiveStack(hand, stack);
 
             return InteractionResultHolder.consume(stack);
 
@@ -164,7 +163,7 @@ public abstract class GunItem extends Item {
             setLoadingStage(stack, 1);
 
             player.startUsingItem(hand);
-            if (worldIn.isClientSide) setActiveStack(hand, stack);
+            if (level.isClientSide) setActiveStack(hand, stack);
 
             return InteractionResultHolder.consume(stack);
 
@@ -207,61 +206,71 @@ public abstract class GunItem extends Item {
     public Vec3 aimAt(LivingEntity entity, LivingEntity target) {
         double dist = entity.distanceTo(target);
         double ticks = 20 * dist / bulletSpeed();
+        // predicted bullet drop
         double bulletDrop = 0.5 * ticks * ticks * BulletEntity.GRAVITY;
         Vec3 pos = new Vec3(
             target.getX(),
             0.5 * (target.getEyeY() + target.getY(0.5)),
             target.getZ()
            );
-        Vec3 direction = new Vec3(
+        return new Vec3(
             pos.x() - entity.getX(),
             pos.y() + bulletDrop - entity.getEyeY(),
             pos.z() - entity.getZ()
         ).normalize();
-        return direction;
+    }
+
+    public void mobUse(LivingEntity entity, InteractionHand hand, Vec3 direction) {
+        ItemStack stack = entity.getItemInHand(hand);
+        HumanoidArm arm = entity.getMainArm();
+        if (hand == InteractionHand.OFF_HAND) arm = arm.getOpposite();
+        mobUse(entity, stack, direction, smokeOffsetFor(entity, arm));
     }
 
     public void mobUse(LivingEntity entity, ItemStack stack, Vec3 direction) {
+        mobUse(entity, stack, direction, smokeOffsetFor(entity, entity.getMainArm()));
+    }
+
+    public void mobUse(LivingEntity entity, ItemStack stack, Vec3 direction, Vec3 smokeOffset) {
         Level level = entity.level();
         if (level.isClientSide) return;
         if (!isLoaded(stack)) return;
 
-        fire(entity, direction, smokeOffsetFor(entity, entity.getMainArm()));
+        fire(entity, direction, smokeOffset);
         entity.playSound(fireSound(), 3.5f, 1);
         setLoaded(stack, false);
     }
 
     @Override
-    public void releaseUsing(ItemStack stack, Level worldIn, LivingEntity entityLiving, int timeLeft) {
+    public void releaseUsing(ItemStack stack, Level level, LivingEntity entity, int ticksLeft) {
         setLoadingStage(stack, 0);
     }
 
     @Override
-    public void onUseTick(Level world, LivingEntity entity, ItemStack stack, int timeLeft) {
-        int usingDuration = getUseDuration(stack, entity) - timeLeft;
+    public void onUseTick(Level level, LivingEntity entity, ItemStack stack, int ticksLeft) {
+        int useTicks = getUseDuration(stack, entity) - ticksLeft;
         int loadingStage = getLoadingStage(stack);
 
-        if (loadingStage == 1 && usingDuration >= LOADING_STAGE_1) {
+        if (loadingStage == 1 && useTicks >= LOADING_STAGE_1) {
             entity.playSound(Sounds.MUSKET_LOAD_0, 0.8f, 1);
             setLoadingStage(stack, 2);
 
-        } else if (loadingStage == 2 && usingDuration >= LOADING_STAGE_2) {
+        } else if (loadingStage == 2 && useTicks >= LOADING_STAGE_2) {
             entity.playSound(Sounds.MUSKET_LOAD_1, 0.8f, 1);
             setLoadingStage(stack, 3);
 
-        } else if (loadingStage == 3 && usingDuration >= LOADING_STAGE_3) {
+        } else if (loadingStage == 3 && useTicks >= LOADING_STAGE_3) {
             entity.playSound(Sounds.MUSKET_LOAD_2, 0.8f, 1);
             setLoadingStage(stack, 4);
         }
 
-        if (world.isClientSide && entity instanceof Player) {
+        if (level.isClientSide && entity instanceof Player) {
             setActiveStack(entity.getUsedItemHand(), stack);
             return;
         }
 
-        if (usingDuration >= RELOAD_DURATION && !isLoaded(stack)) {
-            if (entity instanceof Player) {
-                Player player = (Player)entity;
+        if (useTicks >= RELOAD_DURATION && !isLoaded(stack)) {
+            if (entity instanceof Player player) {
                 if (!player.getAbilities().instabuild) {
                     ItemStack ammoStack = findAmmo(player);
                     if (ammoStack.isEmpty()) return;
@@ -272,21 +281,21 @@ public abstract class GunItem extends Item {
             }
 
             // played on server
-            world.playSound(null, entity.getX(), entity.getY(), entity.getZ(), Sounds.MUSKET_READY, entity.getSoundSource(), 0.8f, 1);
+            level.playSound(null, entity.getX(), entity.getY(), entity.getZ(), Sounds.MUSKET_READY, entity.getSoundSource(), 0.8f, 1);
             setLoaded(stack, true);
         }
     }
 
     @Override
-    public boolean hurtEnemy(ItemStack stack, LivingEntity enemy, LivingEntity entityIn) {
-        stack.hurtAndBreak(hitDurabilityDamage(), entityIn, EquipmentSlot.MAINHAND);
+    public boolean hurtEnemy(ItemStack stack, LivingEntity target, LivingEntity entity) {
+        stack.hurtAndBreak(hitDurabilityDamage(), entity, EquipmentSlot.MAINHAND);
         return false;
     }
 
     @Override
-    public boolean mineBlock(ItemStack stack, Level worldIn, BlockState state, BlockPos pos, LivingEntity entityIn) {
-        if (state.getDestroySpeed(worldIn, pos) != 0) {
-            stack.hurtAndBreak(hitDurabilityDamage(), entityIn, EquipmentSlot.MAINHAND);
+    public boolean mineBlock(ItemStack stack, Level level, BlockState blockState, BlockPos blockPos, LivingEntity entity) {
+        if (blockState.getDestroySpeed(level, blockPos) != 0) {
+            stack.hurtAndBreak(hitDurabilityDamage(), entity, EquipmentSlot.MAINHAND);
         }
         return false;
     }
@@ -296,21 +305,21 @@ public abstract class GunItem extends Item {
         return 72000;
     }
 
-    public void fire(LivingEntity shooter, Vec3 direction) {
-        fire(shooter, direction, Vec3.ZERO);
+    public void fire(LivingEntity entity, Vec3 direction) {
+        fire(entity, direction, Vec3.ZERO);
     }
 
-    public void fire(LivingEntity shooter, Vec3 direction, Vec3 smokeOriginOffset) {
-        Level level = shooter.level();
-        Vec3 origin = new Vec3(shooter.getX(), shooter.getEyeY(), shooter.getZ());
+    public void fire(LivingEntity entity, Vec3 direction, Vec3 smokeOffset) {
+        Level level = entity.level();
+        Vec3 origin = new Vec3(entity.getX(), entity.getEyeY(), entity.getZ());
 
         for (int i = 0; i < pelletCount(); i++) {
             BulletEntity bullet = new BulletEntity(level);
-            bullet.setOwner(shooter);
+            bullet.setOwner(entity);
             bullet.setPos(origin);
             bullet.setParticleCount(PARTICLE_COUNT / pelletCount());
             bullet.setBulletType(bulletType());
-            direction = addSpread(direction, shooter.getRandom(), bulletStdDev());
+            direction = addSpread(direction, entity.getRandom(), bulletStdDev());
             bullet.setVelocity(bulletSpeed(), direction);
             bullet.setDamage(bulletSpeed(), damageMin() / pelletCount(), damageMax() / pelletCount());
             bullet.ignoreInvulnerableTime = ignoreInvulnerableTime();
@@ -318,18 +327,18 @@ public abstract class GunItem extends Item {
             level.addFreshEntity(bullet);
         }
 
-        MusketMod.sendSmokeEffect((ServerLevel)level, origin.add(smokeOriginOffset), direction);
+        MusketMod.sendSmokeEffect((ServerLevel)level, origin.add(smokeOffset), direction);
     }
 
-    public static void fireParticles(Level world, Vec3 origin, Vec3 direction) {
+    public static void fireParticles(Level level, Vec3 origin, Vec3 direction) {
         RandomSource random = RandomSource.create();
 
-        for (int i = 0; i != 10; ++i) {
+        for (int i = 0; i < 10; i++) {
             double t = Math.pow(random.nextFloat(), 1.5);
             Vec3 p = origin.add(direction.scale(1.25 + t));
             p = p.add(new Vec3(random.nextFloat() - 0.5, random.nextFloat() - 0.5, random.nextFloat() - 0.5).scale(0.1));
             Vec3 v = direction.scale(0.1 * (1 - t));
-            world.addParticle(ParticleTypes.POOF, p.x, p.y, p.z, v.x, v.y, v.z);
+            level.addParticle(ParticleTypes.POOF, p.x, p.y, p.z, v.x, v.y, v.z);
         }
     }
 
@@ -367,20 +376,19 @@ public abstract class GunItem extends Item {
     }
 
     public static ItemStack findAmmo(Player player) {
-        if (isAmmo(player.getItemBySlot(EquipmentSlot.OFFHAND))) {
-            return player.getItemBySlot(EquipmentSlot.OFFHAND);
+        ItemStack stack = player.getItemBySlot(EquipmentSlot.OFFHAND);
+        if (isAmmo(stack)) return stack;
 
-        } else if (isAmmo(player.getItemBySlot(EquipmentSlot.MAINHAND))) {
-            return player.getItemBySlot(EquipmentSlot.MAINHAND);
+        stack = player.getItemBySlot(EquipmentSlot.MAINHAND);
+        if (isAmmo(stack)) return stack;
 
-        } else {
-            for (int i = 0; i != player.getInventory().getContainerSize(); ++i) {
-                ItemStack itemstack = player.getInventory().getItem(i);
-                if (isAmmo(itemstack)) return itemstack;
-            }
-
-            return ItemStack.EMPTY;
+        int size = player.getInventory().getContainerSize();
+        for (int i = 0; i < size; i++) {
+            stack = player.getInventory().getItem(i);
+            if (isAmmo(stack)) return stack;
         }
+
+        return ItemStack.EMPTY;
     }
 
     public static boolean isReady(ItemStack stack) {

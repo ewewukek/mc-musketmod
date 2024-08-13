@@ -10,7 +10,7 @@ public class ClientSetup implements ClientModInitializer {
     public void onInitializeClient() {
         ClientUtilities.registerItemProperties();
 
-        EntityRendererRegistry.register(BulletEntity.ENTITY_TYPE, (ctx) -> new BulletRenderer(ctx));
+        EntityRendererRegistry.register(BulletEntity.ENTITY_TYPE, (context) -> new BulletRenderer(context));
 
         ClientPlayNetworking.registerGlobalReceiver(SmokeEffectPacket.TYPE, (packet, context) -> {
             context.client().execute(() -> {

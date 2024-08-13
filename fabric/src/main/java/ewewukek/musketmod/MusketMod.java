@@ -33,7 +33,7 @@ public class MusketMod implements ModInitializer {
 
     @Override
     public void onInitialize() {
-        Config.reload();
+        Config.load();
 
         Items.registerDataComponentTypes((path, component) -> {
             Registry.register(BuiltInRegistries.DATA_COMPONENT_TYPE, ResourceLocation.fromNamespaceAndPath(MODID, path), component);
@@ -71,7 +71,7 @@ public class MusketMod implements ModInitializer {
                 Executor gameExecutor) {
 
                 return stage.wait(Unit.INSTANCE).thenRunAsync(() -> {
-                    Config.reload();
+                    Config.load();
                 }, gameExecutor);
             }
         });

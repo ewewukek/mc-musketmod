@@ -31,8 +31,7 @@ public class MinecraftMixin {
     target = "Lnet/minecraft/client/Minecraft;startAttack()Z"))
     private boolean handleKeyAttack(Minecraft client) {
         ItemStack stack = client.player.getMainHandItem();
-        if (client.options.getCameraType().isFirstPerson()
-        && stack.getItem() == Items.MUSKET_WITH_SCOPE && ScopedMusketItem.isScoping) {
+        if (stack.getItem() == Items.MUSKET_WITH_SCOPE && ScopedMusketItem.isScoping) {
             client.startUseItem();
         } else {
             return client.startAttack();
@@ -42,6 +41,7 @@ public class MinecraftMixin {
 
     @Inject(method = "handleKeybinds", at = @At("HEAD"))
     private void finishReloading(CallbackInfo ci) {
+        @SuppressWarnings("resource")
         Minecraft client = (Minecraft)(Object)this;
         if (client.options.getCameraType().isFirstPerson() && client.player.isUsingItem()) {
             ItemStack stack = client.player.getUseItem();

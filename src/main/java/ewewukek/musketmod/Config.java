@@ -80,13 +80,7 @@ public class Config {
     public static float dispenserDamageMax;
     public static final float DISPENSER_DAMAGE_MAX = 10.5f;
 
-    public static void reload() {
-        setDefaults();
-        load();
-        logger.info("Configuration has been loaded");
-    }
-
-    public static void setDefaults() {
+    public static void load() {
         bulletMaxDistance = BULLET_MAX_DISTANCE;
         pvpDamageMultiplier = PVP_DAMAGE_MULTIPLIER;
         mobDamageMultiplier = MOB_DAMAGE_MULTIPLIER;
@@ -122,9 +116,7 @@ public class Config {
         dispenserBulletSpeed = DISPENSER_BULLET_SPEED;
         dispenserDamageMin = DISPENSER_DAMAGE_MIN;
         dispenserDamageMax = DISPENSER_DAMAGE_MAX;
-    }
 
-    public static void load() {
         int version = 0;
         try (BufferedReader reader = Files.newBufferedReader(MusketMod.CONFIG_PATH)) {
             String line;
@@ -279,6 +271,7 @@ public class Config {
             }
             save();
         }
+        logger.info("Configuration has been loaded");
     }
 
     public static void save() {

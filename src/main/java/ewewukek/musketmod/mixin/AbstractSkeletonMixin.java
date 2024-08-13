@@ -1,7 +1,5 @@
 package ewewukek.musketmod.mixin;
 
-import java.util.EnumSet;
-
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
@@ -14,7 +12,6 @@ import net.minecraft.world.Difficulty;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Mob;
-import net.minecraft.world.entity.ai.goal.Goal;
 import net.minecraft.world.entity.monster.AbstractSkeleton;
 import net.minecraft.world.item.ItemStack;
 
@@ -23,7 +20,7 @@ public class AbstractSkeletonMixin {
     @Inject(method = "registerGoals", at = @At("TAIL"))
     private void registerGoals(CallbackInfo ci) {
         AbstractSkeleton skeleton = (AbstractSkeleton)(Object)this;
-        skeleton.goalSelector.addGoal(4, new RangedGunAttackGoal<>(skeleton, EnumSet.of(Goal.Flag.MOVE, Goal.Flag.LOOK)) {
+        skeleton.goalSelector.addGoal(4, new RangedGunAttackGoal<>(skeleton) {
             private static final double speedModifier = 1.0;
             private static final float attackRadius = 15.0f;
             private int seeTime;

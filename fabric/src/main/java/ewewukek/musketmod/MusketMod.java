@@ -31,15 +31,19 @@ public class MusketMod implements ModInitializer {
     public static final String MODID = "musketmod";
     public static final Path CONFIG_PATH = FabricLoader.getInstance().getConfigDir().resolve("musketmod.txt");
 
+    public static ResourceLocation resource(String path) {
+        return ResourceLocation.fromNamespaceAndPath(MODID, path);
+    }
+
     @Override
     public void onInitialize() {
         Config.load();
 
         Items.registerDataComponentTypes((path, component) -> {
-            Registry.register(BuiltInRegistries.DATA_COMPONENT_TYPE, ResourceLocation.fromNamespaceAndPath(MODID, path), component);
+            Registry.register(BuiltInRegistries.DATA_COMPONENT_TYPE, resource(path), component);
         });
         Items.register((path, item) -> {
-            Registry.register(BuiltInRegistries.ITEM, ResourceLocation.fromNamespaceAndPath(MODID, path), item);
+            Registry.register(BuiltInRegistries.ITEM, resource(path), item);
         });
         ItemGroupEvents.modifyEntriesEvent(CreativeModeTabs.COMBAT).register(entries -> {
             Items.addToCreativeTab(CreativeModeTabs.COMBAT, (item) -> {
@@ -55,7 +59,7 @@ public class MusketMod implements ModInitializer {
             Registry.register(BuiltInRegistries.SOUND_EVENT, sound.getLocation(), sound);
         });
         BulletEntity.register((string, entityType) -> {
-            Registry.register(BuiltInRegistries.ENTITY_TYPE, ResourceLocation.fromNamespaceAndPath(MODID, string), entityType);
+            Registry.register(BuiltInRegistries.ENTITY_TYPE, resource(string), entityType);
         });
 
         ServerTickEvents.END_WORLD_TICK.register((world) -> {
@@ -67,7 +71,7 @@ public class MusketMod implements ModInitializer {
         ResourceManagerHelper.get(PackType.SERVER_DATA).registerReloadListener(new IdentifiableResourceReloadListener() {
             @Override
             public ResourceLocation getFabricId() {
-                return ResourceLocation.fromNamespaceAndPath(MODID, "reload");
+                return resource("reload");
             }
 
             @Override

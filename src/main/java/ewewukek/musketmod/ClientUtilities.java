@@ -27,7 +27,7 @@ public class ClientUtilities {
         ClampedItemPropertyFunction predicate = (stack, level, player, seed) -> {
             return GunItem.isLoaded(stack) ? 1 : 0;
         };
-        ResourceLocation location = ResourceLocation.fromNamespaceAndPath(MusketMod.MODID, "loaded");
+        ResourceLocation location = MusketMod.resource("loaded");
         ItemProperties.register(Items.MUSKET, location, predicate);
         ItemProperties.register(Items.MUSKET_WITH_BAYONET, location, predicate);
         ItemProperties.register(Items.MUSKET_WITH_SCOPE, location, predicate);

@@ -18,7 +18,6 @@ import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.resources.ResourceKey;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerEntity;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.tags.FluidTags;
@@ -46,7 +45,7 @@ public class BulletEntity extends AbstractHurtingProjectile {
     public static final EntityDataAccessor<Float> INITIAL_SPEED = SynchedEntityData.defineId(BulletEntity.class, EntityDataSerializers.FLOAT);
     public static final EntityDataAccessor<Float> PARTICLE_COUNT = SynchedEntityData.defineId(BulletEntity.class, EntityDataSerializers.FLOAT);
     public static final EntityDataAccessor<Byte> BULLET_TYPE = SynchedEntityData.defineId(BulletEntity.class, EntityDataSerializers.BYTE);
-    public static final ResourceKey<DamageType> BULLET_DAMAGE = ResourceKey.create(Registries.DAMAGE_TYPE, ResourceLocation.fromNamespaceAndPath(MusketMod.MODID, "bullet"));
+    public static final ResourceKey<DamageType> BULLET_DAMAGE = ResourceKey.create(Registries.DAMAGE_TYPE, MusketMod.resource("bullet"));
     public static EntityType<BulletEntity> ENTITY_TYPE;
 
     public static final double DAMAGE_SPEED_THRESHOLD = 1.0;

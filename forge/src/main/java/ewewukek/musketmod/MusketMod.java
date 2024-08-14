@@ -38,9 +38,13 @@ public class MusketMod {
     public static final String MODID = "musketmod";
     public static final Path CONFIG_PATH = FMLPaths.CONFIGDIR.get().resolve("musketmod.txt");
 
+    public static ResourceLocation resource(String path) {
+        return ResourceLocation.fromNamespaceAndPath(MODID, path);
+    }
+
     private static final int PROTOCOL_VERSION = 2;
     public static final SimpleChannel NETWORK_CHANNEL = ChannelBuilder.named(
-        ResourceLocation.fromNamespaceAndPath(MODID, "main"))
+        resource("main"))
         .networkProtocolVersion(PROTOCOL_VERSION)
         .clientAcceptedVersions(Channel.VersionTest.exact(PROTOCOL_VERSION))
         .serverAcceptedVersions(Channel.VersionTest.exact(PROTOCOL_VERSION))
@@ -66,17 +70,17 @@ public class MusketMod {
 
     public void register(final RegisterEvent event) {
         Items.registerDataComponentTypes((path, component) -> {
-            event.register(Registries.DATA_COMPONENT_TYPE, ResourceLocation.fromNamespaceAndPath(MODID, path), () -> component);
+            event.register(Registries.DATA_COMPONENT_TYPE, resource(path), () -> component);
         });
         Items.register((path, item) -> {
-            event.register(Registries.ITEM, ResourceLocation.fromNamespaceAndPath(MODID, path), () -> item);
+            event.register(Registries.ITEM, resource(path), () -> item);
         });
         Sounds.register((sound) -> {
             event.register(Registries.SOUND_EVENT, sound.getLocation(), () -> sound);
         });
         event.register(ForgeRegistries.Keys.ENTITY_TYPES, helper -> {
             BulletEntity.register((string, entityType) -> {
-                helper.register(ResourceLocation.fromNamespaceAndPath(MODID, string), entityType);
+                helper.register(resource(string), entityType);
             });
         });
     }

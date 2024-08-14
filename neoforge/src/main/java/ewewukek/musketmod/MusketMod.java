@@ -36,6 +36,10 @@ public class MusketMod {
     public static final String MODID = "musketmod";
     public static final Path CONFIG_PATH = FMLPaths.CONFIGDIR.get().resolve("musketmod.txt");
 
+    public static ResourceLocation resource(String path) {
+        return ResourceLocation.fromNamespaceAndPath(MODID, path);
+    }
+
     public MusketMod(IEventBus bus, ModContainer modContainer) {
         Config.load();
         ModLoadingContext.get().registerExtensionPoint(IConfigScreenFactory.class,
@@ -50,17 +54,17 @@ public class MusketMod {
 
     public void register(final RegisterEvent event) {
         Items.registerDataComponentTypes((path, component) -> {
-            event.register(Registries.DATA_COMPONENT_TYPE, ResourceLocation.fromNamespaceAndPath(MODID, path), () -> component);
+            event.register(Registries.DATA_COMPONENT_TYPE, resource(path), () -> component);
         });
         Items.register((path, item) -> {
-            event.register(Registries.ITEM, ResourceLocation.fromNamespaceAndPath(MODID, path), () -> item);
+            event.register(Registries.ITEM, resource(path), () -> item);
         });
         Sounds.register((sound) -> {
             event.register(Registries.SOUND_EVENT, sound.getLocation(), () -> sound);
         });
         event.register(Registries.ENTITY_TYPE, helper -> {
             BulletEntity.register((string, entityType) -> {
-                helper.register(ResourceLocation.fromNamespaceAndPath(MODID, string), entityType);
+                helper.register(resource(string), entityType);
             });
         });
     }

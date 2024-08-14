@@ -12,7 +12,7 @@ import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.resources.ResourceLocation;
 
 public class BulletRenderer extends EntityRenderer<BulletEntity> {
-    public static final ResourceLocation TEXTURE = ResourceLocation.fromNamespaceAndPath(MusketMod.MODID, "textures/entity/bullet.png");
+    public static final ResourceLocation TEXTURE = MusketMod.resource("textures/entity/bullet.png");
     public static final RenderType RENDER_TYPE = RenderType.entityCutoutNoCull(TEXTURE);
 
     public BulletRenderer(EntityRendererProvider.Context context) {

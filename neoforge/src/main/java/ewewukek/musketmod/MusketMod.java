@@ -13,7 +13,6 @@ import net.minecraft.server.packs.resources.ResourceManager;
 import net.minecraft.util.Unit;
 import net.minecraft.util.profiling.ProfilerFiller;
 import net.minecraft.world.entity.EntityType;
-import net.minecraft.world.item.CreativeModeTabs;
 import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
@@ -67,11 +66,9 @@ public class MusketMod {
     }
 
     public void creativeTabs(final BuildCreativeModeTabContentsEvent event) {
-        if (event.getTabKey() == CreativeModeTabs.COMBAT) {
-            Items.addToCombatTab((item) -> {
-                event.accept(item);
-            });
-        }
+        Items.addToCreativeTab(event.getTabKey(), (item) -> {
+            event.accept(item);
+        });
     }
 
     public void worldTick(final LevelTickEvent.Post event) {

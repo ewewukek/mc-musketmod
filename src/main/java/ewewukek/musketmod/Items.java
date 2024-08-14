@@ -4,6 +4,9 @@ import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 
 import net.minecraft.core.component.DataComponentType;
+import net.minecraft.resources.ResourceKey;
+import net.minecraft.world.item.CreativeModeTab;
+import net.minecraft.world.item.CreativeModeTabs;
 import net.minecraft.world.item.Item;
 
 public class Items {
@@ -19,6 +22,7 @@ public class Items {
     public static final Item PISTOL = new PistolItem(new Item.Properties()
         .durability(Config.pistolDurability));
     public static final Item CARTRIDGE = new CartridgeItem(new Item.Properties());
+    public static final Item MUSKET_UPGRADE = new MusketUpgradeItem();
 
     public static void registerDataComponentTypes(BiConsumer<String, DataComponentType<?>> helper) {
         helper.accept("loaded", GunItem.LOADED);
@@ -32,14 +36,20 @@ public class Items {
         helper.accept("blunderbuss", BLUNDERBUSS);
         helper.accept("pistol", PISTOL);
         helper.accept("cartridge", CARTRIDGE);
+        helper.accept("musket_upgrade_smithing_template", MUSKET_UPGRADE);
     }
 
-    public static void addToCombatTab(Consumer<Item> helper) {
-        helper.accept(MUSKET);
-        helper.accept(MUSKET_WITH_BAYONET);
-        helper.accept(MUSKET_WITH_SCOPE);
-        helper.accept(BLUNDERBUSS);
-        helper.accept(PISTOL);
-        helper.accept(CARTRIDGE);
+    public static void addToCreativeTab(ResourceKey<CreativeModeTab> tab, Consumer<Item> helper) {
+        if (tab == CreativeModeTabs.COMBAT) {
+            helper.accept(MUSKET);
+            helper.accept(MUSKET_WITH_BAYONET);
+            helper.accept(MUSKET_WITH_SCOPE);
+            helper.accept(BLUNDERBUSS);
+            helper.accept(PISTOL);
+            helper.accept(CARTRIDGE);
+        }
+        if (tab == CreativeModeTabs.INGREDIENTS) {
+            helper.accept(MUSKET_UPGRADE);
+        }
     }
 }

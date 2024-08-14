@@ -42,7 +42,12 @@ public class MusketMod implements ModInitializer {
             Registry.register(BuiltInRegistries.ITEM, ResourceLocation.fromNamespaceAndPath(MODID, path), item);
         });
         ItemGroupEvents.modifyEntriesEvent(CreativeModeTabs.COMBAT).register(entries -> {
-            Items.addToCombatTab((item) -> {
+            Items.addToCreativeTab(CreativeModeTabs.COMBAT, (item) -> {
+                entries.accept(item);
+            });
+        });
+        ItemGroupEvents.modifyEntriesEvent(CreativeModeTabs.INGREDIENTS).register(entries -> {
+            Items.addToCreativeTab(CreativeModeTabs.INGREDIENTS, (item) -> {
                 entries.accept(item);
             });
         });

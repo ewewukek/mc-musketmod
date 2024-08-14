@@ -1,0 +1,24 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "equipment",
+  "pattern": [
+    "DTD",
+    "DID",
+    "DDD"
+  ],
+  "key": {
+    "D": {
+      "item": "minecraft:diamond"
+    },
+    "I": {
+      "item": "minecraft:iron_block"
+    },
+    "T": {
+      "item": "musketmod:musket_upgrade_smithing_template"
+    }
+  },
+  "result": {
+    "count": 2,
+    "id": "musketmod:musket_upgrade_smithing_template"
+  }
+}

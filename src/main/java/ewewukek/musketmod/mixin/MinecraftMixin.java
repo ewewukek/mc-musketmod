@@ -33,6 +33,7 @@ public class MinecraftMixin {
         ItemStack stack = client.player.getMainHandItem();
         if (stack.getItem() == Items.MUSKET_WITH_SCOPE && ScopedMusketItem.isScoping) {
             client.startUseItem();
+            ScopedMusketItem.recoilTicks = ScopedMusketItem.RECOIL_TICKS;
         } else {
             return client.startAttack();
         }
@@ -70,5 +71,6 @@ public class MinecraftMixin {
                 1.0f, 1.0f);
             ScopedMusketItem.isScoping = scoping;
         }
+        if (!scoping) ScopedMusketItem.recoilTicks = 0;
     }
 }

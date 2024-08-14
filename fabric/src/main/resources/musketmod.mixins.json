@@ -5,6 +5,7 @@
   "client": [
     "AbstractClientPlayerMixin",
     "ItemInHandRendererMixin",
+    "LocalPlayerMixin",
     "MinecraftMixin",
     "PlayerMixin",
     "PlayerRendererMixin"

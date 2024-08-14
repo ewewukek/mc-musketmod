@@ -10,21 +10,31 @@ import ewewukek.musketmod.GunItem;
 import ewewukek.musketmod.Items;
 import ewewukek.musketmod.ScopedMusketItem;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.multiplayer.MultiPlayerGameMode;
 import net.minecraft.sounds.SoundEvents;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.InteractionResult;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 
 @Mixin(Minecraft.class)
 public class MinecraftMixin {
-    @Redirect(method = "handleKeybinds", at = @At(value = "INVOKE",
-    target = "Lnet/minecraft/client/Minecraft;startUseItem()V"))
-    private void handleKeyUseDown(Minecraft client) {
-        ItemStack stack = client.player.getMainHandItem();
+    @SuppressWarnings("resource")
+    @Redirect(method = "startUseItem", at = @At(value = "INVOKE",
+    target = "Lnet/minecraft/client/multiplayer/MultiPlayerGameMode;useItem(Lnet/minecraft/world/entity/player/Player;Lnet/minecraft/world/InteractionHand;)Lnet/minecraft/world/InteractionResult;"))
+    private InteractionResult handleKeyUseDown(MultiPlayerGameMode gameMode, Player player, InteractionHand hand) {
+        Minecraft client = (Minecraft)(Object)this;
+        ItemStack stack = player.getItemInHand(hand);
         if (client.options.getCameraType().isFirstPerson()
         && stack.getItem() == Items.MUSKET_WITH_SCOPE && GunItem.isReady(stack)) {
             setScoping(client, true);
+            if (client.options.keyAttack.isDown()) {
+                return gameMode.useItem(player, hand);
+            }
         } else if (!ScopedMusketItem.isScoping) {
-            client.startUseItem();
+            return gameMode.useItem(player, hand);
         }
+        return InteractionResult.FAIL;
     }
 
     @Redirect(method = "handleKeybinds", at = @At(value = "INVOKE",

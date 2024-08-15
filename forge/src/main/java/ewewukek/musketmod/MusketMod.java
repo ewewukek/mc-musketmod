@@ -83,6 +83,8 @@ public class MusketMod {
                 helper.register(resource(string), entityType);
             });
         });
+        event.register(ForgeRegistries.Keys.GLOBAL_LOOT_MODIFIER_SERIALIZERS,
+            resource("loot_modifier"), () -> ModLootModifier.CODEC);
     }
 
     public void creativeTabs(final BuildCreativeModeTabContentsEvent event) {

@@ -29,6 +29,7 @@ import net.neoforged.neoforge.event.tick.LevelTickEvent;
 import net.neoforged.neoforge.network.PacketDistributor;
 import net.neoforged.neoforge.network.event.RegisterPayloadHandlersEvent;
 import net.neoforged.neoforge.network.registration.PayloadRegistrar;
+import net.neoforged.neoforge.registries.NeoForgeRegistries;
 import net.neoforged.neoforge.registries.RegisterEvent;
 
 @Mod(MusketMod.MODID)
@@ -67,6 +68,8 @@ public class MusketMod {
                 helper.register(resource(string), entityType);
             });
         });
+        event.register(NeoForgeRegistries.Keys.GLOBAL_LOOT_MODIFIER_SERIALIZERS,
+            resource("loot_modifier"), () -> ModLootModifier.CODEC);
     }
 
     public void creativeTabs(final BuildCreativeModeTabContentsEvent event) {

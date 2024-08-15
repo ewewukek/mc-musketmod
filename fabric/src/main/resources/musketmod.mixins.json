@@ -13,7 +13,9 @@
   "mixins": [
     "AbstractSkeletonMixin",
     "EntityMixin",
-    "PillagerMixin"
+    "LootTableMixin",
+    "PillagerMixin",
+    "ReloadableServerRegistriesHolderMixin"
   ],
   "injectors": {
     "defaultRequire": 1

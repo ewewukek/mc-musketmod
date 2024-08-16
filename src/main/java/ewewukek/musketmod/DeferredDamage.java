@@ -17,9 +17,19 @@ public class DeferredDamage {
         entry.damage += damage;
     }
 
+    public static void igniteForSeconds(Entity target, float seconds) {
+        Entry entry = entries.get(target);
+        if (entry == null) {
+            entry = new Entry();
+            entries.put(target, entry);
+        }
+        entry.igniteSeconds = Math.max(entry.igniteSeconds, seconds);
+    }
+
     public static void apply() {
         entries.forEach((target, entry) -> {
-            target.hurt(entry.source, entry.damage);
+            if (entry.damage > 0) target.hurt(entry.source, entry.damage);
+            if (entry.igniteSeconds > 0) target.igniteForSeconds(entry.igniteSeconds);
         });
         entries.clear();
     }
@@ -29,5 +39,6 @@ public class DeferredDamage {
     private static class Entry {
         DamageSource source;
         float damage;
+        float igniteSeconds;
     }
 }

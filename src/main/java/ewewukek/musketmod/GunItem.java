@@ -7,11 +7,13 @@ import com.mojang.serialization.Codec;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.component.DataComponentType;
 import net.minecraft.core.particles.ParticleTypes;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.tags.FluidTags;
+import net.minecraft.tags.TagKey;
 import net.minecraft.util.Mth;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.InteractionHand;
@@ -22,6 +24,8 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.enchantment.Enchantment;
+import net.minecraft.world.item.enchantment.EnchantmentHelper;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.Vec3;
@@ -37,6 +41,8 @@ public abstract class GunItem extends Item {
     public static final int RELOAD_DURATION = 30;
 
     public static final float PARTICLE_COUNT = 5;
+
+    public static final TagKey<Enchantment> FLAME_ENCHANTMENT = TagKey.create(Registries.ENCHANTMENT, MusketMod.resource("flame"));
 
     public static final DataComponentType<Boolean> LOADED = new DataComponentType.Builder<Boolean>()
         .persistent(Codec.BOOL).networkSynchronized(ByteBufCodecs.BOOL).build();
@@ -119,6 +125,10 @@ public abstract class GunItem extends Item {
         return side.add(down).scale(0.15);
     }
 
+    public static boolean hasFlame(ItemStack stack) {
+        return EnchantmentHelper.hasTag(stack, FLAME_ENCHANTMENT);
+    }
+
     @Override
     public InteractionResultHolder<ItemStack> use(Level level, Player player, InteractionHand hand) {
         if (!canUseFrom(player, hand)) return super.use(level, player, hand);
@@ -147,7 +157,7 @@ public abstract class GunItem extends Item {
             if (!level.isClientSide) {
                 Vec3 direction = Vec3.directionFromRotation(player.getXRot(), player.getYRot());
                 HumanoidArm arm = hand == InteractionHand.MAIN_HAND ? player.getMainArm() : player.getMainArm().getOpposite();
-                fire(player, direction, smokeOffsetFor(player, arm));
+                fire(player, stack, direction, smokeOffsetFor(player, arm));
             }
             player.playSound(fireSound(), 3.5f, 1);
 
@@ -236,7 +246,7 @@ public abstract class GunItem extends Item {
         if (level.isClientSide) return;
         if (!isLoaded(stack)) return;
 
-        fire(entity, direction, smokeOffset);
+        fire(entity, stack, direction, smokeOffset);
         entity.playSound(fireSound(), 3.5f, 1);
         setLoaded(stack, false);
     }
@@ -305,13 +315,10 @@ public abstract class GunItem extends Item {
         return 72000;
     }
 
-    public void fire(LivingEntity entity, Vec3 direction) {
-        fire(entity, direction, Vec3.ZERO);
-    }
-
-    public void fire(LivingEntity entity, Vec3 direction, Vec3 smokeOffset) {
+    public void fire(LivingEntity entity, ItemStack stack, Vec3 direction, Vec3 smokeOffset) {
         Level level = entity.level();
         Vec3 origin = new Vec3(entity.getX(), entity.getEyeY(), entity.getZ());
+        boolean flame = hasFlame(stack);
 
         for (int i = 0; i < pelletCount(); i++) {
             BulletEntity bullet = new BulletEntity(level);
@@ -323,6 +330,7 @@ public abstract class GunItem extends Item {
             bullet.setVelocity(bulletSpeed(), direction);
             bullet.setDamage(bulletSpeed(), damageMin() / pelletCount(), damageMax() / pelletCount());
             bullet.ignoreInvulnerableTime = ignoreInvulnerableTime();
+            if (flame) bullet.igniteForSeconds(100.0f);
 
             level.addFreshEntity(bullet);
         }

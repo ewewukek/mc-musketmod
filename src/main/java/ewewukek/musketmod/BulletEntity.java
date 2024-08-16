@@ -203,6 +203,8 @@ public class BulletEntity extends AbstractHurtingProjectile {
             }
         }
 
+        if (wasTouchingWater) extinguishFire();
+
         if (hitResult.getType() != HitResult.Type.MISS) {
             if (!level.isClientSide) {
                 onHit(hitResult);
@@ -290,6 +292,7 @@ public class BulletEntity extends AbstractHurtingProjectile {
 
         DamageSource source = getDamageSource();
         float damage = calculateDamage() * damageMult;
+        boolean ignite = isOnFire() && target.getType() != EntityType.ENDERMAN;
 
         switch (getBulletType()) {
         case BULLET:
@@ -297,11 +300,13 @@ public class BulletEntity extends AbstractHurtingProjectile {
             if (ignoreInvulnerableTime) target.invulnerableTime = 0;
             boolean beenHurt = target.hurt(source, damage);
             if (ignoreInvulnerableTime && !beenHurt) target.invulnerableTime = oldInvulnerableTime;
+            if (ignite) target.igniteForSeconds(5.0f);
             break;
         case PELLET:
             // replacing invulnerableTime works for pellets too
             // but causes hurt sound to play for each pellet hit
             DeferredDamage.hurt(target, source, damage);
+            if (ignite) DeferredDamage.igniteForSeconds(target, 5.0f);
             break;
         }
     }

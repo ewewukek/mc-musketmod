@@ -43,6 +43,7 @@ public abstract class GunItem extends Item {
     public static final float PARTICLE_COUNT = 5;
 
     public static final TagKey<Enchantment> FLAME_ENCHANTMENT = TagKey.create(Registries.ENCHANTMENT, MusketMod.resource("flame"));
+    public static final TagKey<Enchantment> INFINITY_ENCHANTMENT = TagKey.create(Registries.ENCHANTMENT, MusketMod.resource("infinity"));
 
     public static final DataComponentType<Boolean> LOADED = new DataComponentType.Builder<Boolean>()
         .persistent(Codec.BOOL).networkSynchronized(ByteBufCodecs.BOOL).build();
@@ -129,6 +130,10 @@ public abstract class GunItem extends Item {
         return EnchantmentHelper.hasTag(stack, FLAME_ENCHANTMENT);
     }
 
+    public static boolean infiniteAmmo(ItemStack stack) {
+        return EnchantmentHelper.hasTag(stack, INFINITY_ENCHANTMENT);
+    }
+
     @Override
     public InteractionResultHolder<ItemStack> use(Level level, Player player, InteractionHand hand) {
         if (!canUseFrom(player, hand)) return super.use(level, player, hand);
@@ -150,7 +155,7 @@ public abstract class GunItem extends Item {
             }
         }
 
-        boolean haveAmmo = !findAmmo(player).isEmpty() || creative;
+        boolean haveAmmo = !findAmmo(player).isEmpty() || creative || infiniteAmmo(stack);
         boolean loaded = isLoaded(stack);
 
         if (loaded) {
@@ -281,7 +286,7 @@ public abstract class GunItem extends Item {
 
         if (useTicks >= RELOAD_DURATION && !isLoaded(stack)) {
             if (entity instanceof Player player) {
-                if (!player.getAbilities().instabuild) {
+                if (!player.getAbilities().instabuild && !infiniteAmmo(stack)) {
                     ItemStack ammoStack = findAmmo(player);
                     if (ammoStack.isEmpty()) return;
 

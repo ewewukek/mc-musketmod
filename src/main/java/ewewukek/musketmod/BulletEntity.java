@@ -137,6 +137,11 @@ public class BulletEntity extends AbstractHurtingProjectile {
     }
 
     @Override
+    public boolean displayFireAnimation() {
+        return false;
+    }
+
+    @Override
     public void tick() {
         if (++tickCounter > LIFETIME || distanceTravelled > Config.bulletMaxDistance) {
             discard();
@@ -216,6 +221,7 @@ public class BulletEntity extends AbstractHurtingProjectile {
         }
 
         if (wasTouchingWater) extinguishFire();
+        if (!level.isClientSide) setSharedFlagOnFire(getRemainingFireTicks() > 0);
 
         if (hitResult.getType() != HitResult.Type.MISS) {
             if (!level.isClientSide) {

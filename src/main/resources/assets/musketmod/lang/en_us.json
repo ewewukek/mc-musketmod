@@ -22,6 +22,8 @@
   "musketmod.options.mob_damage_multiplier": "Damage multiplier for monsters",
   "musketmod.options.pistol_pillager_chance": "Probability of Pillager having a pistol",
   "musketmod.options.musket_skeleton_chance": "Probability of Skeleton having a musket",
+  "musketmod.options.damage_per_power_level": "Extra damage per Power enchantment level",
+  "musketmod.options.drop_reduction_per_power_level": "Bullet drop reduction per Power enchantment level",
   "musketmod.options.bullet_max_distance": "Bullet max travel distance",
   "musketmod.options.bullet_std_dev": "Standard deviation of bullet spread",
   "musketmod.options.bullet_speed": "Muzzle velocity of bullet",

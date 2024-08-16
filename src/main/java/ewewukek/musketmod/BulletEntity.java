@@ -44,7 +44,9 @@ public class BulletEntity extends AbstractHurtingProjectile {
     // workaround for ClientboundAddEntityPacket.LIMIT
     public static final EntityDataAccessor<Float> INITIAL_SPEED = SynchedEntityData.defineId(BulletEntity.class, EntityDataSerializers.FLOAT);
     public static final EntityDataAccessor<Float> PARTICLE_COUNT = SynchedEntityData.defineId(BulletEntity.class, EntityDataSerializers.FLOAT);
+    public static final EntityDataAccessor<Integer> POWER_LEVEL = SynchedEntityData.defineId(BulletEntity.class, EntityDataSerializers.INT);
     public static final EntityDataAccessor<Byte> BULLET_TYPE = SynchedEntityData.defineId(BulletEntity.class, EntityDataSerializers.BYTE);
+
     public static final ResourceKey<DamageType> BULLET_DAMAGE = ResourceKey.create(Registries.DAMAGE_TYPE, MusketMod.resource("bullet"));
     public static EntityType<BulletEntity> ENTITY_TYPE;
 
@@ -87,8 +89,18 @@ public class BulletEntity extends AbstractHurtingProjectile {
         tickCounter = LIFETIME;
     }
 
+    public double calculateGravity() {
+        float reduction = entityData.get(POWER_LEVEL) * Config.dropReductionPerPowerLevel;
+        return GRAVITY * Math.max(0.0, 1.0 - reduction);
+    }
+
     public float calculateDamage() {
-        return damageMultiplier * (float)getDeltaMovement().lengthSqr();
+        double maxEnergy = Math.pow(entityData.get(INITIAL_SPEED), 2);
+        float maxDamage = damageMultiplier * (float)maxEnergy;
+        double energy = getDeltaMovement().lengthSqr();
+        float damage = damageMultiplier * (float)energy
+            + entityData.get(POWER_LEVEL) * Config.damagePerPowerLevel;
+        return Math.min(damage, maxDamage);
     }
 
     public float calculateEnergyFraction() {
@@ -264,7 +276,7 @@ public class BulletEntity extends AbstractHurtingProjectile {
         }
 
         if (!wasTouchingWater) velocity = velocity.scale(AIR_FRICTION);
-        setDeltaMovement(velocity.subtract(0, GRAVITY, 0));
+        setDeltaMovement(velocity.subtract(0, calculateGravity(), 0));
         setPos(to);
         distanceTravelled += to.subtract(from).length();
         checkInsideBlocks();
@@ -373,6 +385,10 @@ public class BulletEntity extends AbstractHurtingProjectile {
         entityData.set(PARTICLE_COUNT, count);
     }
 
+    public void setPowerLevel(int power) {
+        entityData.set(POWER_LEVEL, power);
+    }
+
     public BulletType getBulletType() {
         return BulletType.fromByte(entityData.get(BULLET_TYPE));
     }
@@ -386,6 +402,7 @@ public class BulletEntity extends AbstractHurtingProjectile {
         super.defineSynchedData(builder);
         builder.define(INITIAL_SPEED, 0.0f);
         builder.define(PARTICLE_COUNT, 0.0f);
+        builder.define(POWER_LEVEL, 0);
         builder.define(BULLET_TYPE, (byte)0);
     }
 
@@ -396,6 +413,7 @@ public class BulletEntity extends AbstractHurtingProjectile {
         ignoreInvulnerableTime = compound.getByte("ignoreInvulnerableTime") != 0;
         distanceTravelled = compound.getFloat("distanceTravelled");
         entityData.set(PARTICLE_COUNT, compound.getFloat("particleCount"));
+        entityData.set(POWER_LEVEL, compound.getInt("powerLevel"));
         entityData.set(BULLET_TYPE, compound.getByte("bulletType"));
     }
 
@@ -406,6 +424,7 @@ public class BulletEntity extends AbstractHurtingProjectile {
         compound.putByte("ignoreInvulnerableTime", (byte)(ignoreInvulnerableTime ? 1 : 0));
         compound.putFloat("distanceTravelled", distanceTravelled);
         compound.putFloat("particleCount", entityData.get(PARTICLE_COUNT));
+        compound.putFloat("powerLevel", entityData.get(POWER_LEVEL));
         compound.putByte("bulletType", entityData.get(BULLET_TYPE));
     }
 

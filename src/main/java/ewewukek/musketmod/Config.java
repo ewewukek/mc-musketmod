@@ -25,6 +25,10 @@ public class Config {
     public static final float PISTOL_PILLAGER_CHANCE = 0.2f;
     public static float musketSkeletonChance;
     public static final float MUSKET_SKELETON_CHANCE = 0.05f;
+    public static float damagePerPowerLevel;
+    public static final float DAMAGE_PER_POWER_LEVEL = 0.5f;
+    public static float dropReductionPerPowerLevel;
+    public static final float DROP_REDUCTION_PER_POWER_LEVEL = 0.1f;
 
     public static float musketBulletStdDev;
     public static final float MUSKET_BULLET_STD_DEV = 1.0f;
@@ -86,6 +90,8 @@ public class Config {
         mobDamageMultiplier = MOB_DAMAGE_MULTIPLIER;
         pistolPillagerChance = PISTOL_PILLAGER_CHANCE;
         musketSkeletonChance = MUSKET_SKELETON_CHANCE;
+        damagePerPowerLevel = DAMAGE_PER_POWER_LEVEL;
+        dropReductionPerPowerLevel = DROP_REDUCTION_PER_POWER_LEVEL;
 
         musketBulletStdDev = MUSKET_BULLET_STD_DEV;
         musketBulletSpeed = MUSKET_BULLET_SPEED;
@@ -165,6 +171,12 @@ public class Config {
                         break;
                     case "musketSkeletonChance":
                         musketSkeletonChance = value;
+                        break;
+                    case "damagePerPowerLevel":
+                        damagePerPowerLevel = value;
+                        break;
+                    case "dropReductionPerPowerLevel":
+                        dropReductionPerPowerLevel = value;
                         break;
 
                     case "bulletStdDev": // COMPAT
@@ -289,6 +301,10 @@ public class Config {
             writer.write("pistolPillagerChance = "+pistolPillagerChance+"\n");
             writer.write("# Probability of Skeleton having a musket\n");
             writer.write("musketSkeletonChance = "+musketSkeletonChance+"\n");
+            writer.write("# Extra damage per Power enchantment level\n");
+            writer.write("damagePerPowerLevel = "+damagePerPowerLevel+"\n");
+            writer.write("# Bullet drop reduction per Power enchantment level\n");
+            writer.write("dropReductionPerPowerLevel = "+dropReductionPerPowerLevel+"\n");
             writer.write("\n");
 
             writer.write("# Musket\n");

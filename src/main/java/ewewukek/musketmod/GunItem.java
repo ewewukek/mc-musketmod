@@ -4,7 +4,9 @@ import org.jetbrains.annotations.Nullable;
 
 import com.mojang.serialization.Codec;
 
+import it.unimi.dsi.fastutil.objects.Object2IntMap.Entry;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Holder;
 import net.minecraft.core.component.DataComponentType;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.core.registries.Registries;
@@ -26,6 +28,7 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.enchantment.Enchantment;
 import net.minecraft.world.item.enchantment.EnchantmentHelper;
+import net.minecraft.world.item.enchantment.ItemEnchantments;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.Vec3;
@@ -44,6 +47,7 @@ public abstract class GunItem extends Item {
 
     public static final TagKey<Enchantment> FLAME_ENCHANTMENT = TagKey.create(Registries.ENCHANTMENT, MusketMod.resource("flame"));
     public static final TagKey<Enchantment> INFINITY_ENCHANTMENT = TagKey.create(Registries.ENCHANTMENT, MusketMod.resource("infinity"));
+    public static final TagKey<Enchantment> POWER_ENCHANTMENT = TagKey.create(Registries.ENCHANTMENT, MusketMod.resource("power"));
 
     public static final DataComponentType<Boolean> LOADED = new DataComponentType.Builder<Boolean>()
         .persistent(Codec.BOOL).networkSynchronized(ByteBufCodecs.BOOL).build();
@@ -132,6 +136,16 @@ public abstract class GunItem extends Item {
 
     public static boolean infiniteAmmo(ItemStack stack) {
         return EnchantmentHelper.hasTag(stack, INFINITY_ENCHANTMENT);
+    }
+
+    public static int getPowerLevel(ItemStack stack) {
+        ItemEnchantments enchantments = EnchantmentHelper.getEnchantmentsForCrafting(stack);
+        for (Entry<Holder<Enchantment>> entry : enchantments.entrySet()) {
+            if (entry.getKey().is(POWER_ENCHANTMENT)) {
+                return entry.getIntValue();
+            }
+        }
+        return 0;
     }
 
     @Override
@@ -320,6 +334,7 @@ public abstract class GunItem extends Item {
         Level level = entity.level();
         Vec3 origin = new Vec3(entity.getX(), entity.getEyeY(), entity.getZ());
         boolean flame = hasFlame(stack);
+        int power = getPowerLevel(stack);
 
         for (int i = 0; i < pelletCount(); i++) {
             BulletEntity bullet = new BulletEntity(level);
@@ -332,6 +347,7 @@ public abstract class GunItem extends Item {
             bullet.setDamage(bulletSpeed(), damageMin() / pelletCount(), damageMax() / pelletCount());
             bullet.ignoreInvulnerableTime = ignoreInvulnerableTime();
             if (flame) bullet.igniteForSeconds(100.0f);
+            bullet.setPowerLevel(power);
 
             level.addFreshEntity(bullet);
         }

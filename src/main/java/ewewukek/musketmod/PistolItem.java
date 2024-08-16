@@ -1,6 +1,7 @@
 package ewewukek.musketmod;
 
 import net.minecraft.sounds.SoundEvent;
+import net.minecraft.world.item.ItemStack;
 
 public class PistolItem extends GunItem {
     public PistolItem(Properties properties) {
@@ -28,7 +29,7 @@ public class PistolItem extends GunItem {
     }
 
     @Override
-    public SoundEvent fireSound() {
+    public SoundEvent fireSound(ItemStack stack) {
         return Sounds.PISTOL_FIRE;
     }
 

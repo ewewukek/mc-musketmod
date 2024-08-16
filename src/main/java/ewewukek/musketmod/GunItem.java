@@ -66,7 +66,7 @@ public abstract class GunItem extends Item {
     public abstract float bulletSpeed();
     public abstract float damageMin();
     public abstract float damageMax();
-    public abstract SoundEvent fireSound();
+    public abstract SoundEvent fireSound(ItemStack stack);
 
     public int pelletCount() {
         return 1;
@@ -178,7 +178,7 @@ public abstract class GunItem extends Item {
                 HumanoidArm arm = hand == InteractionHand.MAIN_HAND ? player.getMainArm() : player.getMainArm().getOpposite();
                 fire(player, stack, direction, smokeOffsetFor(player, arm));
             }
-            player.playSound(fireSound(), 3.5f, 1);
+            player.playSound(fireSound(stack), 3.5f, 1);
 
             setLoaded(stack, false);
             stack.hurtAndBreak(1, player, Player.getSlotForHand(hand));
@@ -262,7 +262,7 @@ public abstract class GunItem extends Item {
         if (!isLoaded(stack)) return;
 
         fire(entity, stack, direction, smokeOffset);
-        entity.playSound(fireSound(), 3.5f, 1);
+        entity.playSound(fireSound(stack), 3.5f, 1);
         setLoaded(stack, false);
     }
 

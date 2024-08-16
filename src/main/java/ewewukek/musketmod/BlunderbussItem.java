@@ -1,6 +1,7 @@
 package ewewukek.musketmod;
 
 import net.minecraft.sounds.SoundEvent;
+import net.minecraft.world.item.ItemStack;
 
 public class BlunderbussItem extends GunItem {
     public BlunderbussItem(Properties properties) {
@@ -38,7 +39,11 @@ public class BlunderbussItem extends GunItem {
     }
 
     @Override
-    public SoundEvent fireSound() {
-        return Sounds.BLUNDERBUSS_FIRE;
+    public SoundEvent fireSound(ItemStack stack) {
+        if (hasFlame(stack)) {
+            return Sounds.BLUNDERBUSS_FIRE_FLAME;
+        } else {
+            return Sounds.BLUNDERBUSS_FIRE;
+        }
     }
 }

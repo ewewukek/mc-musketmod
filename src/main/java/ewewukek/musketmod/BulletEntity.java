@@ -243,6 +243,10 @@ public class BulletEntity extends AbstractHurtingProjectile {
                 BlockState blockState = level.getBlockState(((BlockHitResult)hitResult).getBlockPos());
                 BlockParticleOption particle = new BlockParticleOption(ParticleTypes.BLOCK, blockState);
                 createHitParticles(particle, pos, Vec3.ZERO);
+                if (isOnFire()) {
+                    level.addParticle(ParticleTypes.DRIPPING_LAVA,
+                        pos.x, pos.y, pos.z, 0, 0.01, 0);
+                }
                 playHitSound(blockState.getSoundType().getBreakSound(), pos);
                 discard();
             }

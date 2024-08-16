@@ -1,0 +1,43 @@
+{
+  "type": "minecraft:chest",
+  "pools": [
+    {
+      "bonus_rolls": 0.0,
+      "entries": [
+        {
+          "type": "minecraft:empty"
+        },
+        {
+          "type": "minecraft:item",
+          "name": "musketmod:pistol"
+        }
+      ],
+      "rolls": 1.0
+    },
+    {
+      "bonus_rolls": 0.0,
+      "entries": [
+        {
+          "type": "minecraft:empty"
+        },
+        {
+          "type": "minecraft:item",
+          "functions": [
+            {
+              "add": false,
+              "count": {
+                "type": "minecraft:uniform",
+                "max": 5.0,
+                "min": 1.0
+              },
+              "function": "minecraft:set_count"
+            }
+          ],
+          "name": "musketmod:cartridge"
+        }
+      ],
+      "rolls": 2.0
+    }
+  ],
+  "random_sequence": "minecraft:chests/pillager_outpost"
+}

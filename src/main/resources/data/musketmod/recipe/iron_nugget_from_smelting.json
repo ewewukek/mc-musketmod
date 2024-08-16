@@ -11,6 +11,12 @@
       "item": "musketmod:musket_with_bayonet"
     },
     {
+      "item": "musketmod:musket_with_scope"
+    },
+    {
+      "item": "musketmod:blunderbuss"
+    },
+    {
       "item": "musketmod:pistol"
     }
   ],

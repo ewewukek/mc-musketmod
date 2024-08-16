@@ -6,7 +6,8 @@
     "AbstractClientPlayerMixin",
     "LocalPlayerMixin",
     "MinecraftMixin",
-    "PlayerMixin"
+    "PlayerMixin",
+    "SkeletonModelMixin"
   ],
   "mixins": [
     "AbstractSkeletonMixin",

@@ -8,9 +8,10 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 import ewewukek.musketmod.ILootTableId;
 import net.minecraft.resources.ResourceKey;
+import net.minecraft.server.ReloadableServerRegistries;
 import net.minecraft.world.level.storage.loot.LootTable;
 
-@Mixin(targets = "net.minecraft.server.ReloadableServerRegistries$Holder")
+@Mixin(ReloadableServerRegistries.Holder.class)
 public class ReloadableServerRegistriesHolderMixin {
     private ResourceKey<LootTable> key;
 

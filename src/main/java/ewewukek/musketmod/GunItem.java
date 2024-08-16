@@ -242,10 +242,6 @@ public abstract class GunItem extends Item {
         mobUse(entity, stack, direction, smokeOffsetFor(entity, arm));
     }
 
-    public void mobUse(LivingEntity entity, ItemStack stack, Vec3 direction) {
-        mobUse(entity, stack, direction, smokeOffsetFor(entity, entity.getMainArm()));
-    }
-
     public void mobUse(LivingEntity entity, ItemStack stack, Vec3 direction, Vec3 smokeOffset) {
         Level level = entity.level();
         if (level.isClientSide) return;

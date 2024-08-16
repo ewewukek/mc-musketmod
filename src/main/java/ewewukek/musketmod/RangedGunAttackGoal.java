@@ -74,7 +74,7 @@ public class RangedGunAttackGoal<T extends Monster> extends Goal {
             if (spread > 0) {
                 direction = GunItem.addUniformSpread(direction, mob.getRandom(), spread);
             }
-            gun.mobUse(mob, stack, direction);
+            gun.mobUse(mob, hand, direction);
         }
     }
 

@@ -351,7 +351,10 @@ public abstract class GunItem extends Item {
             bullet.setVelocity(bulletSpeed(), direction);
             bullet.setDamage(bulletSpeed(), damageMin() / pelletCount(), damageMax() / pelletCount());
             bullet.ignoreInvulnerableTime = ignoreInvulnerableTime();
-            if (flame) bullet.igniteForSeconds(100.0f);
+            if (flame) {
+                bullet.igniteForSeconds(100.0f);
+                bullet.setSharedFlagOnFire(true);
+            }
             bullet.setPowerLevel(power);
 
             level.addFreshEntity(bullet);

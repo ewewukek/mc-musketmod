@@ -330,6 +330,11 @@ public abstract class GunItem extends Item {
         return 72000;
     }
 
+    @Override
+    public int getEnchantmentValue() {
+        return 14;
+    }
+
     public void fire(LivingEntity entity, ItemStack stack, Vec3 direction, Vec3 smokeOffset) {
         Level level = entity.level();
         Vec3 origin = new Vec3(entity.getX(), entity.getEyeY(), entity.getZ());

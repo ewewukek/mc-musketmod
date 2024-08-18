@@ -12,6 +12,8 @@
   ],
   "mixins": [
     "AbstractSkeletonMixin",
+    "AnvilMenuMixin",
+    "EnchantmentHelperMixin",
     "EntityMixin",
     "PillagerMixin"
   ],

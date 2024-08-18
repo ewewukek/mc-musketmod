@@ -6,12 +6,15 @@ import java.util.concurrent.Executor;
 
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerTickEvents;
+import net.fabricmc.fabric.api.item.v1.EnchantingContext;
+import net.fabricmc.fabric.api.item.v1.EnchantmentEvents;
 import net.fabricmc.fabric.api.itemgroup.v1.ItemGroupEvents;
 import net.fabricmc.fabric.api.networking.v1.PayloadTypeRegistry;
 import net.fabricmc.fabric.api.networking.v1.PlayerLookup;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.fabricmc.fabric.api.resource.IdentifiableResourceReloadListener;
 import net.fabricmc.fabric.api.resource.ResourceManagerHelper;
+import net.fabricmc.fabric.api.util.TriState;
 import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Registry;
@@ -60,6 +63,18 @@ public class MusketMod implements ModInitializer {
         });
         BulletEntity.register((string, entityType) -> {
             Registry.register(BuiltInRegistries.ENTITY_TYPE, resource(string), entityType);
+        });
+
+        EnchantmentEvents.ALLOW_ENCHANTING.register((enchantment, stack, context) -> {
+            if (context == EnchantingContext.PRIMARY) {
+                return VanillaHelper.isPrimaryEnchantmentFor(enchantment, stack)
+                    ? TriState.TRUE
+                    : TriState.DEFAULT;
+            } else {
+                return VanillaHelper.isAcceptableEnchantmentFor(enchantment, stack)
+                    ? TriState.TRUE
+                    : TriState.DEFAULT;
+            }
         });
 
         ServerTickEvents.END_WORLD_TICK.register((world) -> {

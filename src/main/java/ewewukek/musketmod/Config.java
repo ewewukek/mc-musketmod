@@ -79,7 +79,7 @@ public class Config {
     public static float pistolDamageMax;
     public static final float PISTOL_DAMAGE_MAX = 12.5f;
     public static int pistolDurability;
-    public static final int PISTOL_DURABILITY = 150;
+    public static final int PISTOL_DURABILITY = 200;
 
     public static float dispenserBulletStdDev;
     public static final float DISPENSER_BULLET_STD_DEV = 2.0f;
@@ -295,6 +295,7 @@ public class Config {
             logger.info("Configuration file belongs to older version, updating");
             if (version < 4) {
                 if (bayonetDamage == 4) bayonetDamage = 5;
+                if (pistolDurability == 150) pistolDurability = 200;
             }
             if (version < 2) {
                 if (musketDamageMax == 21.5) musketDamageMax = 21;

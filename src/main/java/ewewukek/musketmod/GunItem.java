@@ -78,10 +78,6 @@ public abstract class GunItem extends Item {
         return 1;
     }
 
-    public boolean ignoreInvulnerableTime() {
-        return false;
-    }
-
     public boolean canUseFrom(LivingEntity entity, InteractionHand hand) {
         if (hand == InteractionHand.MAIN_HAND) {
             return true;
@@ -343,7 +339,6 @@ public abstract class GunItem extends Item {
             direction = addSpread(direction, entity.getRandom(), bulletStdDev());
             bullet.setVelocity(bulletSpeed(), direction);
             bullet.setDamage(bulletSpeed(), damageMin() / pelletCount(), damageMax() / pelletCount());
-            bullet.ignoreInvulnerableTime = ignoreInvulnerableTime();
             if (flame) {
                 bullet.igniteForSeconds(100.0f);
                 bullet.setSharedFlagOnFire(true);

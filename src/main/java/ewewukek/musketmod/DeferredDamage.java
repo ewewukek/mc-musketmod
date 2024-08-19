@@ -7,7 +7,7 @@ import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.Entity;
 
 public class DeferredDamage {
-    public static void hurt(Entity target, DamageSource source, float damage) {
+    public static void hurt(Entity target, DamageSource source, float damage, float igniteSeconds) {
         Entry entry = entries.get(target);
         if (entry == null) {
             entry = new Entry();
@@ -15,20 +15,13 @@ public class DeferredDamage {
         }
         entry.source = source;
         entry.damage += damage;
-    }
-
-    public static void igniteForSeconds(Entity target, float seconds) {
-        Entry entry = entries.get(target);
-        if (entry == null) {
-            entry = new Entry();
-            entries.put(target, entry);
-        }
-        entry.igniteSeconds = Math.max(entry.igniteSeconds, seconds);
+        entry.igniteSeconds = Math.max(entry.igniteSeconds, igniteSeconds);
     }
 
     public static void apply() {
         entries.forEach((target, entry) -> {
-            if (entry.damage > 0) target.hurt(entry.source, entry.damage);
+            target.invulnerableTime = 0;
+            target.hurt(entry.source, entry.damage);
             if (entry.igniteSeconds > 0) target.igniteForSeconds(entry.igniteSeconds);
         });
         entries.clear();

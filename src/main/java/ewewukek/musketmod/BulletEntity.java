@@ -57,7 +57,6 @@ public class BulletEntity extends AbstractHurtingProjectile {
     public static final int HIT_PARTICLE_COUNT = 5;
 
     public float damageMultiplier;
-    public boolean ignoreInvulnerableTime;
     public float distanceTravelled;
     public short tickCounter;
 
@@ -325,18 +324,16 @@ public class BulletEntity extends AbstractHurtingProjectile {
         DamageSource source = getDamageSource();
         float damage = calculateDamage() * damageMult;
         boolean ignite = isOnFire() && target.getType() != EntityType.ENDERMAN;
+        float igniteSeconds = ignite ? 5.0f : 0.0f;
 
         if (isBullet()) {
-            int oldInvulnerableTime = target.invulnerableTime;
-            if (ignoreInvulnerableTime) target.invulnerableTime = 0;
-            boolean beenHurt = target.hurt(source, damage);
-            if (ignoreInvulnerableTime && !beenHurt) target.invulnerableTime = oldInvulnerableTime;
-            if (ignite) target.igniteForSeconds(5.0f);
+            target.invulnerableTime = 0;
+            target.hurt(source, damage);
+            if (igniteSeconds > 0) target.igniteForSeconds(igniteSeconds);
         } else {
             // replacing invulnerableTime works for pellets too
             // but causes hurt sound to play for each pellet hit
-            DeferredDamage.hurt(target, source, damage);
-            if (ignite) DeferredDamage.igniteForSeconds(target, 5.0f);
+            DeferredDamage.hurt(target, source, damage, igniteSeconds);
         }
     }
 
@@ -419,7 +416,6 @@ public class BulletEntity extends AbstractHurtingProjectile {
     public void readAdditionalSaveData(CompoundTag compound) {
         super.readAdditionalSaveData(compound);
         damageMultiplier = compound.getFloat("damageMultiplier");
-        ignoreInvulnerableTime = compound.getByte("ignoreInvulnerableTime") != 0;
         distanceTravelled = compound.getFloat("distanceTravelled");
         entityData.set(PELLET_COUNT, compound.getByte("pelletCount"));
         entityData.set(POWER_LEVEL, compound.getInt("powerLevel"));
@@ -429,7 +425,6 @@ public class BulletEntity extends AbstractHurtingProjectile {
     public void addAdditionalSaveData(CompoundTag compound) {
         super.addAdditionalSaveData(compound);
         compound.putFloat("damageMultiplier", damageMultiplier);
-        compound.putByte("ignoreInvulnerableTime", (byte)(ignoreInvulnerableTime ? 1 : 0));
         compound.putFloat("distanceTravelled", distanceTravelled);
         compound.putByte("pelletCount", entityData.get(PELLET_COUNT));
         compound.putFloat("powerLevel", entityData.get(POWER_LEVEL));

@@ -95,24 +95,28 @@ public class ClientUtilities {
             }
 
         } else if (player.isUsingItem() && player.getUsedItemHand() == hand) {
+            int stageDuration = GunItem.TICKS_PER_LOADING_STAGE;
+            int loadingStage = GunItem.getLoadingStage(stack) + player.getTicksUsingItem() / stageDuration;
             float useTicks = player.getTicksUsingItem() + dt - 1;
             int reloadDuration = GunItem.reloadDuration(stack);
-            if (useTicks > 0 && reloadDuration > 0 && useTicks < reloadDuration + 5) {
+            if (reloadDuration > 0 && useTicks < reloadDuration + 5) {
                 poseStack.translate(0, -0.3, 0.05);
                 poseStack.mulPose(Axis.XP.rotationDegrees(60));
                 poseStack.mulPose(Axis.ZP.rotationDegrees(10));
 
-                if (useTicks >= 8 && useTicks <= 14 || useTicks >= 18 && useTicks <= 24) {
-                    if (useTicks >= 18) useTicks -= 10;
-                    float t;
-                    if (useTicks < 10) {
-                        t = (useTicks - 8) / 2;
-                        t = Mth.sin((float)Math.PI / 2 * Mth.sqrt(t));
-                    } else {
-                        t = (14 - useTicks) / 4;
+                float t = 0;
+                if (useTicks >= stageDuration && loadingStage <= GunItem.LOADING_STAGES) {
+                    useTicks = useTicks % stageDuration;
+                    if (useTicks < 4) {
+                        t = (4 - useTicks) / 4;
                     }
-                    poseStack.translate(0, 0, 0.025 * t);
                 }
+                if (useTicks >= stageDuration - 2 && loadingStage < GunItem.LOADING_STAGES) {
+                    t = (useTicks - stageDuration + 2) / 2;
+                    t = Mth.sin((float)Math.PI / 2 * Mth.sqrt(t));
+                }
+                poseStack.translate(0, 0, 0.025 * t);
+
                 if (gun == Items.BLUNDERBUSS) {
                     poseStack.translate(0, 0, -0.06);
                 } else if (gun == Items.PISTOL) {

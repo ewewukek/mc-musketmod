@@ -56,7 +56,9 @@ public class Config {
     public static float blunderbussBulletSpeed;
     public static final float BLUNDERBUSS_BULLET_SPEED = 160.0f;
     public static int blunderbussPelletCount;
-    public static final int BLUNDERBUSS_PELLET_COUNT = 10;
+    public static final int BLUNDERBUSS_PELLET_COUNT = 9;
+    public static float pelletDamageMultiplier;
+    public static final float PELLET_DAMAGE_MULTIPLIER = 1.5f;
     public static float blunderbussDamageMin;
     public static final float BLUNDERBUSS_DAMAGE_MIN = 20.5f;
     public static float blunderbussDamageMax;
@@ -108,6 +110,7 @@ public class Config {
         blunderbussBulletStdDev = BLUNDERBUSS_BULLET_STD_DEV;
         blunderbussBulletSpeed = BLUNDERBUSS_BULLET_SPEED;
         blunderbussPelletCount = BLUNDERBUSS_PELLET_COUNT;
+        pelletDamageMultiplier = PELLET_DAMAGE_MULTIPLIER;
         blunderbussDamageMin = BLUNDERBUSS_DAMAGE_MIN;
         blunderbussDamageMax = BLUNDERBUSS_DAMAGE_MAX;
         blunderbussDurability = BLUNDERBUSS_DURABILITY;
@@ -222,6 +225,9 @@ public class Config {
                         break;
                     case "blunderbussPelletCount":
                         blunderbussPelletCount = (int)value;
+                        break;
+                    case "pelletDamageMultiplier":
+                        pelletDamageMultiplier = value;
                         break;
                     case "blunderbussDamageMin":
                         blunderbussDamageMin = value;
@@ -345,6 +351,8 @@ public class Config {
             writer.write("blunderbussBulletSpeed = "+blunderbussBulletSpeed+"\n");
             writer.write("# Pellet count\n");
             writer.write("blunderbussPelletCount = "+blunderbussPelletCount+"\n");
+            writer.write("# Individual pellet damage multiplier\n");
+            writer.write("pelletDamageMultiplier = "+pelletDamageMultiplier+"\n");
             writer.write("# Minimum damage at point-blank range\n");
             writer.write("blunderbussDamageMin = "+blunderbussDamageMin+"\n");
             writer.write("# Maximum damage at point-blank range\n");

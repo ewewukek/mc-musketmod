@@ -163,6 +163,14 @@ public class ClothConfigScreen {
             .build());
 
         blunderbussCategory.addEntry(entryBuilder.startFloatField(
+            Component.translatable("musketmod.options.pellet_damage_multiplier"), Config.pelletDamageMultiplier)
+            .setTooltip(Component.translatable("musketmod.options.pellet_damage_multiplier.tooltip"))
+            .setSaveConsumer(value -> Config.pelletDamageMultiplier = value)
+            .setMin(1.0f)
+            .setDefaultValue(Config.PELLET_DAMAGE_MULTIPLIER)
+            .build());
+
+        blunderbussCategory.addEntry(entryBuilder.startFloatField(
             Component.translatable("musketmod.options.damage_min"), Config.blunderbussDamageMin)
             .setSaveConsumer(value -> Config.blunderbussDamageMin = value)
             .setMin(0.5f)

@@ -109,20 +109,14 @@ public class BulletEntity extends AbstractHurtingProjectile {
         return (float)(energy / maxEnergy);
     }
 
-    public float calculatePelletEnergyFraction() {
+    public int pelletCount() {
         int count = entityData.get(PELLET_COUNT);
-        if (count < 1) count = 1;
-        return calculateEnergyFraction() / count;
-    }
-
-    public boolean isBullet() {
-        return entityData.get(PELLET_COUNT) <= 1;
+        return count > 1 ? count : 1;
     }
 
     public boolean soundEffectRoll() {
-        int count = entityData.get(PELLET_COUNT);
-        if (count <= 1) return true;
-        return random.nextFloat() < 1.5f / count;
+        int count = pelletCount();
+        return count == 1 ? true : random.nextFloat() < 1.5f / count;
     }
 
     public DamageSource getDamageSource() {
@@ -284,7 +278,7 @@ public class BulletEntity extends AbstractHurtingProjectile {
             double length = velocity.length();
             Vec3 step = velocity.scale(1 / length);
             Vec3 pos = waterPos.add(step.scale(0.5));
-            float prob = 1.5f * calculatePelletEnergyFraction();
+            float prob = 1.5f * calculateEnergyFraction() / pelletCount();
             while (length > 0.5) {
                 pos = pos.add(step);
                 length -= 1;
@@ -326,14 +320,13 @@ public class BulletEntity extends AbstractHurtingProjectile {
         boolean ignite = isOnFire() && target.getType() != EntityType.ENDERMAN;
         float igniteSeconds = ignite ? 5.0f : 0.0f;
 
-        if (isBullet()) {
+        if (pelletCount() == 1) {
             target.invulnerableTime = 0;
             target.hurt(source, damage);
             if (igniteSeconds > 0) target.igniteForSeconds(igniteSeconds);
         } else {
-            // replacing invulnerableTime works for pellets too
-            // but causes hurt sound to play for each pellet hit
-            DeferredDamage.hurt(target, source, damage, igniteSeconds);
+            float pelletDamageMultiplier = Config.pelletDamageMultiplier / pelletCount();
+            DeferredDamage.hurt(target, source, pelletDamageMultiplier, damage, igniteSeconds);
         }
     }
 
@@ -368,7 +361,7 @@ public class BulletEntity extends AbstractHurtingProjectile {
     }
 
     public void createHitParticles(ParticleOptions particle, Vec3 position, Vec3 velocity) {
-        float amount = HIT_PARTICLE_COUNT * calculatePelletEnergyFraction();
+        float amount = HIT_PARTICLE_COUNT * calculateEnergyFraction() / pelletCount();
         int count = (int)amount + (random.nextFloat() < amount % 1 ? 1 : 0);
         for (int i = 0; i < count; i++) {
             level().addParticle(

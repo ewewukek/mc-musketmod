@@ -30,7 +30,7 @@ public class BulletRenderer extends EntityRenderer<BulletEntity> {
 
         poseStack.pushPose();
 
-        if (bullet.isBullet()) {
+        if (bullet.pelletCount() == 1) {
             poseStack.scale(0.1f, 0.1f, 0.1f);
         } else {
             poseStack.scale(bullet.isOnFire() ? 0.075f : 0.05f, 0.05f, 0.05f);

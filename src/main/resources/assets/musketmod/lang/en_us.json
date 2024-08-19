@@ -28,6 +28,8 @@
   "musketmod.options.bullet_std_dev": "Standard deviation of bullet spread",
   "musketmod.options.bullet_speed": "Muzzle velocity of bullet",
   "musketmod.options.pellet_count": "Pellet count",
+  "musketmod.options.pellet_damage_multiplier": "Individual pellet damage multiplier",
+  "musketmod.options.pellet_damage_multiplier.tooltip": "Less pellets required to hit for same damage",
   "musketmod.options.damage_min": "Minimum damage at point-blank range",
   "musketmod.options.damage_max": "Maximum damage at point-blank range",
   "musketmod.options.durability": "Durability",

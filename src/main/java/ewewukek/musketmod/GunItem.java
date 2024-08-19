@@ -38,10 +38,8 @@ import net.minecraft.world.scores.Scoreboard;
 import net.minecraft.world.scores.criteria.ObjectiveCriteria;
 
 public abstract class GunItem extends Item {
-    public static final int LOADING_STAGE_1 = 5;
-    public static final int LOADING_STAGE_2 = 10;
-    public static final int LOADING_STAGE_3 = 20;
-    public static final int RELOAD_DURATION = 30;
+    public static final int TICKS_PER_LOADING_STAGE = 10;
+    public static final int LOADING_STAGES = 3;
 
     public static final TagKey<Enchantment> FLAME_ENCHANTMENT = TagKey.create(Registries.ENCHANTMENT, MusketMod.resource("flame"));
     public static final TagKey<Enchantment> INFINITY_ENCHANTMENT = TagKey.create(Registries.ENCHANTMENT, MusketMod.resource("infinity"));
@@ -159,10 +157,7 @@ public abstract class GunItem extends Item {
             }
         }
 
-        boolean haveAmmo = !findAmmo(player).isEmpty() || creative || infiniteAmmo(stack);
-        boolean loaded = isLoaded(stack);
-
-        if (loaded) {
+        if (isLoaded(stack)) {
             if (!level.isClientSide) {
                 Vec3 direction = Vec3.directionFromRotation(player.getXRot(), player.getYRot());
                 HumanoidArm arm = hand == InteractionHand.MAIN_HAND ? player.getMainArm() : player.getMainArm().getOpposite();
@@ -178,17 +173,26 @@ public abstract class GunItem extends Item {
 
             return InteractionResultHolder.consume(stack);
 
-        } else if (haveAmmo) {
-            setLoadingStage(stack, 1);
-
-            player.startUsingItem(hand);
-            if (level.isClientSide) setActiveStack(hand, stack);
-
-            return InteractionResultHolder.consume(stack);
-
-        } else {
-            return InteractionResultHolder.fail(stack);
         }
+
+        if (getLoadingStage(stack) == 0) {
+            if (!creative && !infiniteAmmo(stack)) {
+                ItemStack ammoStack = findAmmo(player);
+                if (ammoStack.isEmpty()) {
+                    return InteractionResultHolder.fail(stack);
+                }
+                ammoStack.shrink(1);
+                if (ammoStack.isEmpty()) {
+                    player.getInventory().removeItem(ammoStack);
+                }
+            }
+            setLoadingStage(stack, 1);
+        }
+
+        player.startUsingItem(hand);
+        if (level.isClientSide) setActiveStack(hand, stack);
+
+        return InteractionResultHolder.consume(stack);
     }
 
     public static Vec3 addSpread(Vec3 direction, RandomSource random, float spreadStdDev) {
@@ -256,27 +260,37 @@ public abstract class GunItem extends Item {
         setLoaded(stack, false);
     }
 
+    public static int reloadDuration(ItemStack stack) {
+        int loadingStagesLeft = 1 + LOADING_STAGES - getLoadingStage(stack);
+        return loadingStagesLeft * TICKS_PER_LOADING_STAGE;
+    }
+
     @Override
     public void releaseUsing(ItemStack stack, Level level, LivingEntity entity, int ticksLeft) {
-        setLoadingStage(stack, 0);
+        if (isLoaded(stack)) {
+            setLoadingStage(stack, 0);
+
+        } else {
+            int useTicks = getUseDuration(stack, entity) - ticksLeft;
+            int loadingStage = getLoadingStage(stack) + useTicks / TICKS_PER_LOADING_STAGE;
+            setLoadingStage(stack, loadingStage);
+        }
     }
 
     @Override
     public void onUseTick(Level level, LivingEntity entity, ItemStack stack, int ticksLeft) {
         int useTicks = getUseDuration(stack, entity) - ticksLeft;
-        int loadingStage = getLoadingStage(stack);
+        int loadingStage = getLoadingStage(stack) + useTicks / TICKS_PER_LOADING_STAGE;
 
-        if (loadingStage == 1 && useTicks >= LOADING_STAGE_1) {
+        if (loadingStage < LOADING_STAGES && useTicks == TICKS_PER_LOADING_STAGE / 2) {
             entity.playSound(Sounds.MUSKET_LOAD_0, 0.8f, 1);
-            setLoadingStage(stack, 2);
-
-        } else if (loadingStage == 2 && useTicks >= LOADING_STAGE_2) {
-            entity.playSound(Sounds.MUSKET_LOAD_1, 0.8f, 1);
-            setLoadingStage(stack, 3);
-
-        } else if (loadingStage == 3 && useTicks >= LOADING_STAGE_3) {
-            entity.playSound(Sounds.MUSKET_LOAD_2, 0.8f, 1);
-            setLoadingStage(stack, 4);
+        }
+        if (useTicks > 0 && useTicks % TICKS_PER_LOADING_STAGE == 0) {
+            if (loadingStage < LOADING_STAGES) {
+                entity.playSound(Sounds.MUSKET_LOAD_1, 0.8f, 1);
+            } else if (loadingStage == LOADING_STAGES) {
+                entity.playSound(Sounds.MUSKET_LOAD_2, 0.8f, 1);
+            }
         }
 
         if (level.isClientSide && entity instanceof Player) {
@@ -284,17 +298,7 @@ public abstract class GunItem extends Item {
             return;
         }
 
-        if (useTicks >= RELOAD_DURATION && !isLoaded(stack)) {
-            if (entity instanceof Player player) {
-                if (!player.getAbilities().instabuild && !infiniteAmmo(stack)) {
-                    ItemStack ammoStack = findAmmo(player);
-                    if (ammoStack.isEmpty()) return;
-
-                    ammoStack.shrink(1);
-                    if (ammoStack.isEmpty()) player.getInventory().removeItem(ammoStack);
-                }
-            }
-
+        if (loadingStage > LOADING_STAGES && !isLoaded(stack)) {
             // played on server
             level.playSound(null, entity.getX(), entity.getY(), entity.getZ(), Sounds.MUSKET_READY, entity.getSoundSource(), 0.8f, 1);
             setLoaded(stack, true);

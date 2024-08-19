@@ -57,7 +57,7 @@ public class MinecraftMixin {
         if (client.options.getCameraType().isFirstPerson() && client.player.isUsingItem()) {
             ItemStack stack = client.player.getUseItem();
             if (stack.getItem() == Items.MUSKET_WITH_SCOPE && GunItem.isLoaded(stack)
-            && client.player.getTicksUsingItem() >= GunItem.RELOAD_DURATION + 10) {
+            && client.player.getTicksUsingItem() >= GunItem.reloadDuration(stack) + 10) {
                 client.gameMode.releaseUsingItem(client.player);
             }
         }

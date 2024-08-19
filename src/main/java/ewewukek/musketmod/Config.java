@@ -78,6 +78,8 @@ public class Config {
     public static final float PISTOL_DAMAGE_MIN = 12.0f;
     public static float pistolDamageMax;
     public static final float PISTOL_DAMAGE_MAX = 12.5f;
+    public static float reductionPerQuickChargeLevel;
+    public static final float REDUCTION_PER_QUICK_CHARGE_LEVEL = 0.15f;
     public static int pistolDurability;
     public static final int PISTOL_DURABILITY = 200;
 
@@ -125,6 +127,7 @@ public class Config {
         pistolBulletSpeed = PISTOL_BULLET_SPEED;
         pistolDamageMin = PISTOL_DAMAGE_MIN;
         pistolDamageMax = PISTOL_DAMAGE_MAX;
+        reductionPerQuickChargeLevel = REDUCTION_PER_QUICK_CHARGE_LEVEL;
         pistolDurability = PISTOL_DURABILITY;
 
         dispenserBulletStdDev = DISPENSER_BULLET_STD_DEV;
@@ -263,6 +266,9 @@ public class Config {
                     case "pistolDamageMax":
                         pistolDamageMax = value;
                         break;
+                    case "reductionPerQuickChargeLevel":
+                        reductionPerQuickChargeLevel = value;
+                        break;
                     case "pistolDurability":
                         pistolDurability = (int)value;
                         break;
@@ -388,6 +394,8 @@ public class Config {
             writer.write("pistolDamageMin = "+pistolDamageMin+"\n");
             writer.write("# Maximum damage at point-blank range\n");
             writer.write("pistolDamageMax = "+pistolDamageMax+"\n");
+            writer.write("# Loading time reduction per Quick Charge level (in seconds)\n");
+            writer.write("reductionPerQuickChargeLevel = "+reductionPerQuickChargeLevel+"\n");
             writer.write("# Durability (applied on restart)\n");
             writer.write("pistolDurability = "+pistolDurability+"\n");
             writer.write("\n");

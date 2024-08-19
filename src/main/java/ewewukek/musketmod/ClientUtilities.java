@@ -2,6 +2,8 @@ package ewewukek.musketmod;
 
 import java.util.Optional;
 
+import org.apache.commons.lang3.tuple.Pair;
+
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.math.Axis;
 
@@ -95,7 +97,9 @@ public class ClientUtilities {
             }
 
         } else if (player.isUsingItem() && player.getUsedItemHand() == hand) {
-            int ticksPerLoadingStage = (int)(20 * Config.loadingStageDuration);
+            Pair<Integer, Integer> loadingDuration = GunItem.getLoadingDuration(stack);
+            int loadingStages = loadingDuration.getLeft();
+            int ticksPerLoadingStage = loadingDuration.getRight();
             float useTicks = player.getTicksUsingItem() + dt - 1;
             int loadingStage = GunItem.getLoadingStage(stack) + (int)(useTicks / ticksPerLoadingStage);
             int reloadDuration = GunItem.reloadDuration(stack);
@@ -105,13 +109,13 @@ public class ClientUtilities {
                 poseStack.mulPose(Axis.ZP.rotationDegrees(10));
 
                 float t = 0;
-                if (useTicks >= ticksPerLoadingStage && loadingStage <= Config.loadingStages) {
+                if (useTicks >= ticksPerLoadingStage && loadingStage <= loadingStages) {
                     useTicks = useTicks % ticksPerLoadingStage;
                     if (useTicks < 4) {
                         t = (4 - useTicks) / 4;
                     }
                 }
-                if (useTicks >= ticksPerLoadingStage - 2 && loadingStage < Config.loadingStages) {
+                if (useTicks >= ticksPerLoadingStage - 2 && loadingStage < loadingStages) {
                     t = (useTicks - ticksPerLoadingStage + 2) / 2;
                     t = Mth.sin((float)Math.PI / 2 * Mth.sqrt(t));
                 }

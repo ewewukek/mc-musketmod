@@ -18,7 +18,7 @@ public class ClothConfigScreen {
         commonCategory.addEntry(entryBuilder.startIntField(
             Component.translatable("musketmod.options.loading_stages"), Config.loadingStages)
             .setSaveConsumer(value -> Config.loadingStages = value)
-            .setMin(1)
+            .setMin(2)
             .setDefaultValue(Config.LOADING_STAGES)
             .build());
 
@@ -238,6 +238,14 @@ public class ClothConfigScreen {
             .setSaveConsumer(value -> Config.pistolDamageMax = value)
             .setMin(0.5f)
             .setDefaultValue(Config.PISTOL_DAMAGE_MAX)
+            .build());
+
+        pistolCategory.addEntry(entryBuilder.startFloatField(
+            Component.translatable("musketmod.options.reduction_per_quick_charge_level"), Config.reductionPerQuickChargeLevel)
+            .setTooltip(Component.translatable("musketmod.options.tooltip.seconds"))
+            .setSaveConsumer(value -> Config.reductionPerQuickChargeLevel = value)
+            .setMin(0.1f)
+            .setDefaultValue(Config.REDUCTION_PER_QUICK_CHARGE_LEVEL)
             .build());
 
         pistolCategory.addEntry(entryBuilder.startIntField(

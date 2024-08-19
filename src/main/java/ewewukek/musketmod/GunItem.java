@@ -1,5 +1,6 @@
 package ewewukek.musketmod;
 
+import org.apache.commons.lang3.tuple.Pair;
 import org.jetbrains.annotations.Nullable;
 
 import com.mojang.serialization.Codec;
@@ -41,6 +42,7 @@ public abstract class GunItem extends Item {
     public static final TagKey<Enchantment> FLAME_ENCHANTMENT = TagKey.create(Registries.ENCHANTMENT, MusketMod.resource("flame"));
     public static final TagKey<Enchantment> INFINITY_ENCHANTMENT = TagKey.create(Registries.ENCHANTMENT, MusketMod.resource("infinity"));
     public static final TagKey<Enchantment> POWER_ENCHANTMENT = TagKey.create(Registries.ENCHANTMENT, MusketMod.resource("power"));
+    public static final TagKey<Enchantment> QUICK_CHARGE_ENCHANTMENT = TagKey.create(Registries.ENCHANTMENT, MusketMod.resource("quick_charge"));
 
     public static final DataComponentType<Boolean> LOADED = new DataComponentType.Builder<Boolean>()
         .persistent(Codec.BOOL).networkSynchronized(ByteBufCodecs.BOOL).build();
@@ -133,6 +135,27 @@ public abstract class GunItem extends Item {
         return 0;
     }
 
+    public static int getQuickChargeLevel(ItemStack stack) {
+        ItemEnchantments enchantments = EnchantmentHelper.getEnchantmentsForCrafting(stack);
+        for (Entry<Holder<Enchantment>> entry : enchantments.entrySet()) {
+            if (entry.getKey().is(QUICK_CHARGE_ENCHANTMENT)) {
+                return entry.getIntValue();
+            }
+        }
+        return 0;
+    }
+
+    public static Pair<Integer, Integer> getLoadingDuration(ItemStack stack) {
+        int level = getQuickChargeLevel(stack);
+        int stages = Config.loadingStages;
+        float total = stages * Config.loadingStageDuration;
+        float reduction = level * Config.reductionPerQuickChargeLevel;
+        float duration = (total - reduction) / stages;
+        if (duration < 0.25f) duration = 0.25f;
+        if (level == 3) stages--;
+        return Pair.of(stages, (int)(20 * duration));
+    }
+
     @Override
     public InteractionResultHolder<ItemStack> use(Level level, Player player, InteractionHand hand) {
         if (!canUseFrom(player, hand)) return super.use(level, player, hand);
@@ -184,8 +207,10 @@ public abstract class GunItem extends Item {
                 }
             }
             setLoadingStage(stack, 1);
-        } else if (getLoadingStage(stack) == Config.loadingStages) {
-            setLoadingStage(stack, Config.loadingStages + 1);
+        } else {
+            int loadingStages = getLoadingDuration(stack).getLeft();
+            if (getLoadingStage(stack) == loadingStages)
+                setLoadingStage(stack, loadingStages + 1);
         }
 
         player.startUsingItem(hand);
@@ -260,8 +285,10 @@ public abstract class GunItem extends Item {
     }
 
     public static int reloadDuration(ItemStack stack) {
-        int loadingStagesLeft = 1 + Config.loadingStages - getLoadingStage(stack);
-        int ticksPerLoadingStage = (int)(20 * Config.loadingStageDuration);
+        Pair<Integer, Integer> loadingDuration = getLoadingDuration(stack);
+        int loadingStages = loadingDuration.getLeft();
+        int loadingStagesLeft = 1 + loadingStages - getLoadingStage(stack);
+        int ticksPerLoadingStage = loadingDuration.getRight();
         return loadingStagesLeft * ticksPerLoadingStage;
     }
 
@@ -272,7 +299,7 @@ public abstract class GunItem extends Item {
 
         } else {
             int useTicks = getUseDuration(stack, entity) - ticksLeft;
-            int ticksPerLoadingStage = (int)(20 * Config.loadingStageDuration);
+            int ticksPerLoadingStage = getLoadingDuration(stack).getRight();
             int loadingStage = getLoadingStage(stack) + useTicks / ticksPerLoadingStage;
             setLoadingStage(stack, loadingStage);
         }
@@ -280,17 +307,19 @@ public abstract class GunItem extends Item {
 
     @Override
     public void onUseTick(Level level, LivingEntity entity, ItemStack stack, int ticksLeft) {
+        Pair<Integer, Integer> loadingDuration = getLoadingDuration(stack);
+        int loadingStages = loadingDuration.getLeft();
         int useTicks = getUseDuration(stack, entity) - ticksLeft;
-        int ticksPerLoadingStage = (int)(20 * Config.loadingStageDuration);
+        int ticksPerLoadingStage = loadingDuration.getRight();
         int loadingStage = getLoadingStage(stack) + useTicks / ticksPerLoadingStage;
 
-        if (loadingStage < Config.loadingStages && useTicks == ticksPerLoadingStage / 2) {
+        if (loadingStage < loadingStages && useTicks == ticksPerLoadingStage / 2) {
             entity.playSound(Sounds.MUSKET_LOAD_0, 0.8f, 1);
         }
         if (useTicks > 0 && useTicks % ticksPerLoadingStage == 0) {
-            if (loadingStage < Config.loadingStages) {
+            if (loadingStage < loadingStages) {
                 entity.playSound(Sounds.MUSKET_LOAD_1, 0.8f, 1);
-            } else if (loadingStage == Config.loadingStages) {
+            } else if (loadingStage == loadingStages) {
                 entity.playSound(Sounds.MUSKET_LOAD_2, 0.8f, 1);
             }
         }
@@ -300,7 +329,7 @@ public abstract class GunItem extends Item {
             return;
         }
 
-        if (loadingStage > Config.loadingStages && !isLoaded(stack)) {
+        if (loadingStage > loadingStages && !isLoaded(stack)) {
             // played on server
             level.playSound(null, entity.getX(), entity.getY(), entity.getZ(), Sounds.MUSKET_READY, entity.getSoundSource(), 0.8f, 1);
             setLoaded(stack, true);

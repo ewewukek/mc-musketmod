@@ -187,6 +187,8 @@ public abstract class GunItem extends Item {
                 }
             }
             setLoadingStage(stack, 1);
+        } else if (getLoadingStage(stack) == LOADING_STAGES) {
+            setLoadingStage(stack, LOADING_STAGES + 1);
         }
 
         player.startUsingItem(hand);

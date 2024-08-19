@@ -96,7 +96,8 @@ public class ClientUtilities {
 
         } else if (player.isUsingItem() && player.getUsedItemHand() == hand) {
             float useTicks = player.getTicksUsingItem() + dt - 1;
-            if (useTicks > 0 && useTicks < GunItem.reloadDuration(stack) + 5) {
+            int reloadDuration = GunItem.reloadDuration(stack);
+            if (useTicks > 0 && reloadDuration > 0 && useTicks < reloadDuration + 5) {
                 poseStack.translate(0, -0.3, 0.05);
                 poseStack.mulPose(Axis.XP.rotationDegrees(60));
                 poseStack.mulPose(Axis.ZP.rotationDegrees(10));

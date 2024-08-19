@@ -10,7 +10,6 @@ import net.minecraft.tags.TagKey;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.enchantment.Enchantment;
-import net.minecraft.world.item.enchantment.Enchantments;
 import net.minecraft.world.level.storage.loot.LootContext;
 import net.minecraft.world.level.storage.loot.LootTable;
 
@@ -26,7 +25,7 @@ public class VanillaHelper {
         }
     }
 
-    public static boolean isPrimaryEnchantmentFor(Holder<Enchantment> enchantment, ItemStack stack) {
+    public static boolean canEnchant(Holder<Enchantment> enchantment, ItemStack stack) {
         if (enchantment.kind() == Holder.Kind.REFERENCE) {
             ResourceKey<Enchantment> key = enchantment.unwrapKey().get();
             if (key.location().getNamespace().equals(ResourceLocation.DEFAULT_NAMESPACE)) {
@@ -37,12 +36,4 @@ public class VanillaHelper {
         }
         return false;
     }
-
-    public static boolean isAcceptableEnchantmentFor(Holder<Enchantment> enchantment, ItemStack stack) {
-        if (enchantment.is(Enchantments.KNOCKBACK)) {
-            return (stack.getItem() instanceof GunItem gun) && gun.twoHanded();
-        }
-        return isPrimaryEnchantmentFor(enchantment, stack);
-    }
-
 }

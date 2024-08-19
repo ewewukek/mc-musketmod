@@ -27,7 +27,7 @@ public class AnvilMenuMixin {
         target = "Lnet/minecraft/world/item/enchantment/Enchantment;canEnchant(Lnet/minecraft/world/item/ItemStack;)Z"))
     private boolean canEnchant(Enchantment enchantment, ItemStack stack) {
         if (enchantment == testedEnchantment.value()
-        && VanillaHelper.isAcceptableEnchantmentFor(testedEnchantment, stack)) {
+        && VanillaHelper.canEnchant(testedEnchantment, stack)) {
             return true;
         }
         return enchantment.canEnchant(stack);

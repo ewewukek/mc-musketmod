@@ -15,6 +15,10 @@ public class Config {
     private static final Logger logger = LogManager.getLogger(MusketMod.class);
     public static final int VERSION = 4;
 
+    public static int loadingStages;
+    public static final int LOADING_STAGES = 4;
+    public static float loadingStageDuration;
+    public static final float LOADING_STAGE_DURATION = 0.45f;
     public static float bulletMaxDistance;
     public static final float BULLET_MAX_DISTANCE = 256.0f;
     public static float pvpDamageMultiplier;
@@ -87,6 +91,8 @@ public class Config {
     public static final float DISPENSER_DAMAGE_MAX = 10.5f;
 
     public static void load() {
+        loadingStages = LOADING_STAGES;
+        loadingStageDuration = LOADING_STAGE_DURATION;
         bulletMaxDistance = BULLET_MAX_DISTANCE;
         pvpDamageMultiplier = PVP_DAMAGE_MULTIPLIER;
         mobDamageMultiplier = MOB_DAMAGE_MULTIPLIER;
@@ -160,6 +166,12 @@ public class Config {
                         version = (int)value;
                         break;
 
+                    case "loadingStages":
+                        loadingStages = (int)value;
+                        break;
+                    case "loadingStageDuration":
+                        loadingStageDuration = value;
+                        break;
                     case "bulletMaxDistance":
                         bulletMaxDistance = value;
                         break;
@@ -297,6 +309,10 @@ public class Config {
             writer.write("version = "+VERSION+"\n");
             writer.write("\n");
 
+            writer.write("# Number of loading stages\n");
+            writer.write("loadingStages = "+loadingStages+"\n");
+            writer.write("# Loading stage duration (in seconds)\n");
+            writer.write("loadingStageDuration = "+loadingStageDuration+"\n");
             writer.write("# Maximum bullet travel distance (in blocks)\n");
             writer.write("bulletMaxDistance = "+bulletMaxDistance+"\n");
             writer.write("# Damage multiplier for pvp\n");

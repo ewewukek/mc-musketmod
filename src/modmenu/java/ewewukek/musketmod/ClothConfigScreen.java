@@ -15,6 +15,21 @@ public class ClothConfigScreen {
 
         ConfigCategory commonCategory = builder.getOrCreateCategory(Component.translatable("musketmod.options.common"));
 
+        commonCategory.addEntry(entryBuilder.startIntField(
+            Component.translatable("musketmod.options.loading_stages"), Config.loadingStages)
+            .setSaveConsumer(value -> Config.loadingStages = value)
+            .setMin(1)
+            .setDefaultValue(Config.LOADING_STAGES)
+            .build());
+
+        commonCategory.addEntry(entryBuilder.startFloatField(
+            Component.translatable("musketmod.options.loading_stage_duration"), Config.loadingStageDuration)
+            .setTooltip(Component.translatable("musketmod.options.tooltip.seconds"))
+            .setSaveConsumer(value -> Config.loadingStageDuration = value)
+            .setMin(0.25f)
+            .setDefaultValue(Config.LOADING_STAGE_DURATION)
+            .build());
+
         commonCategory.addEntry(entryBuilder.startFloatField(
             Component.translatable("musketmod.options.bullet_max_distance"), Config.bulletMaxDistance)
             .setTooltip(Component.translatable("musketmod.options.tooltip.blocks"))

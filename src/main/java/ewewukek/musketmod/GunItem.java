@@ -38,9 +38,6 @@ import net.minecraft.world.scores.Scoreboard;
 import net.minecraft.world.scores.criteria.ObjectiveCriteria;
 
 public abstract class GunItem extends Item {
-    public static final int TICKS_PER_LOADING_STAGE = 10;
-    public static final int LOADING_STAGES = 3;
-
     public static final TagKey<Enchantment> FLAME_ENCHANTMENT = TagKey.create(Registries.ENCHANTMENT, MusketMod.resource("flame"));
     public static final TagKey<Enchantment> INFINITY_ENCHANTMENT = TagKey.create(Registries.ENCHANTMENT, MusketMod.resource("infinity"));
     public static final TagKey<Enchantment> POWER_ENCHANTMENT = TagKey.create(Registries.ENCHANTMENT, MusketMod.resource("power"));
@@ -187,8 +184,8 @@ public abstract class GunItem extends Item {
                 }
             }
             setLoadingStage(stack, 1);
-        } else if (getLoadingStage(stack) == LOADING_STAGES) {
-            setLoadingStage(stack, LOADING_STAGES + 1);
+        } else if (getLoadingStage(stack) == Config.loadingStages) {
+            setLoadingStage(stack, Config.loadingStages + 1);
         }
 
         player.startUsingItem(hand);
@@ -263,8 +260,9 @@ public abstract class GunItem extends Item {
     }
 
     public static int reloadDuration(ItemStack stack) {
-        int loadingStagesLeft = 1 + LOADING_STAGES - getLoadingStage(stack);
-        return loadingStagesLeft * TICKS_PER_LOADING_STAGE;
+        int loadingStagesLeft = 1 + Config.loadingStages - getLoadingStage(stack);
+        int ticksPerLoadingStage = (int)(20 * Config.loadingStageDuration);
+        return loadingStagesLeft * ticksPerLoadingStage;
     }
 
     @Override
@@ -274,7 +272,8 @@ public abstract class GunItem extends Item {
 
         } else {
             int useTicks = getUseDuration(stack, entity) - ticksLeft;
-            int loadingStage = getLoadingStage(stack) + useTicks / TICKS_PER_LOADING_STAGE;
+            int ticksPerLoadingStage = (int)(20 * Config.loadingStageDuration);
+            int loadingStage = getLoadingStage(stack) + useTicks / ticksPerLoadingStage;
             setLoadingStage(stack, loadingStage);
         }
     }
@@ -282,15 +281,16 @@ public abstract class GunItem extends Item {
     @Override
     public void onUseTick(Level level, LivingEntity entity, ItemStack stack, int ticksLeft) {
         int useTicks = getUseDuration(stack, entity) - ticksLeft;
-        int loadingStage = getLoadingStage(stack) + useTicks / TICKS_PER_LOADING_STAGE;
+        int ticksPerLoadingStage = (int)(20 * Config.loadingStageDuration);
+        int loadingStage = getLoadingStage(stack) + useTicks / ticksPerLoadingStage;
 
-        if (loadingStage < LOADING_STAGES && useTicks == TICKS_PER_LOADING_STAGE / 2) {
+        if (loadingStage < Config.loadingStages && useTicks == ticksPerLoadingStage / 2) {
             entity.playSound(Sounds.MUSKET_LOAD_0, 0.8f, 1);
         }
-        if (useTicks > 0 && useTicks % TICKS_PER_LOADING_STAGE == 0) {
-            if (loadingStage < LOADING_STAGES) {
+        if (useTicks > 0 && useTicks % ticksPerLoadingStage == 0) {
+            if (loadingStage < Config.loadingStages) {
                 entity.playSound(Sounds.MUSKET_LOAD_1, 0.8f, 1);
-            } else if (loadingStage == LOADING_STAGES) {
+            } else if (loadingStage == Config.loadingStages) {
                 entity.playSound(Sounds.MUSKET_LOAD_2, 0.8f, 1);
             }
         }
@@ -300,7 +300,7 @@ public abstract class GunItem extends Item {
             return;
         }
 
-        if (loadingStage > LOADING_STAGES && !isLoaded(stack)) {
+        if (loadingStage > Config.loadingStages && !isLoaded(stack)) {
             // played on server
             level.playSound(null, entity.getX(), entity.getY(), entity.getZ(), Sounds.MUSKET_READY, entity.getSoundSource(), 0.8f, 1);
             setLoaded(stack, true);

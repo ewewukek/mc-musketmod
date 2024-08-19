@@ -40,8 +40,22 @@ public class MinecraftMixin {
             if (!useKeyReleased) return InteractionResult.FAIL;
         }
         if (ScopedMusketItem.isScoping) return InteractionResult.FAIL;
-        useKeyReleased = false;
-        return gameMode.useItem(player, hand);
+
+        boolean bothGunsLoaded = false;
+        if (stack.getItem() instanceof GunItem gun
+        && GunItem.isReady(stack) && gun.canUseFrom(player, hand)) {
+            InteractionHand hand2 = hand == InteractionHand.MAIN_HAND
+                ? InteractionHand.OFF_HAND : InteractionHand.MAIN_HAND;
+            ItemStack stack2 = player.getItemInHand(hand2);
+            bothGunsLoaded = stack2.getItem() instanceof GunItem gun2
+                && GunItem.isReady(stack2) && gun2.canUseFrom(player, hand2);
+        }
+
+        InteractionResult result = gameMode.useItem(player, hand);
+        if (result.consumesAction() && !bothGunsLoaded) {
+            useKeyReleased = false;
+        }
+        return result;
     }
 
     @Redirect(method = "handleKeybinds", at = @At(value = "INVOKE",

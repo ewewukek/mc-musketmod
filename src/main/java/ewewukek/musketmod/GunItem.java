@@ -167,16 +167,6 @@ public abstract class GunItem extends Item {
             return InteractionResultHolder.fail(stack);
         }
 
-        // shoot from left hand if both are loaded
-        if (hand == InteractionHand.MAIN_HAND && !twoHanded() && isLoaded(stack)) {
-            ItemStack offhandStack = player.getItemInHand(InteractionHand.OFF_HAND);
-            if (!offhandStack.isEmpty() && offhandStack.getItem() instanceof GunItem offhandGun) {
-                if (!offhandGun.twoHanded() && isLoaded(offhandStack)) {
-                    return InteractionResultHolder.pass(stack);
-                }
-            }
-        }
-
         if (isLoaded(stack)) {
             if (!level.isClientSide) {
                 Vec3 direction = Vec3.directionFromRotation(player.getXRot(), player.getYRot());
@@ -193,6 +183,13 @@ public abstract class GunItem extends Item {
 
             return InteractionResultHolder.consume(stack);
 
+        } else if (hand == InteractionHand.MAIN_HAND) {
+            // shoot from offhand if it's loaded
+            ItemStack offhandStack = player.getOffhandItem();
+            if (offhandStack.getItem() instanceof GunItem offhandGun && isLoaded(offhandStack)
+            && offhandGun.canUseFrom(player, InteractionHand.OFF_HAND)) {
+                return InteractionResultHolder.pass(stack);
+            }
         }
 
         if (getLoadingStage(stack) == 0) {

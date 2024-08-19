@@ -45,7 +45,6 @@ public class BulletEntity extends AbstractHurtingProjectile {
     public static final EntityDataAccessor<Float> INITIAL_SPEED = SynchedEntityData.defineId(BulletEntity.class, EntityDataSerializers.FLOAT);
     public static final EntityDataAccessor<Byte> PELLET_COUNT = SynchedEntityData.defineId(BulletEntity.class, EntityDataSerializers.BYTE);
     public static final EntityDataAccessor<Integer> POWER_LEVEL = SynchedEntityData.defineId(BulletEntity.class, EntityDataSerializers.INT);
-    public static final EntityDataAccessor<Byte> BULLET_TYPE = SynchedEntityData.defineId(BulletEntity.class, EntityDataSerializers.BYTE);
 
     public static final ResourceKey<DamageType> BULLET_DAMAGE = ResourceKey.create(Registries.DAMAGE_TYPE, MusketMod.resource("bullet"));
     public static EntityType<BulletEntity> ENTITY_TYPE;
@@ -115,6 +114,16 @@ public class BulletEntity extends AbstractHurtingProjectile {
         int count = entityData.get(PELLET_COUNT);
         if (count < 1) count = 1;
         return calculateEnergyFraction() / count;
+    }
+
+    public boolean isBullet() {
+        return entityData.get(PELLET_COUNT) <= 1;
+    }
+
+    public boolean soundEffectRoll() {
+        int count = entityData.get(PELLET_COUNT);
+        if (count <= 1) return true;
+        return random.nextFloat() < 1.5f / count;
     }
 
     public DamageSource getDamageSource() {
@@ -251,7 +260,7 @@ public class BulletEntity extends AbstractHurtingProjectile {
                 playHitSound(blockState.getSoundType().getBreakSound(), pos);
                 discard();
             }
-        } else if (level.isClientSide && !wasTouchingWater && getBulletType() == BulletType.BULLET) {
+        } else if (level.isClientSide && !wasTouchingWater && soundEffectRoll()) {
             AABB aabbSelection = getBoundingBox().expandTowards(velocity).inflate(8.0);
             double length = velocity.length();
             Vec3 dir = velocity.scale(1.0 / length);
@@ -317,20 +326,17 @@ public class BulletEntity extends AbstractHurtingProjectile {
         float damage = calculateDamage() * damageMult;
         boolean ignite = isOnFire() && target.getType() != EntityType.ENDERMAN;
 
-        switch (getBulletType()) {
-        case BULLET:
+        if (isBullet()) {
             int oldInvulnerableTime = target.invulnerableTime;
             if (ignoreInvulnerableTime) target.invulnerableTime = 0;
             boolean beenHurt = target.hurt(source, damage);
             if (ignoreInvulnerableTime && !beenHurt) target.invulnerableTime = oldInvulnerableTime;
             if (ignite) target.igniteForSeconds(5.0f);
-            break;
-        case PELLET:
+        } else {
             // replacing invulnerableTime works for pellets too
             // but causes hurt sound to play for each pellet hit
             DeferredDamage.hurt(target, source, damage);
             if (ignite) DeferredDamage.igniteForSeconds(target, 5.0f);
-            break;
         }
     }
 
@@ -379,7 +385,7 @@ public class BulletEntity extends AbstractHurtingProjectile {
     }
 
     public void playHitSound(SoundEvent sound, Vec3 position) {
-        if (getBulletType() == BulletType.BULLET) {
+        if (soundEffectRoll()) {
             level().playLocalSound(
                 position.x, position.y, position.z,
                 sound, getSoundSource(),
@@ -401,21 +407,12 @@ public class BulletEntity extends AbstractHurtingProjectile {
         entityData.set(POWER_LEVEL, power);
     }
 
-    public BulletType getBulletType() {
-        return BulletType.fromByte(entityData.get(BULLET_TYPE));
-    }
-
-    public void setBulletType(BulletType type) {
-        entityData.set(BULLET_TYPE, type.toByte());
-    }
-
     @Override
     protected void defineSynchedData(SynchedEntityData.Builder builder) {
         super.defineSynchedData(builder);
         builder.define(INITIAL_SPEED, 0.0f);
         builder.define(PELLET_COUNT, (byte)1);
         builder.define(POWER_LEVEL, 0);
-        builder.define(BULLET_TYPE, (byte)0);
     }
 
     @Override
@@ -426,7 +423,6 @@ public class BulletEntity extends AbstractHurtingProjectile {
         distanceTravelled = compound.getFloat("distanceTravelled");
         entityData.set(PELLET_COUNT, compound.getByte("pelletCount"));
         entityData.set(POWER_LEVEL, compound.getInt("powerLevel"));
-        entityData.set(BULLET_TYPE, compound.getByte("bulletType"));
     }
 
     @Override
@@ -437,7 +433,6 @@ public class BulletEntity extends AbstractHurtingProjectile {
         compound.putFloat("distanceTravelled", distanceTravelled);
         compound.putByte("pelletCount", entityData.get(PELLET_COUNT));
         compound.putFloat("powerLevel", entityData.get(POWER_LEVEL));
-        compound.putByte("bulletType", entityData.get(BULLET_TYPE));
     }
 
     // workaround for ClientboundAddEntityPacket.LIMIT

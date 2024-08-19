@@ -70,10 +70,6 @@ public abstract class GunItem extends Item {
         return 1;
     }
 
-    public BulletType bulletType() {
-        return BulletType.BULLET;
-    }
-
     public boolean twoHanded() {
         return true;
     }
@@ -344,7 +340,6 @@ public abstract class GunItem extends Item {
             bullet.setOwner(entity);
             bullet.setPos(origin);
             bullet.setPelletCount(pelletCount());
-            bullet.setBulletType(bulletType());
             direction = addSpread(direction, entity.getRandom(), bulletStdDev());
             bullet.setVelocity(bulletSpeed(), direction);
             bullet.setDamage(bulletSpeed(), damageMin() / pelletCount(), damageMax() / pelletCount());

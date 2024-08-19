@@ -31,7 +31,6 @@ public class CartridgeItem extends Item {
 
             BulletEntity bullet = new BulletEntity(level);
             bullet.setPos(origin.add(direction.scale(0.5)));
-            bullet.setBulletType(BulletType.BULLET);
             direction = GunItem.addSpread(direction, level.getRandom(), Config.dispenserBulletStdDev);
             bullet.setVelocity(Config.dispenserBulletSpeed, direction);
             bullet.setDamage(Config.dispenserBulletSpeed, Config.dispenserDamageMin, Config.dispenserDamageMax);

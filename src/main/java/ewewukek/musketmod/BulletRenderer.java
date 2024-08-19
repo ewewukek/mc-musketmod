@@ -30,13 +30,10 @@ public class BulletRenderer extends EntityRenderer<BulletEntity> {
 
         poseStack.pushPose();
 
-        switch(bullet.getBulletType()) {
-        case BULLET:
+        if (bullet.isBullet()) {
             poseStack.scale(0.1f, 0.1f, 0.1f);
-            break;
-        case PELLET:
+        } else {
             poseStack.scale(bullet.isOnFire() ? 0.075f : 0.05f, 0.05f, 0.05f);
-            break;
         }
 
         // billboarding

@@ -44,7 +44,7 @@ public class BulletEntity extends AbstractHurtingProjectile {
     // workaround for ClientboundAddEntityPacket.LIMIT
     public static final EntityDataAccessor<Float> INITIAL_SPEED = SynchedEntityData.defineId(BulletEntity.class, EntityDataSerializers.FLOAT);
     public static final EntityDataAccessor<Byte> PELLET_COUNT = SynchedEntityData.defineId(BulletEntity.class, EntityDataSerializers.BYTE);
-    public static final EntityDataAccessor<Integer> POWER_LEVEL = SynchedEntityData.defineId(BulletEntity.class, EntityDataSerializers.INT);
+    public static final EntityDataAccessor<Byte> POWER_LEVEL = SynchedEntityData.defineId(BulletEntity.class, EntityDataSerializers.BYTE);
 
     public static final ResourceKey<DamageType> BULLET_DAMAGE = ResourceKey.create(Registries.DAMAGE_TYPE, MusketMod.resource("bullet"));
     public static EntityType<BulletEntity> ENTITY_TYPE;
@@ -401,7 +401,7 @@ public class BulletEntity extends AbstractHurtingProjectile {
     }
 
     public void setPowerLevel(int power) {
-        entityData.set(POWER_LEVEL, power);
+        entityData.set(POWER_LEVEL, (byte)power);
     }
 
     @Override
@@ -409,7 +409,7 @@ public class BulletEntity extends AbstractHurtingProjectile {
         super.defineSynchedData(builder);
         builder.define(INITIAL_SPEED, 0.0f);
         builder.define(PELLET_COUNT, (byte)1);
-        builder.define(POWER_LEVEL, 0);
+        builder.define(POWER_LEVEL, (byte)0);
     }
 
     @Override
@@ -418,7 +418,7 @@ public class BulletEntity extends AbstractHurtingProjectile {
         damageMultiplier = compound.getFloat("damageMultiplier");
         distanceTravelled = compound.getFloat("distanceTravelled");
         entityData.set(PELLET_COUNT, compound.getByte("pelletCount"));
-        entityData.set(POWER_LEVEL, compound.getInt("powerLevel"));
+        entityData.set(POWER_LEVEL, compound.getByte("powerLevel"));
     }
 
     @Override
@@ -427,7 +427,7 @@ public class BulletEntity extends AbstractHurtingProjectile {
         compound.putFloat("damageMultiplier", damageMultiplier);
         compound.putFloat("distanceTravelled", distanceTravelled);
         compound.putByte("pelletCount", entityData.get(PELLET_COUNT));
-        compound.putFloat("powerLevel", entityData.get(POWER_LEVEL));
+        compound.putByte("powerLevel", entityData.get(POWER_LEVEL));
     }
 
     // workaround for ClientboundAddEntityPacket.LIMIT

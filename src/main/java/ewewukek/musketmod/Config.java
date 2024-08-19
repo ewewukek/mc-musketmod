@@ -29,10 +29,6 @@ public class Config {
     public static final float PISTOL_PILLAGER_CHANCE = 0.2f;
     public static float musketSkeletonChance;
     public static final float MUSKET_SKELETON_CHANCE = 0.05f;
-    public static float damagePerPowerLevel;
-    public static final float DAMAGE_PER_POWER_LEVEL = 0.5f;
-    public static float dropReductionPerPowerLevel;
-    public static final float DROP_REDUCTION_PER_POWER_LEVEL = 0.1f;
 
     public static float musketBulletStdDev;
     public static final float MUSKET_BULLET_STD_DEV = 1.0f;
@@ -52,6 +48,10 @@ public class Config {
     public static final float SCOPED_MUSKET_BULLET_STD_DEV = 0.2f;
     public static float scopeZoom;
     public static final float SCOPE_ZOOM = 4.0f;
+    public static float damagePerPowerLevel;
+    public static final float DAMAGE_PER_POWER_LEVEL = 0.5f;
+    public static float dropReductionPerPowerLevel;
+    public static final float DROP_REDUCTION_PER_POWER_LEVEL = 0.1f;
     public static int scopedMusketDurability;
     public static final int SCOPED_MUSKET_DURABILITY = 150;
 
@@ -98,8 +98,6 @@ public class Config {
         mobDamageMultiplier = MOB_DAMAGE_MULTIPLIER;
         pistolPillagerChance = PISTOL_PILLAGER_CHANCE;
         musketSkeletonChance = MUSKET_SKELETON_CHANCE;
-        damagePerPowerLevel = DAMAGE_PER_POWER_LEVEL;
-        dropReductionPerPowerLevel = DROP_REDUCTION_PER_POWER_LEVEL;
 
         musketBulletStdDev = MUSKET_BULLET_STD_DEV;
         musketBulletSpeed = MUSKET_BULLET_SPEED;
@@ -111,6 +109,8 @@ public class Config {
 
         scopedMusketBulletStdDev = SCOPED_MUSKET_BULLET_STD_DEV;
         scopeZoom = SCOPE_ZOOM;
+        damagePerPowerLevel = DAMAGE_PER_POWER_LEVEL;
+        dropReductionPerPowerLevel = DROP_REDUCTION_PER_POWER_LEVEL;
         scopedMusketDurability = SCOPED_MUSKET_DURABILITY;
 
         blunderbussBulletStdDev = BLUNDERBUSS_BULLET_STD_DEV;
@@ -187,12 +187,6 @@ public class Config {
                     case "musketSkeletonChance":
                         musketSkeletonChance = value;
                         break;
-                    case "damagePerPowerLevel":
-                        damagePerPowerLevel = value;
-                        break;
-                    case "dropReductionPerPowerLevel":
-                        dropReductionPerPowerLevel = value;
-                        break;
 
                     case "bulletStdDev": // COMPAT
                     case "musketBulletStdDev":
@@ -224,6 +218,12 @@ public class Config {
                         break;
                     case "scopeZoom":
                         scopeZoom = value;
+                        break;
+                    case "damagePerPowerLevel":
+                        damagePerPowerLevel = value;
+                        break;
+                    case "dropReductionPerPowerLevel":
+                        dropReductionPerPowerLevel = value;
                         break;
                     case "scopedMusketDurability":
                         scopedMusketDurability = (int)value;
@@ -323,10 +323,6 @@ public class Config {
             writer.write("pistolPillagerChance = "+pistolPillagerChance+"\n");
             writer.write("# Probability of Skeleton having a musket\n");
             writer.write("musketSkeletonChance = "+musketSkeletonChance+"\n");
-            writer.write("# Extra damage per Power enchantment level\n");
-            writer.write("damagePerPowerLevel = "+damagePerPowerLevel+"\n");
-            writer.write("# Bullet drop reduction per Power enchantment level\n");
-            writer.write("dropReductionPerPowerLevel = "+dropReductionPerPowerLevel+"\n");
             writer.write("\n");
 
             writer.write("# Musket\n");
@@ -355,6 +351,10 @@ public class Config {
             writer.write("scopedMusketBulletStdDev = "+scopedMusketBulletStdDev+"\n");
             writer.write("# Scope zoom factor\n");
             writer.write("scopeZoom = "+scopeZoom+"\n");
+            writer.write("# Extra damage per Power enchantment level\n");
+            writer.write("damagePerPowerLevel = "+damagePerPowerLevel+"\n");
+            writer.write("# Bullet drop reduction per Power enchantment level\n");
+            writer.write("dropReductionPerPowerLevel = "+dropReductionPerPowerLevel+"\n");
             writer.write("# Durability (applied on restart)\n");
             writer.write("scopedMusketDurability = "+scopedMusketDurability+"\n");
             writer.write("\n");

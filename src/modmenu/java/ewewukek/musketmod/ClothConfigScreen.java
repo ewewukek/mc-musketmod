@@ -66,19 +66,6 @@ public class ClothConfigScreen {
             .setDefaultValue(Config.MUSKET_SKELETON_CHANCE)
             .build());
 
-        commonCategory.addEntry(entryBuilder.startFloatField(
-            Component.translatable("musketmod.options.damage_per_power_level"), Config.damagePerPowerLevel)
-            .setSaveConsumer(value -> Config.damagePerPowerLevel = value)
-            .setMin(0.5f)
-            .setDefaultValue(Config.DAMAGE_PER_POWER_LEVEL)
-            .build());
-        commonCategory.addEntry(entryBuilder.startFloatField(
-            Component.translatable("musketmod.options.drop_reduction_per_power_level"), Config.dropReductionPerPowerLevel)
-            .setSaveConsumer(value -> Config.dropReductionPerPowerLevel = value)
-            .setMin(0.0f).setMax(0.2f)
-            .setDefaultValue(Config.DROP_REDUCTION_PER_POWER_LEVEL)
-            .build());
-
         ConfigCategory musketCategory = builder.getOrCreateCategory(Component.translatable("item.musketmod.musket"));
 
         musketCategory.addEntry(entryBuilder.startFloatField(
@@ -142,6 +129,20 @@ public class ClothConfigScreen {
             .setSaveConsumer(value -> Config.scopeZoom = value)
             .setMin(1.0f).setMax(10.0f)
             .setDefaultValue(Config.SCOPE_ZOOM)
+            .build());
+
+        scopedMusketCategory.addEntry(entryBuilder.startFloatField(
+            Component.translatable("musketmod.options.damage_per_power_level"), Config.damagePerPowerLevel)
+            .setSaveConsumer(value -> Config.damagePerPowerLevel = value)
+            .setMin(0.5f)
+            .setDefaultValue(Config.DAMAGE_PER_POWER_LEVEL)
+            .build());
+
+        scopedMusketCategory.addEntry(entryBuilder.startFloatField(
+            Component.translatable("musketmod.options.drop_reduction_per_power_level"), Config.dropReductionPerPowerLevel)
+            .setSaveConsumer(value -> Config.dropReductionPerPowerLevel = value)
+            .setMin(0.0f).setMax(0.2f)
+            .setDefaultValue(Config.DROP_REDUCTION_PER_POWER_LEVEL)
             .build());
 
         scopedMusketCategory.addEntry(entryBuilder.startIntField(

@@ -43,8 +43,6 @@ public abstract class GunItem extends Item {
     public static final int LOADING_STAGE_3 = 20;
     public static final int RELOAD_DURATION = 30;
 
-    public static final float PARTICLE_COUNT = 5;
-
     public static final TagKey<Enchantment> FLAME_ENCHANTMENT = TagKey.create(Registries.ENCHANTMENT, MusketMod.resource("flame"));
     public static final TagKey<Enchantment> INFINITY_ENCHANTMENT = TagKey.create(Registries.ENCHANTMENT, MusketMod.resource("infinity"));
     public static final TagKey<Enchantment> POWER_ENCHANTMENT = TagKey.create(Registries.ENCHANTMENT, MusketMod.resource("power"));
@@ -345,7 +343,7 @@ public abstract class GunItem extends Item {
             BulletEntity bullet = new BulletEntity(level);
             bullet.setOwner(entity);
             bullet.setPos(origin);
-            bullet.setParticleCount(PARTICLE_COUNT / pelletCount());
+            bullet.setPelletCount(pelletCount());
             bullet.setBulletType(bulletType());
             direction = addSpread(direction, entity.getRandom(), bulletStdDev());
             bullet.setVelocity(bulletSpeed(), direction);

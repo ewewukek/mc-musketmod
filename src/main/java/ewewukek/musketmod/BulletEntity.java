@@ -43,7 +43,7 @@ import net.minecraft.world.phys.Vec3;
 public class BulletEntity extends AbstractHurtingProjectile {
     // workaround for ClientboundAddEntityPacket.LIMIT
     public static final EntityDataAccessor<Float> INITIAL_SPEED = SynchedEntityData.defineId(BulletEntity.class, EntityDataSerializers.FLOAT);
-    public static final EntityDataAccessor<Float> PARTICLE_COUNT = SynchedEntityData.defineId(BulletEntity.class, EntityDataSerializers.FLOAT);
+    public static final EntityDataAccessor<Byte> PELLET_COUNT = SynchedEntityData.defineId(BulletEntity.class, EntityDataSerializers.BYTE);
     public static final EntityDataAccessor<Integer> POWER_LEVEL = SynchedEntityData.defineId(BulletEntity.class, EntityDataSerializers.INT);
     public static final EntityDataAccessor<Byte> BULLET_TYPE = SynchedEntityData.defineId(BulletEntity.class, EntityDataSerializers.BYTE);
 
@@ -55,6 +55,7 @@ public class BulletEntity extends AbstractHurtingProjectile {
     public static final double AIR_FRICTION = 0.99;
     public static final double WATER_FRICTION = 0.6;
     public static final short LIFETIME = 100;
+    public static final int HIT_PARTICLE_COUNT = 5;
 
     public float damageMultiplier;
     public boolean ignoreInvulnerableTime;
@@ -110,10 +111,10 @@ public class BulletEntity extends AbstractHurtingProjectile {
         return (float)(energy / maxEnergy);
     }
 
-    public int calculateParticleCount() {
-        float count = entityData.get(PARTICLE_COUNT) * calculateEnergyFraction();
-        float prob = count % 1;
-        return (int)count + (random.nextFloat() < prob ? 1 : 0);
+    public float calculatePelletEnergyFraction() {
+        int count = entityData.get(PELLET_COUNT);
+        if (count < 1) count = 1;
+        return calculateEnergyFraction() / count;
     }
 
     public DamageSource getDamageSource() {
@@ -275,7 +276,7 @@ public class BulletEntity extends AbstractHurtingProjectile {
             double length = velocity.length();
             Vec3 step = velocity.scale(1 / length);
             Vec3 pos = waterPos.add(step.scale(0.5));
-            float prob = 1.5f * calculateParticleCount() / GunItem.PARTICLE_COUNT;
+            float prob = 1.5f * calculatePelletEnergyFraction();
             while (length > 0.5) {
                 pos = pos.add(step);
                 length -= 1;
@@ -364,7 +365,8 @@ public class BulletEntity extends AbstractHurtingProjectile {
     }
 
     public void createHitParticles(ParticleOptions particle, Vec3 position, Vec3 velocity) {
-        int count = calculateParticleCount();
+        float amount = HIT_PARTICLE_COUNT * calculatePelletEnergyFraction();
+        int count = (int)amount + (random.nextFloat() < amount % 1 ? 1 : 0);
         for (int i = 0; i < count; i++) {
             level().addParticle(
                 particle,
@@ -391,8 +393,8 @@ public class BulletEntity extends AbstractHurtingProjectile {
         entityData.set(INITIAL_SPEED, speed);
     }
 
-    public void setParticleCount(float count) {
-        entityData.set(PARTICLE_COUNT, count);
+    public void setPelletCount(int count) {
+        entityData.set(PELLET_COUNT, (byte)count);
     }
 
     public void setPowerLevel(int power) {
@@ -411,7 +413,7 @@ public class BulletEntity extends AbstractHurtingProjectile {
     protected void defineSynchedData(SynchedEntityData.Builder builder) {
         super.defineSynchedData(builder);
         builder.define(INITIAL_SPEED, 0.0f);
-        builder.define(PARTICLE_COUNT, 0.0f);
+        builder.define(PELLET_COUNT, (byte)1);
         builder.define(POWER_LEVEL, 0);
         builder.define(BULLET_TYPE, (byte)0);
     }
@@ -422,7 +424,7 @@ public class BulletEntity extends AbstractHurtingProjectile {
         damageMultiplier = compound.getFloat("damageMultiplier");
         ignoreInvulnerableTime = compound.getByte("ignoreInvulnerableTime") != 0;
         distanceTravelled = compound.getFloat("distanceTravelled");
-        entityData.set(PARTICLE_COUNT, compound.getFloat("particleCount"));
+        entityData.set(PELLET_COUNT, compound.getByte("pelletCount"));
         entityData.set(POWER_LEVEL, compound.getInt("powerLevel"));
         entityData.set(BULLET_TYPE, compound.getByte("bulletType"));
     }
@@ -433,7 +435,7 @@ public class BulletEntity extends AbstractHurtingProjectile {
         compound.putFloat("damageMultiplier", damageMultiplier);
         compound.putByte("ignoreInvulnerableTime", (byte)(ignoreInvulnerableTime ? 1 : 0));
         compound.putFloat("distanceTravelled", distanceTravelled);
-        compound.putFloat("particleCount", entityData.get(PARTICLE_COUNT));
+        compound.putByte("pelletCount", entityData.get(PELLET_COUNT));
         compound.putFloat("powerLevel", entityData.get(POWER_LEVEL));
         compound.putByte("bulletType", entityData.get(BULLET_TYPE));
     }

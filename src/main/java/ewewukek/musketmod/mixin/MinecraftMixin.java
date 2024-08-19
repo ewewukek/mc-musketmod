@@ -27,7 +27,8 @@ public class MinecraftMixin {
     private InteractionResult onUseItem(MultiPlayerGameMode gameMode, Player player, InteractionHand hand) {
         Minecraft client = (Minecraft)(Object)this;
         ItemStack stack = player.getItemInHand(hand);
-        if (stack.getItem() instanceof GunItem && GunItem.isReady(stack)) {
+        if (stack.getItem() instanceof GunItem gun
+        && GunItem.isReady(stack) && gun.canUseFrom(player, hand)) {
             if (stack.getItem() == Items.MUSKET_WITH_SCOPE
             && client.options.getCameraType().isFirstPerson()) {
                 useKeyReleased = false;

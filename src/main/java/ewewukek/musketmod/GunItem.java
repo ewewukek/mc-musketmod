@@ -336,8 +336,7 @@ public abstract class GunItem extends Item {
             bullet.setOwner(entity);
             bullet.setPos(origin);
             bullet.setPelletCount(pelletCount());
-            direction = addSpread(direction, entity.getRandom(), bulletStdDev());
-            bullet.setVelocity(bulletSpeed(), direction);
+            bullet.setVelocity(bulletSpeed(), addSpread(direction, entity.getRandom(), bulletStdDev()));
             bullet.setDamage(bulletSpeed(), damageMin() / pelletCount(), damageMax() / pelletCount());
             if (flame) {
                 bullet.igniteForSeconds(100.0f);

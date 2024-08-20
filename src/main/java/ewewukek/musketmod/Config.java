@@ -56,7 +56,7 @@ public class Config {
     public static final int SCOPED_MUSKET_DURABILITY = 150;
 
     public static float blunderbussBulletStdDev;
-    public static final float BLUNDERBUSS_BULLET_STD_DEV = 1.5f;
+    public static final float BLUNDERBUSS_BULLET_STD_DEV = 2.0f;
     public static float blunderbussBulletSpeed;
     public static final float BLUNDERBUSS_BULLET_SPEED = 160.0f;
     public static int blunderbussPelletCount;

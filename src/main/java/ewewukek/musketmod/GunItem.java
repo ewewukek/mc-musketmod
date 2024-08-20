@@ -195,15 +195,8 @@ public abstract class GunItem extends Item {
         }
 
         if (getLoadingStage(stack) == 0) {
-            if (!creative && !infiniteAmmo(stack)) {
-                ItemStack ammoStack = findAmmo(player);
-                if (ammoStack.isEmpty()) {
-                    return InteractionResultHolder.fail(stack);
-                }
-                ammoStack.shrink(1);
-                if (ammoStack.isEmpty()) {
-                    player.getInventory().removeItem(ammoStack);
-                }
+            if (!checkAmmo(player, stack)) {
+                return InteractionResultHolder.fail(stack);
             }
             setLoadingStage(stack, 1);
 
@@ -293,6 +286,22 @@ public abstract class GunItem extends Item {
         return loadingStagesRemaining * ticksPerLoadingStage;
     }
 
+    public static boolean checkAmmo(Player player, ItemStack stack) {
+        if (player.getAbilities().instabuild || infiniteAmmo(stack)) return true;
+        ItemStack ammoStack = findAmmo(player);
+        return !ammoStack.isEmpty();
+    }
+
+    public static void consumeAmmo(Player player, ItemStack stack) {
+        if (player.getAbilities().instabuild || infiniteAmmo(stack)) return;
+
+        ItemStack ammoStack = findAmmo(player);
+        ammoStack.shrink(1);
+        if (ammoStack.isEmpty()) {
+            player.getInventory().removeItem(ammoStack);
+        }
+    }
+
     @Override
     public void releaseUsing(ItemStack stack, Level level, LivingEntity entity, int ticksLeft) {
         if (isLoaded(stack)) {
@@ -301,7 +310,17 @@ public abstract class GunItem extends Item {
         } else {
             int usingTicks = getUseDuration(stack, entity) - ticksLeft;
             int ticksPerLoadingStage = getLoadingDuration(stack).getRight();
-            int loadingStage = getLoadingStage(stack) + usingTicks / ticksPerLoadingStage;
+            int prevLoadingStage = getLoadingStage(stack);
+            int loadingStage = prevLoadingStage + usingTicks / ticksPerLoadingStage;
+
+            if (prevLoadingStage == 1) {
+                if (loadingStage == 1) {
+                    setLoadingStage(stack, 0);
+
+                } else if (!isLoaded(stack) && entity instanceof Player player){
+                    consumeAmmo(player, stack);
+                }
+            }
             setLoadingStage(stack, loadingStage);
         }
     }
@@ -313,7 +332,8 @@ public abstract class GunItem extends Item {
         int ticksPerLoadingStage = loadingDuration.getRight();
 
         int usingTicks = getUseDuration(stack, entity) - ticksLeft;
-        int loadingStage = getLoadingStage(stack) + usingTicks / ticksPerLoadingStage;
+        int prevLoadingStage = getLoadingStage(stack);
+        int loadingStage = prevLoadingStage + usingTicks / ticksPerLoadingStage;
 
         if (loadingStage < loadingStages && usingTicks == ticksPerLoadingStage / 2) {
             entity.playSound(Sounds.MUSKET_LOAD_0, 0.8f, 1);
@@ -334,6 +354,9 @@ public abstract class GunItem extends Item {
         if (loadingStage > loadingStages && !isLoaded(stack)) {
             // played on server
             level.playSound(null, entity.getX(), entity.getY(), entity.getZ(), Sounds.MUSKET_READY, entity.getSoundSource(), 0.8f, 1);
+            if (prevLoadingStage == 1 && entity instanceof Player player) {
+                consumeAmmo(player, stack);
+            }
             setLoaded(stack, true);
         }
     }

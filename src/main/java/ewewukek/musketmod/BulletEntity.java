@@ -25,6 +25,7 @@ import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.damagesource.DamageType;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.MobCategory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.projectile.AbstractHurtingProjectile;
@@ -357,6 +358,15 @@ public class BulletEntity extends AbstractHurtingProjectile {
         }
 
         return resultEntity != null ? new EntityHitResult(resultEntity, resultPos) : null;
+    }
+
+    @Override
+    public boolean canHitEntity(Entity entity) {
+        if (super.canHitEntity(entity)) return true;
+        // entity may become dead on client side before
+        // this check occurs due to packet order
+        Level level = level();
+        return level.isClientSide && entity instanceof LivingEntity;
     }
 
     public void createHitParticles(ParticleOptions particle, Vec3 position, Vec3 velocity) {

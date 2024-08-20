@@ -31,7 +31,7 @@ public class MinecraftMixin {
         if (stack.getItem() instanceof GunItem gun
         && GunItem.isReady(stack) && gun.canUseFrom(player, hand)) {
 
-            if (stack.getItem() == Items.MUSKET_WITH_SCOPE
+            if (stack.getItem() == Items.MUSKET_WITH_SCOPE && GunItem.canUse(player)
             && client.options.getCameraType().isFirstPerson()) {
 
                 useKeyReleased = false;
@@ -96,9 +96,11 @@ public class MinecraftMixin {
     @Inject(method = "handleKeybinds", at = @At("TAIL"))
     private void handleKeyUseUp(CallbackInfo ci) {
         Minecraft client = (Minecraft)(Object)this;
-        ItemStack stack = client.player.getMainHandItem();
+        Player player = client.player;
+        ItemStack stack = player.getMainHandItem();
 
         if (stack.getItem() != Items.MUSKET_WITH_SCOPE
+        || !GunItem.canUse(player)
         || !client.options.keyUse.isDown()
         || !GunItem.isReady(stack) && !client.options.keyAttack.isDown()) {
             setScoping(client, false);

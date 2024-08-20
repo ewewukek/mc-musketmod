@@ -2,7 +2,6 @@ package ewewukek.musketmod;
 
 import java.util.EnumSet;
 
-import net.minecraft.tags.FluidTags;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.ai.goal.Goal;
 import net.minecraft.world.entity.monster.Monster;
@@ -32,11 +31,7 @@ public class RangedGunAttackGoal<T extends Monster> extends Goal {
     }
 
     public boolean canUseGun() {
-        return GunItem.isHoldingGun(mob) && !isInFluid();
-    }
-
-    private boolean isInFluid() {
-        return mob.isEyeInFluid(FluidTags.WATER) || mob.isEyeInFluid(FluidTags.LAVA);
+        return GunItem.isHoldingGun(mob) && GunItem.canUse(mob);
     }
 
     public boolean isReady() {

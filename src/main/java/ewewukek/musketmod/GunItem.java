@@ -75,6 +75,11 @@ public abstract class GunItem extends Item {
         return 1;
     }
 
+    public static boolean canUse(LivingEntity entity) {
+        boolean creative = entity instanceof Player player && player.getAbilities().instabuild;
+        return creative || (!entity.isEyeInFluid(FluidTags.WATER) && !entity.isEyeInFluid(FluidTags.LAVA));
+    }
+
     public boolean canUseFrom(LivingEntity entity, InteractionHand hand) {
         if (hand == InteractionHand.MAIN_HAND) {
             return true;
@@ -158,13 +163,9 @@ public abstract class GunItem extends Item {
 
     @Override
     public InteractionResultHolder<ItemStack> use(Level level, Player player, InteractionHand hand) {
-        if (!canUseFrom(player, hand)) return super.use(level, player, hand);
-
         ItemStack stack = player.getItemInHand(hand);
-        boolean creative = player.getAbilities().instabuild;
-
-        if (!creative && (player.isEyeInFluid(FluidTags.WATER) || player.isEyeInFluid(FluidTags.LAVA))) {
-            return InteractionResultHolder.fail(stack);
+        if (!canUse(player) || !canUseFrom(player, hand)) {
+            return InteractionResultHolder.pass(stack);
         }
 
         if (isLoaded(stack)) {

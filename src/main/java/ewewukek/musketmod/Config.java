@@ -15,18 +15,21 @@ public class Config {
     private static final Logger logger = LogManager.getLogger(MusketMod.class);
     public static final int VERSION = 4;
 
+    public static float bulletMaxDistance;
+    public static final float BULLET_MAX_DISTANCE = 256.0f;
+    public static float randomDamage;
+    public static final float RANDOM_DAMAGE = 0.5f;
+
     public static int loadingStages;
     public static final int LOADING_STAGES = 4;
     public static float loadingStageDuration;
     public static final float LOADING_STAGE_DURATION = 0.45f;
-    public static float randomDamage;
-    public static final float RANDOM_DAMAGE = 0.5f;
-    public static float bulletMaxDistance;
-    public static final float BULLET_MAX_DISTANCE = 256.0f;
+
     public static float pvpDamageMultiplier;
     public static final float PVP_DAMAGE_MULTIPLIER = 1.0f;
     public static float mobDamageMultiplier;
     public static final float MOB_DAMAGE_MULTIPLIER = 0.5f;
+
     public static float pistolPillagerChance;
     public static final float PISTOL_PILLAGER_CHANCE = 0.2f;
     public static float musketSkeletonChance;
@@ -38,11 +41,10 @@ public class Config {
     public static final float MUSKET_BULLET_SPEED = 180.0f;
     public static float musketDamage;
     public static final float MUSKET_DAMAGE = 20.5f;
-    public static int musketDurability;
-    public static final int MUSKET_DURABILITY = 250;
-
     public static int bayonetDamage;
     public static final int BAYONET_DAMAGE = 5;
+    public static int musketDurability;
+    public static final int MUSKET_DURABILITY = 250;
 
     public static float scopedMusketBulletStdDev;
     public static final float SCOPED_MUSKET_BULLET_STD_DEV = 0.2f;
@@ -59,12 +61,12 @@ public class Config {
     public static final float BLUNDERBUSS_BULLET_STD_DEV = 2.0f;
     public static float blunderbussBulletSpeed;
     public static final float BLUNDERBUSS_BULLET_SPEED = 160.0f;
+    public static float blunderbussDamage;
+    public static final float BLUNDERBUSS_DAMAGE = 20.5f;
     public static int blunderbussPelletCount;
     public static final int BLUNDERBUSS_PELLET_COUNT = 9;
     public static float pelletDamageMultiplier;
     public static final float PELLET_DAMAGE_MULTIPLIER = 1.5f;
-    public static float blunderbussDamage;
-    public static final float BLUNDERBUSS_DAMAGE = 20.5f;
     public static int blunderbussDurability;
     public static final int BLUNDERBUSS_DURABILITY = 200;
 
@@ -87,21 +89,23 @@ public class Config {
     public static final float DISPENSER_DAMAGE = 10.0f;
 
     public static void load() {
+        bulletMaxDistance = BULLET_MAX_DISTANCE;
+        randomDamage = RANDOM_DAMAGE;
+
         loadingStages = LOADING_STAGES;
         loadingStageDuration = LOADING_STAGE_DURATION;
-        randomDamage = RANDOM_DAMAGE;
-        bulletMaxDistance = BULLET_MAX_DISTANCE;
+
         pvpDamageMultiplier = PVP_DAMAGE_MULTIPLIER;
         mobDamageMultiplier = MOB_DAMAGE_MULTIPLIER;
+
         pistolPillagerChance = PISTOL_PILLAGER_CHANCE;
         musketSkeletonChance = MUSKET_SKELETON_CHANCE;
 
         musketBulletStdDev = MUSKET_BULLET_STD_DEV;
         musketBulletSpeed = MUSKET_BULLET_SPEED;
         musketDamage = MUSKET_DAMAGE;
-        musketDurability = MUSKET_DURABILITY;
-
         bayonetDamage = BAYONET_DAMAGE;
+        musketDurability = MUSKET_DURABILITY;
 
         scopedMusketBulletStdDev = SCOPED_MUSKET_BULLET_STD_DEV;
         scopeZoom = SCOPE_ZOOM;
@@ -111,9 +115,9 @@ public class Config {
 
         blunderbussBulletStdDev = BLUNDERBUSS_BULLET_STD_DEV;
         blunderbussBulletSpeed = BLUNDERBUSS_BULLET_SPEED;
+        blunderbussDamage = BLUNDERBUSS_DAMAGE;
         blunderbussPelletCount = BLUNDERBUSS_PELLET_COUNT;
         pelletDamageMultiplier = PELLET_DAMAGE_MULTIPLIER;
-        blunderbussDamage = BLUNDERBUSS_DAMAGE;
         blunderbussDurability = BLUNDERBUSS_DURABILITY;
 
         pistolBulletStdDev = PISTOL_BULLET_STD_DEV;
@@ -160,24 +164,27 @@ public class Config {
                         version = (int)value;
                         break;
 
+                    case "bulletMaxDistance":
+                        bulletMaxDistance = value;
+                        break;
+                    case "randomDamage":
+                        randomDamage = value;
+                        break;
+
                     case "loadingStages":
                         loadingStages = (int)value;
                         break;
                     case "loadingStageDuration":
                         loadingStageDuration = value;
                         break;
-                    case "randomDamage":
-                        randomDamage = value;
-                        break;
-                    case "bulletMaxDistance":
-                        bulletMaxDistance = value;
-                        break;
+
                     case "pvpDamageMultiplier":
                         pvpDamageMultiplier = value;
                         break;
                     case "mobDamageMultiplier":
                         mobDamageMultiplier = value;
                         break;
+
                     case "pistolPillagerChance":
                         pistolPillagerChance = value;
                         break;
@@ -199,13 +206,12 @@ public class Config {
                         break;
                     case "damageMax": // REMOVED
                         break;
+                    case "bayonetDamage":
+                        bayonetDamage = (int)value;
+                        break;
                     case "durability": // COMPAT
                     case "musketDurability":
                         musketDurability = (int)value;
-                        break;
-
-                    case "bayonetDamage":
-                        bayonetDamage = (int)value;
                         break;
 
                     case "scopedMusketBulletStdDev":
@@ -230,14 +236,14 @@ public class Config {
                     case "blunderbussBulletSpeed":
                         blunderbussBulletSpeed = value;
                         break;
+                    case "blunderbussDamage":
+                        blunderbussDamage = value;
+                        break;
                     case "blunderbussPelletCount":
                         blunderbussPelletCount = (int)value;
                         break;
                     case "pelletDamageMultiplier":
                         pelletDamageMultiplier = value;
-                        break;
-                    case "blunderbussDamage":
-                        blunderbussDamage = value;
                         break;
                     case "blunderbussDurability":
                         blunderbussDurability = (int)value;
@@ -299,18 +305,21 @@ public class Config {
             writer.write("version = "+VERSION+"\n");
             writer.write("\n");
 
+            writer.write("# Maximum bullet travel distance (in blocks)\n");
+            writer.write("bulletMaxDistance = "+bulletMaxDistance+"\n");
+            writer.write("# Additional random damage\n");
+            writer.write("randomDamage = "+randomDamage+"\n");
+            writer.write("\n");
             writer.write("# Number of loading stages\n");
             writer.write("loadingStages = "+loadingStages+"\n");
             writer.write("# Loading stage duration (in seconds)\n");
             writer.write("loadingStageDuration = "+loadingStageDuration+"\n");
-            writer.write("# Additional random damage\n");
-            writer.write("randomDamage = "+randomDamage+"\n");
-            writer.write("# Maximum bullet travel distance (in blocks)\n");
-            writer.write("bulletMaxDistance = "+bulletMaxDistance+"\n");
+            writer.write("\n");
             writer.write("# Damage multiplier for pvp\n");
             writer.write("pvpDamageMultiplier = "+pvpDamageMultiplier+"\n");
             writer.write("# Damage multiplier for monsters\n");
             writer.write("mobDamageMultiplier = "+mobDamageMultiplier+"\n");
+            writer.write("\n");
             writer.write("# Probability of Pillager having a pistol\n");
             writer.write("pistolPillagerChance = "+pistolPillagerChance+"\n");
             writer.write("# Probability of Skeleton having a musket\n");
@@ -355,12 +364,12 @@ public class Config {
             writer.write("blunderbussBulletStdDev = "+blunderbussBulletStdDev+"\n");
             writer.write("# Muzzle velocity of bullet (in blocks per second)\n");
             writer.write("blunderbussBulletSpeed = "+blunderbussBulletSpeed+"\n");
+            writer.write("# Damage at point-blank range\n");
+            writer.write("blunderbussDamage = "+blunderbussDamage+"\n");
             writer.write("# Pellet count\n");
             writer.write("blunderbussPelletCount = "+blunderbussPelletCount+"\n");
             writer.write("# Individual pellet damage multiplier\n");
             writer.write("pelletDamageMultiplier = "+pelletDamageMultiplier+"\n");
-            writer.write("# Damage at point-blank range\n");
-            writer.write("blunderbussDamage = "+blunderbussDamage+"\n");
             writer.write("# Durability (applied on restart)\n");
             writer.write("blunderbussDurability = "+blunderbussDurability+"\n");
             writer.write("\n");

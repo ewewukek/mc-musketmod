@@ -15,21 +15,6 @@ public class ClothConfigScreen {
 
         ConfigCategory commonCategory = builder.getOrCreateCategory(Component.translatable("musketmod.options.common"));
 
-        commonCategory.addEntry(entryBuilder.startIntField(
-            Component.translatable("musketmod.options.loading_stages"), Config.loadingStages)
-            .setSaveConsumer(value -> Config.loadingStages = value)
-            .setMin(2)
-            .setDefaultValue(Config.LOADING_STAGES)
-            .build());
-
-        commonCategory.addEntry(entryBuilder.startFloatField(
-            Component.translatable("musketmod.options.loading_stage_duration"), Config.loadingStageDuration)
-            .setTooltip(Component.translatable("musketmod.options.tooltip.seconds"))
-            .setSaveConsumer(value -> Config.loadingStageDuration = value)
-            .setMin(0.25f)
-            .setDefaultValue(Config.LOADING_STAGE_DURATION)
-            .build());
-
         commonCategory.addEntry(entryBuilder.startFloatField(
             Component.translatable("musketmod.options.bullet_max_distance"), Config.bulletMaxDistance)
             .setTooltip(Component.translatable("musketmod.options.tooltip.blocks"))
@@ -43,6 +28,21 @@ public class ClothConfigScreen {
             .setSaveConsumer(value -> Config.randomDamage = value)
             .setMin(0.0f)
             .setDefaultValue(Config.RANDOM_DAMAGE)
+            .build());
+
+        commonCategory.addEntry(entryBuilder.startIntField(
+            Component.translatable("musketmod.options.loading_stages"), Config.loadingStages)
+            .setSaveConsumer(value -> Config.loadingStages = value)
+            .setMin(2)
+            .setDefaultValue(Config.LOADING_STAGES)
+            .build());
+
+        commonCategory.addEntry(entryBuilder.startFloatField(
+            Component.translatable("musketmod.options.loading_stage_duration"), Config.loadingStageDuration)
+            .setTooltip(Component.translatable("musketmod.options.tooltip.seconds"))
+            .setSaveConsumer(value -> Config.loadingStageDuration = value)
+            .setMin(0.25f)
+            .setDefaultValue(Config.LOADING_STAGE_DURATION)
             .build());
 
         commonCategory.addEntry(entryBuilder.startFloatField(
@@ -99,19 +99,19 @@ public class ClothConfigScreen {
             .build());
 
         musketCategory.addEntry(entryBuilder.startIntField(
-            Component.translatable("musketmod.options.durability"), Config.musketDurability)
-            .setTooltip(Component.translatable("musketmod.options.tooltip.restart"))
-            .setSaveConsumer(value -> Config.musketDurability = value)
-            .setMin(1)
-            .setDefaultValue(Config.MUSKET_DURABILITY)
-            .build());
-
-        musketCategory.addEntry(entryBuilder.startIntField(
             Component.translatable("musketmod.options.bayonet_damage"), Config.bayonetDamage)
             .setTooltip(Component.translatable("musketmod.options.tooltip.restart"))
             .setSaveConsumer(value -> Config.bayonetDamage = value)
             .setMin(1)
             .setDefaultValue(Config.BAYONET_DAMAGE)
+            .build());
+
+        musketCategory.addEntry(entryBuilder.startIntField(
+            Component.translatable("musketmod.options.durability"), Config.musketDurability)
+            .setTooltip(Component.translatable("musketmod.options.tooltip.restart"))
+            .setSaveConsumer(value -> Config.musketDurability = value)
+            .setMin(1)
+            .setDefaultValue(Config.MUSKET_DURABILITY)
             .build());
 
         ConfigCategory scopedMusketCategory = builder.getOrCreateCategory(Component.translatable("item.musketmod.musket_with_scope"));
@@ -156,7 +156,7 @@ public class ClothConfigScreen {
         ConfigCategory blunderbussCategory = builder.getOrCreateCategory(Component.translatable("item.musketmod.blunderbuss"));
 
         blunderbussCategory.addEntry(entryBuilder.startFloatField(
-            Component.translatable("musketmod.options.bullet_std_dev"), Config.blunderbussBulletStdDev)
+            Component.translatable("musketmod.options.pellet_std_dev"), Config.blunderbussBulletStdDev)
             .setTooltip(Component.translatable("musketmod.options.tooltip.degrees"))
             .setSaveConsumer(value -> Config.blunderbussBulletStdDev = value)
             .setMin(0.0f)
@@ -169,6 +169,13 @@ public class ClothConfigScreen {
             .setSaveConsumer(value -> Config.blunderbussBulletSpeed = value)
             .setMin(1.0f)
             .setDefaultValue(Config.BLUNDERBUSS_BULLET_SPEED)
+            .build());
+
+        blunderbussCategory.addEntry(entryBuilder.startFloatField(
+            Component.translatable("musketmod.options.damage.blunderbuss"), Config.blunderbussDamage)
+            .setSaveConsumer(value -> Config.blunderbussDamage = value)
+            .setMin(0.5f)
+            .setDefaultValue(Config.BLUNDERBUSS_DAMAGE)
             .build());
 
         blunderbussCategory.addEntry(entryBuilder.startIntField(
@@ -184,13 +191,6 @@ public class ClothConfigScreen {
             .setSaveConsumer(value -> Config.pelletDamageMultiplier = value)
             .setMin(1.0f)
             .setDefaultValue(Config.PELLET_DAMAGE_MULTIPLIER)
-            .build());
-
-        blunderbussCategory.addEntry(entryBuilder.startFloatField(
-            Component.translatable("musketmod.options.damage"), Config.blunderbussDamage)
-            .setSaveConsumer(value -> Config.blunderbussDamage = value)
-            .setMin(0.5f)
-            .setDefaultValue(Config.BLUNDERBUSS_DAMAGE)
             .build());
 
         blunderbussCategory.addEntry(entryBuilder.startIntField(

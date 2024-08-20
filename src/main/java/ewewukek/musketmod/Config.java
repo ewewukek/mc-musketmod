@@ -19,6 +19,8 @@ public class Config {
     public static final int LOADING_STAGES = 4;
     public static float loadingStageDuration;
     public static final float LOADING_STAGE_DURATION = 0.45f;
+    public static float randomDamage;
+    public static final float RANDOM_DAMAGE = 0.5f;
     public static float bulletMaxDistance;
     public static final float BULLET_MAX_DISTANCE = 256.0f;
     public static float pvpDamageMultiplier;
@@ -34,10 +36,8 @@ public class Config {
     public static final float MUSKET_BULLET_STD_DEV = 1.0f;
     public static float musketBulletSpeed;
     public static final float MUSKET_BULLET_SPEED = 180.0f;
-    public static float musketDamageMin;
-    public static final float MUSKET_DAMAGE_MIN = 20.5f;
-    public static float musketDamageMax;
-    public static final float MUSKET_DAMAGE_MAX = 21.0f;
+    public static float musketDamage;
+    public static final float MUSKET_DAMAGE = 20.5f;
     public static int musketDurability;
     public static final int MUSKET_DURABILITY = 250;
 
@@ -63,10 +63,8 @@ public class Config {
     public static final int BLUNDERBUSS_PELLET_COUNT = 9;
     public static float pelletDamageMultiplier;
     public static final float PELLET_DAMAGE_MULTIPLIER = 1.5f;
-    public static float blunderbussDamageMin;
-    public static final float BLUNDERBUSS_DAMAGE_MIN = 20.5f;
-    public static float blunderbussDamageMax;
-    public static final float BLUNDERBUSS_DAMAGE_MAX = 21.0f;
+    public static float blunderbussDamage;
+    public static final float BLUNDERBUSS_DAMAGE = 20.5f;
     public static int blunderbussDurability;
     public static final int BLUNDERBUSS_DURABILITY = 200;
 
@@ -74,10 +72,8 @@ public class Config {
     public static final float PISTOL_BULLET_STD_DEV = 1.5f;
     public static float pistolBulletSpeed;
     public static final float PISTOL_BULLET_SPEED = 140.0f;
-    public static float pistolDamageMin;
-    public static final float PISTOL_DAMAGE_MIN = 12.0f;
-    public static float pistolDamageMax;
-    public static final float PISTOL_DAMAGE_MAX = 12.5f;
+    public static float pistolDamage;
+    public static final float PISTOL_DAMAGE = 12.0f;
     public static float reductionPerQuickChargeLevel;
     public static final float REDUCTION_PER_QUICK_CHARGE_LEVEL = 0.15f;
     public static int pistolDurability;
@@ -87,14 +83,13 @@ public class Config {
     public static final float DISPENSER_BULLET_STD_DEV = 2.0f;
     public static float dispenserBulletSpeed;
     public static final float DISPENSER_BULLET_SPEED = 120.0f;
-    public static float dispenserDamageMin;
-    public static final float DISPENSER_DAMAGE_MIN = 10.0f;
-    public static float dispenserDamageMax;
-    public static final float DISPENSER_DAMAGE_MAX = 10.5f;
+    public static float dispenserDamage;
+    public static final float DISPENSER_DAMAGE = 10.0f;
 
     public static void load() {
         loadingStages = LOADING_STAGES;
         loadingStageDuration = LOADING_STAGE_DURATION;
+        randomDamage = RANDOM_DAMAGE;
         bulletMaxDistance = BULLET_MAX_DISTANCE;
         pvpDamageMultiplier = PVP_DAMAGE_MULTIPLIER;
         mobDamageMultiplier = MOB_DAMAGE_MULTIPLIER;
@@ -103,8 +98,7 @@ public class Config {
 
         musketBulletStdDev = MUSKET_BULLET_STD_DEV;
         musketBulletSpeed = MUSKET_BULLET_SPEED;
-        musketDamageMin = MUSKET_DAMAGE_MIN;
-        musketDamageMax = MUSKET_DAMAGE_MAX;
+        musketDamage = MUSKET_DAMAGE;
         musketDurability = MUSKET_DURABILITY;
 
         bayonetDamage = BAYONET_DAMAGE;
@@ -119,21 +113,18 @@ public class Config {
         blunderbussBulletSpeed = BLUNDERBUSS_BULLET_SPEED;
         blunderbussPelletCount = BLUNDERBUSS_PELLET_COUNT;
         pelletDamageMultiplier = PELLET_DAMAGE_MULTIPLIER;
-        blunderbussDamageMin = BLUNDERBUSS_DAMAGE_MIN;
-        blunderbussDamageMax = BLUNDERBUSS_DAMAGE_MAX;
+        blunderbussDamage = BLUNDERBUSS_DAMAGE;
         blunderbussDurability = BLUNDERBUSS_DURABILITY;
 
         pistolBulletStdDev = PISTOL_BULLET_STD_DEV;
         pistolBulletSpeed = PISTOL_BULLET_SPEED;
-        pistolDamageMin = PISTOL_DAMAGE_MIN;
-        pistolDamageMax = PISTOL_DAMAGE_MAX;
+        pistolDamage = PISTOL_DAMAGE;
         reductionPerQuickChargeLevel = REDUCTION_PER_QUICK_CHARGE_LEVEL;
         pistolDurability = PISTOL_DURABILITY;
 
         dispenserBulletStdDev = DISPENSER_BULLET_STD_DEV;
         dispenserBulletSpeed = DISPENSER_BULLET_SPEED;
-        dispenserDamageMin = DISPENSER_DAMAGE_MIN;
-        dispenserDamageMax = DISPENSER_DAMAGE_MAX;
+        dispenserDamage = DISPENSER_DAMAGE;
 
         int version = 0;
         try (BufferedReader reader = Files.newBufferedReader(MusketMod.CONFIG_PATH)) {
@@ -175,6 +166,9 @@ public class Config {
                     case "loadingStageDuration":
                         loadingStageDuration = value;
                         break;
+                    case "randomDamage":
+                        randomDamage = value;
+                        break;
                     case "bulletMaxDistance":
                         bulletMaxDistance = value;
                         break;
@@ -200,12 +194,10 @@ public class Config {
                         musketBulletSpeed = value;
                         break;
                     case "damageMin": // COMPAT
-                    case "musketDamageMin":
-                        musketDamageMin = value;
+                    case "musketDamage":
+                        musketDamage = value;
                         break;
-                    case "damageMax": // COMPAT
-                    case "musketDamageMax":
-                        musketDamageMax = value;
+                    case "damageMax": // REMOVED
                         break;
                     case "durability": // COMPAT
                     case "musketDurability":
@@ -244,11 +236,8 @@ public class Config {
                     case "pelletDamageMultiplier":
                         pelletDamageMultiplier = value;
                         break;
-                    case "blunderbussDamageMin":
-                        blunderbussDamageMin = value;
-                        break;
-                    case "blunderbussDamageMax":
-                        blunderbussDamageMax = value;
+                    case "blunderbussDamage":
+                        blunderbussDamage = value;
                         break;
                     case "blunderbussDurability":
                         blunderbussDurability = (int)value;
@@ -260,11 +249,11 @@ public class Config {
                     case "pistolBulletSpeed":
                         pistolBulletSpeed = value;
                         break;
-                    case "pistolDamageMin":
-                        pistolDamageMin = value;
+                    case "pistolDamageMin": // COMPAT
+                    case "pistolDamage":
+                        pistolDamage = value;
                         break;
-                    case "pistolDamageMax":
-                        pistolDamageMax = value;
+                    case "pistolDamageMax": // REMOVED
                         break;
                     case "reductionPerQuickChargeLevel":
                         reductionPerQuickChargeLevel = value;
@@ -279,11 +268,8 @@ public class Config {
                     case "dispenserBulletSpeed":
                         dispenserBulletSpeed = value;
                         break;
-                    case "dispenserDamageMin":
-                        dispenserDamageMin = value;
-                        break;
-                    case "dispenserDamageMax":
-                        dispenserDamageMax = value;
+                    case "dispenserDamage":
+                        dispenserDamage = value;
                         break;
                     default:
                         logger.warn(errorPrefix+"unrecognized parameter name: "+key);
@@ -303,9 +289,6 @@ public class Config {
                 if (bayonetDamage == 4) bayonetDamage = 5;
                 if (pistolDurability == 150) pistolDurability = 200;
             }
-            if (version < 2) {
-                if (musketDamageMax == 21.5) musketDamageMax = 21;
-            }
             save();
         }
         logger.info("Configuration has been loaded");
@@ -320,6 +303,8 @@ public class Config {
             writer.write("loadingStages = "+loadingStages+"\n");
             writer.write("# Loading stage duration (in seconds)\n");
             writer.write("loadingStageDuration = "+loadingStageDuration+"\n");
+            writer.write("# Additional random damage\n");
+            writer.write("randomDamage = "+randomDamage+"\n");
             writer.write("# Maximum bullet travel distance (in blocks)\n");
             writer.write("bulletMaxDistance = "+bulletMaxDistance+"\n");
             writer.write("# Damage multiplier for pvp\n");
@@ -338,10 +323,8 @@ public class Config {
             writer.write("musketBulletStdDev = "+musketBulletStdDev+"\n");
             writer.write("# Muzzle velocity of bullet (in blocks per second)\n");
             writer.write("musketBulletSpeed = "+musketBulletSpeed+"\n");
-            writer.write("# Minimum damage at point-blank range\n");
-            writer.write("musketDamageMin = "+musketDamageMin+"\n");
-            writer.write("# Maximum damage at point-blank range\n");
-            writer.write("musketDamageMax = "+musketDamageMax+"\n");
+            writer.write("# Damage at point-blank range\n");
+            writer.write("musketDamage = "+musketDamage+"\n");
             writer.write("# Durability (applied on restart)\n");
             writer.write("musketDurability = "+musketDurability+"\n");
             writer.write("\n");
@@ -376,10 +359,8 @@ public class Config {
             writer.write("blunderbussPelletCount = "+blunderbussPelletCount+"\n");
             writer.write("# Individual pellet damage multiplier\n");
             writer.write("pelletDamageMultiplier = "+pelletDamageMultiplier+"\n");
-            writer.write("# Minimum damage at point-blank range\n");
-            writer.write("blunderbussDamageMin = "+blunderbussDamageMin+"\n");
-            writer.write("# Maximum damage at point-blank range\n");
-            writer.write("blunderbussDamageMax = "+blunderbussDamageMax+"\n");
+            writer.write("# Damage at point-blank range\n");
+            writer.write("blunderbussDamage = "+blunderbussDamage+"\n");
             writer.write("# Durability (applied on restart)\n");
             writer.write("blunderbussDurability = "+blunderbussDurability+"\n");
             writer.write("\n");
@@ -390,10 +371,8 @@ public class Config {
             writer.write("pistolBulletStdDev = "+pistolBulletStdDev+"\n");
             writer.write("# Muzzle velocity of bullet (in blocks per second)\n");
             writer.write("pistolBulletSpeed = "+pistolBulletSpeed+"\n");
-            writer.write("# Minimum damage at point-blank range\n");
-            writer.write("pistolDamageMin = "+pistolDamageMin+"\n");
-            writer.write("# Maximum damage at point-blank range\n");
-            writer.write("pistolDamageMax = "+pistolDamageMax+"\n");
+            writer.write("# Damage at point-blank range\n");
+            writer.write("pistolDamage = "+pistolDamage+"\n");
             writer.write("# Loading time reduction per Quick Charge level (in seconds)\n");
             writer.write("reductionPerQuickChargeLevel = "+reductionPerQuickChargeLevel+"\n");
             writer.write("# Durability (applied on restart)\n");
@@ -406,10 +385,8 @@ public class Config {
             writer.write("dispenserBulletStdDev = "+dispenserBulletStdDev+"\n");
             writer.write("# Muzzle velocity of bullet (in blocks per second)\n");
             writer.write("dispenserBulletSpeed = "+dispenserBulletSpeed+"\n");
-            writer.write("# Minimum damage at point-blank range\n");
-            writer.write("dispenserDamageMin = "+dispenserDamageMin+"\n");
-            writer.write("# Maximum damage at point-blank range\n");
-            writer.write("dispenserDamageMax = "+dispenserDamageMax+"\n");
+            writer.write("# Damage at point-blank range\n");
+            writer.write("dispenserDamage = "+dispenserDamage+"\n");
 
         } catch (IOException e) {
             logger.warn("Could not save configuration file: ", e);

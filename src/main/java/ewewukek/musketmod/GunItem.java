@@ -59,8 +59,7 @@ public abstract class GunItem extends Item {
 
     public abstract float bulletStdDev();
     public abstract float bulletSpeed();
-    public abstract float damageMin();
-    public abstract float damageMax();
+    public abstract float damage();
     public abstract SoundEvent fireSound(ItemStack stack);
 
     public int pelletCount() {
@@ -397,7 +396,8 @@ public abstract class GunItem extends Item {
             bullet.setOwner(entity);
             bullet.setPos(origin);
             bullet.setVelocity(bulletSpeed(), addSpread(direction, entity.getRandom(), bulletStdDev()));
-            bullet.setDamage(bulletSpeed(), damageMin(), damageMax());
+            float damage = damage() + Config.randomDamage * entity.getRandom().nextFloat();
+            bullet.setDamage(bulletSpeed(), damage);
             bullet.setPelletCount(pelletCount());
             if (flame) {
                 bullet.igniteForSeconds(100.0f);

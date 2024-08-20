@@ -130,13 +130,10 @@ public class BulletEntity extends AbstractHurtingProjectile {
         setDeltaMovement(direction.scale(tickSpeed));
     }
 
-    public void setDamage(float bulletSpeed, float damageMin, float damageMax) {
+    public void setDamage(float bulletSpeed, float damage) {
         float tickSpeed = bulletSpeed / 20; // to blocks per tick
         float maxEnergy = tickSpeed * tickSpeed;
-        float damageMultiplierMin = damageMin / maxEnergy;
-        float damageMultiplierMax = damageMax / maxEnergy;
-        float t = random.nextFloat();
-        damageMultiplier = t * damageMultiplierMin + (1 - t) * damageMultiplierMax;
+        damageMultiplier = damage / maxEnergy;
     }
 
     @Override

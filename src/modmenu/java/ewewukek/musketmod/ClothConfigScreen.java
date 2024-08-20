@@ -39,6 +39,13 @@ public class ClothConfigScreen {
             .build());
 
         commonCategory.addEntry(entryBuilder.startFloatField(
+            Component.translatable("musketmod.options.random_damage"), Config.randomDamage)
+            .setSaveConsumer(value -> Config.randomDamage = value)
+            .setMin(0.0f)
+            .setDefaultValue(Config.RANDOM_DAMAGE)
+            .build());
+
+        commonCategory.addEntry(entryBuilder.startFloatField(
             Component.translatable("musketmod.options.pvp_damage_multiplier"), Config.pvpDamageMultiplier)
             .setSaveConsumer(value -> Config.pvpDamageMultiplier = value)
             .setMin(0.0f)
@@ -85,17 +92,10 @@ public class ClothConfigScreen {
             .build());
 
         musketCategory.addEntry(entryBuilder.startFloatField(
-            Component.translatable("musketmod.options.damage_min"), Config.musketDamageMin)
-            .setSaveConsumer(value -> Config.musketDamageMin = value)
+            Component.translatable("musketmod.options.damage"), Config.musketDamage)
+            .setSaveConsumer(value -> Config.musketDamage = value)
             .setMin(0.5f)
-            .setDefaultValue(Config.MUSKET_DAMAGE_MIN)
-            .build());
-
-        musketCategory.addEntry(entryBuilder.startFloatField(
-            Component.translatable("musketmod.options.damage_max"), Config.musketDamageMax)
-            .setSaveConsumer(value -> Config.musketDamageMax = value)
-            .setMin(0.5f)
-            .setDefaultValue(Config.MUSKET_DAMAGE_MAX)
+            .setDefaultValue(Config.MUSKET_DAMAGE)
             .build());
 
         musketCategory.addEntry(entryBuilder.startIntField(
@@ -187,17 +187,10 @@ public class ClothConfigScreen {
             .build());
 
         blunderbussCategory.addEntry(entryBuilder.startFloatField(
-            Component.translatable("musketmod.options.damage_min"), Config.blunderbussDamageMin)
-            .setSaveConsumer(value -> Config.blunderbussDamageMin = value)
+            Component.translatable("musketmod.options.damage"), Config.blunderbussDamage)
+            .setSaveConsumer(value -> Config.blunderbussDamage = value)
             .setMin(0.5f)
-            .setDefaultValue(Config.BLUNDERBUSS_DAMAGE_MIN)
-            .build());
-
-        blunderbussCategory.addEntry(entryBuilder.startFloatField(
-            Component.translatable("musketmod.options.damage_max"), Config.blunderbussDamageMax)
-            .setSaveConsumer(value -> Config.blunderbussDamageMax = value)
-            .setMin(0.5f)
-            .setDefaultValue(Config.BLUNDERBUSS_DAMAGE_MAX)
+            .setDefaultValue(Config.BLUNDERBUSS_DAMAGE)
             .build());
 
         blunderbussCategory.addEntry(entryBuilder.startIntField(
@@ -227,17 +220,10 @@ public class ClothConfigScreen {
             .build());
 
         pistolCategory.addEntry(entryBuilder.startFloatField(
-            Component.translatable("musketmod.options.damage_min"), Config.pistolDamageMin)
-            .setSaveConsumer(value -> Config.pistolDamageMin = value)
+            Component.translatable("musketmod.options.damage"), Config.pistolDamage)
+            .setSaveConsumer(value -> Config.pistolDamage = value)
             .setMin(0.5f)
-            .setDefaultValue(Config.PISTOL_DAMAGE_MIN)
-            .build());
-
-        pistolCategory.addEntry(entryBuilder.startFloatField(
-            Component.translatable("musketmod.options.damage_max"), Config.pistolDamageMax)
-            .setSaveConsumer(value -> Config.pistolDamageMax = value)
-            .setMin(0.5f)
-            .setDefaultValue(Config.PISTOL_DAMAGE_MAX)
+            .setDefaultValue(Config.PISTOL_DAMAGE)
             .build());
 
         pistolCategory.addEntry(entryBuilder.startFloatField(
@@ -275,17 +261,10 @@ public class ClothConfigScreen {
             .build());
 
         dispenserCategory.addEntry(entryBuilder.startFloatField(
-            Component.translatable("musketmod.options.damage_min"), Config.dispenserDamageMin)
-            .setSaveConsumer(value -> Config.dispenserDamageMin = value)
+            Component.translatable("musketmod.options.damage"), Config.dispenserDamage)
+            .setSaveConsumer(value -> Config.dispenserDamage = value)
             .setMin(0.5f)
-            .setDefaultValue(Config.DISPENSER_DAMAGE_MIN)
-            .build());
-
-        dispenserCategory.addEntry(entryBuilder.startFloatField(
-            Component.translatable("musketmod.options.damage_max"), Config.dispenserDamageMax)
-            .setSaveConsumer(value -> Config.dispenserDamageMax = value)
-            .setMin(0.5f)
-            .setDefaultValue(Config.DISPENSER_DAMAGE_MAX)
+            .setDefaultValue(Config.DISPENSER_DAMAGE)
             .build());
 
         builder.setSavingRunnable(() -> {

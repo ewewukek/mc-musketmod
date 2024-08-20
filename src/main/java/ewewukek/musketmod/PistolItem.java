@@ -19,13 +19,8 @@ public class PistolItem extends GunItem {
     }
 
     @Override
-    public float damageMin() {
-        return Config.pistolDamageMin;
-    }
-
-    @Override
-    public float damageMax() {
-        return Config.pistolDamageMax;
+    public float damage() {
+        return Config.pistolDamage;
     }
 
     @Override

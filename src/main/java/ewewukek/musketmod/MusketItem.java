@@ -37,13 +37,8 @@ public class MusketItem extends GunItem {
     }
 
     @Override
-    public float damageMin() {
-        return Config.musketDamageMin;
-    }
-
-    @Override
-    public float damageMax() {
-        return Config.musketDamageMax;
+    public float damage() {
+        return Config.musketDamage;
     }
 
     @Override

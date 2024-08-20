@@ -24,13 +24,8 @@ public class BlunderbussItem extends GunItem {
     }
 
     @Override
-    public float damageMin() {
-        return Config.blunderbussDamageMin;
-    }
-
-    @Override
-    public float damageMax() {
-        return Config.blunderbussDamageMax;
+    public float damage() {
+        return Config.blunderbussDamage;
     }
 
     @Override

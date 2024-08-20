@@ -21,6 +21,7 @@
   "musketmod.options.tooltip.restart": "(applied on restart)",
   "musketmod.options.loading_stages": "Number of loading stages",
   "musketmod.options.loading_stage_duration": "Loading stage duration",
+  "musketmod.options.random_damage": "Additional random damage",
   "musketmod.options.pvp_damage_multiplier": "Damage multiplier for PvP",
   "musketmod.options.mob_damage_multiplier": "Damage multiplier for monsters",
   "musketmod.options.pistol_pillager_chance": "Probability of Pillager having a pistol",
@@ -34,8 +35,7 @@
   "musketmod.options.pellet_count": "Pellet count",
   "musketmod.options.pellet_damage_multiplier": "Individual pellet damage multiplier",
   "musketmod.options.pellet_damage_multiplier.tooltip": "Less pellets required to hit for same damage",
-  "musketmod.options.damage_min": "Minimum damage at point-blank range",
-  "musketmod.options.damage_max": "Maximum damage at point-blank range",
+  "musketmod.options.damage": "Damage at point-blank range",
   "musketmod.options.durability": "Durability",
   "musketmod.options.bayonet_damage": "Bayonet damage",
   "musketmod.options.scope_zoom": "Scope zoom factor"

@@ -33,7 +33,7 @@ public class CartridgeItem extends Item {
             BulletEntity bullet = new BulletEntity(level);
             bullet.setPos(origin.add(direction.scale(0.5)));
             bullet.setVelocity(Config.dispenserBulletSpeed, direction);
-            bullet.setDamage(Config.dispenserBulletSpeed, Config.dispenserDamageMin, Config.dispenserDamageMax);
+            bullet.setDamage(Config.dispenserBulletSpeed, Config.dispenserDamage);
 
             level.addFreshEntity(bullet);
 

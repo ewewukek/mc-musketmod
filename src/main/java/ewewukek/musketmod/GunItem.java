@@ -170,7 +170,8 @@ public abstract class GunItem extends Item {
         if (isLoaded(stack)) {
             if (!level.isClientSide) {
                 Vec3 direction = Vec3.directionFromRotation(player.getXRot(), player.getYRot());
-                HumanoidArm arm = hand == InteractionHand.MAIN_HAND ? player.getMainArm() : player.getMainArm().getOpposite();
+                HumanoidArm arm = hand == InteractionHand.MAIN_HAND
+                    ? player.getMainArm() : player.getMainArm().getOpposite();
                 fire(player, stack, direction, smokeOffsetFor(player, arm));
             }
             player.playSound(fireSound(stack), 3.5f, 1);
@@ -188,6 +189,7 @@ public abstract class GunItem extends Item {
             ItemStack offhandStack = player.getOffhandItem();
             if (offhandStack.getItem() instanceof GunItem offhandGun && isLoaded(offhandStack)
             && offhandGun.canUseFrom(player, InteractionHand.OFF_HAND)) {
+
                 return InteractionResultHolder.pass(stack);
             }
         }
@@ -204,7 +206,8 @@ public abstract class GunItem extends Item {
                 }
             }
             setLoadingStage(stack, 1);
-        } else {
+
+        } else { // skip stage duration if it's last one (cocking the hammer)
             int loadingStages = getLoadingDuration(stack).getLeft();
             if (getLoadingStage(stack) == loadingStages)
                 setLoadingStage(stack, loadingStages + 1);
@@ -284,9 +287,10 @@ public abstract class GunItem extends Item {
     public static int reloadDuration(ItemStack stack) {
         Pair<Integer, Integer> loadingDuration = getLoadingDuration(stack);
         int loadingStages = loadingDuration.getLeft();
-        int loadingStagesLeft = 1 + loadingStages - getLoadingStage(stack);
         int ticksPerLoadingStage = loadingDuration.getRight();
-        return loadingStagesLeft * ticksPerLoadingStage;
+
+        int loadingStagesRemaining = 1 + loadingStages - getLoadingStage(stack);
+        return loadingStagesRemaining * ticksPerLoadingStage;
     }
 
     @Override
@@ -295,9 +299,9 @@ public abstract class GunItem extends Item {
             setLoadingStage(stack, 0);
 
         } else {
-            int useTicks = getUseDuration(stack, entity) - ticksLeft;
+            int usingTicks = getUseDuration(stack, entity) - ticksLeft;
             int ticksPerLoadingStage = getLoadingDuration(stack).getRight();
-            int loadingStage = getLoadingStage(stack) + useTicks / ticksPerLoadingStage;
+            int loadingStage = getLoadingStage(stack) + usingTicks / ticksPerLoadingStage;
             setLoadingStage(stack, loadingStage);
         }
     }
@@ -306,14 +310,15 @@ public abstract class GunItem extends Item {
     public void onUseTick(Level level, LivingEntity entity, ItemStack stack, int ticksLeft) {
         Pair<Integer, Integer> loadingDuration = getLoadingDuration(stack);
         int loadingStages = loadingDuration.getLeft();
-        int useTicks = getUseDuration(stack, entity) - ticksLeft;
         int ticksPerLoadingStage = loadingDuration.getRight();
-        int loadingStage = getLoadingStage(stack) + useTicks / ticksPerLoadingStage;
 
-        if (loadingStage < loadingStages && useTicks == ticksPerLoadingStage / 2) {
+        int usingTicks = getUseDuration(stack, entity) - ticksLeft;
+        int loadingStage = getLoadingStage(stack) + usingTicks / ticksPerLoadingStage;
+
+        if (loadingStage < loadingStages && usingTicks == ticksPerLoadingStage / 2) {
             entity.playSound(Sounds.MUSKET_LOAD_0, 0.8f, 1);
         }
-        if (useTicks > 0 && useTicks % ticksPerLoadingStage == 0) {
+        if (usingTicks > 0 && usingTicks % ticksPerLoadingStage == 0) {
             if (loadingStage < loadingStages) {
                 entity.playSound(Sounds.MUSKET_LOAD_1, 0.8f, 1);
             } else if (loadingStage == loadingStages) {
@@ -367,9 +372,9 @@ public abstract class GunItem extends Item {
             BulletEntity bullet = new BulletEntity(level);
             bullet.setOwner(entity);
             bullet.setPos(origin);
-            bullet.setPelletCount(pelletCount());
             bullet.setVelocity(bulletSpeed(), addSpread(direction, entity.getRandom(), bulletStdDev()));
             bullet.setDamage(bulletSpeed(), damageMin(), damageMax());
+            bullet.setPelletCount(pelletCount());
             if (flame) {
                 bullet.igniteForSeconds(100.0f);
                 bullet.setSharedFlagOnFire(true);

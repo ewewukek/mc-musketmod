@@ -30,6 +30,7 @@ public class Items {
 
     public static final ResourceLocation EMPTY_SLOT_MUSKET = MusketMod.resource("item/empty_slot_musket");
     public static final ResourceLocation EMPTY_SLOT_SPYGLASS = ResourceLocation.withDefaultNamespace("item/empty_slot_spyglass");
+
     public static final Item MUSKET_UPGRADE = new SmithingTemplateItem(
         Component.translatable(Util.makeDescriptionId("item",
             MusketMod.resource("musket")))

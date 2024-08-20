@@ -42,6 +42,7 @@ public class RangedGunAttackGoal<T extends Monster> extends Goal {
     public boolean isReady() {
         InteractionHand hand = GunItem.getHoldingHand(mob);
         if (hand == null) return false;
+
         ItemStack stack = mob.getItemInHand(hand);
         return GunItem.isLoaded(stack);
     }
@@ -56,6 +57,7 @@ public class RangedGunAttackGoal<T extends Monster> extends Goal {
     public void reload() {
         InteractionHand hand = GunItem.getHoldingHand(mob);
         if (hand == null) return;
+
         ItemStack stack = mob.getItemInHand(hand);
         if (!isLoading && !GunItem.isLoaded(stack)) {
             GunItem.setLoadingStage(stack, 1);
@@ -67,6 +69,7 @@ public class RangedGunAttackGoal<T extends Monster> extends Goal {
     public void fire(float spread) {
         InteractionHand hand = GunItem.getHoldingHand(mob);
         if (hand == null) return;
+
         ItemStack stack = mob.getItemInHand(hand);
         if (GunItem.isLoaded(stack)) {
             GunItem gun = (GunItem)stack.getItem();

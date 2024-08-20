@@ -27,10 +27,13 @@ public class MinecraftMixin {
     private InteractionResult onUseItem(MultiPlayerGameMode gameMode, Player player, InteractionHand hand) {
         Minecraft client = (Minecraft)(Object)this;
         ItemStack stack = player.getItemInHand(hand);
+
         if (stack.getItem() instanceof GunItem gun
         && GunItem.isReady(stack) && gun.canUseFrom(player, hand)) {
+
             if (stack.getItem() == Items.MUSKET_WITH_SCOPE
             && client.options.getCameraType().isFirstPerson()) {
+
                 useKeyReleased = false;
                 setScoping(client, true);
                 if (client.options.keyAttack.isDown()) {
@@ -43,8 +46,10 @@ public class MinecraftMixin {
         if (ScopedMusketItem.isScoping) return InteractionResult.FAIL;
 
         boolean bothGunsLoaded = false;
+
         if (stack.getItem() instanceof GunItem gun
         && GunItem.isReady(stack) && gun.canUseFrom(player, hand)) {
+
             InteractionHand hand2 = hand == InteractionHand.MAIN_HAND
                 ? InteractionHand.OFF_HAND : InteractionHand.MAIN_HAND;
             ItemStack stack2 = player.getItemInHand(hand2);
@@ -82,6 +87,7 @@ public class MinecraftMixin {
                 ? 10 : 5;
             if (stack.getItem() instanceof GunItem && GunItem.isLoaded(stack)
             && client.player.getTicksUsingItem() >= GunItem.reloadDuration(stack) + delay) {
+
                 client.gameMode.releaseUsingItem(client.player);
             }
         }
@@ -91,6 +97,7 @@ public class MinecraftMixin {
     private void handleKeyUseUp(CallbackInfo ci) {
         Minecraft client = (Minecraft)(Object)this;
         ItemStack stack = client.player.getMainHandItem();
+
         if (stack.getItem() != Items.MUSKET_WITH_SCOPE
         || !client.options.keyUse.isDown()
         || !GunItem.isReady(stack) && !client.options.keyAttack.isDown()) {

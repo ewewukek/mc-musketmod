@@ -100,23 +100,27 @@ public class ClientUtilities {
             Pair<Integer, Integer> loadingDuration = GunItem.getLoadingDuration(stack);
             int loadingStages = loadingDuration.getLeft();
             int ticksPerLoadingStage = loadingDuration.getRight();
-            float useTicks = player.getTicksUsingItem() + dt - 1;
-            int loadingStage = GunItem.getLoadingStage(stack) + (int)(useTicks / ticksPerLoadingStage);
+
+            float usingTicks = player.getTicksUsingItem() + dt - 1;
+            int loadingStage = GunItem.getLoadingStage(stack) + (int)(usingTicks / ticksPerLoadingStage);
             int reloadDuration = GunItem.reloadDuration(stack);
-            if (reloadDuration > 0 && useTicks < reloadDuration + 5) {
+
+            if (reloadDuration > 0 && usingTicks < reloadDuration + 5) {
                 poseStack.translate(0, -0.3, 0.05);
                 poseStack.mulPose(Axis.XP.rotationDegrees(60));
                 poseStack.mulPose(Axis.ZP.rotationDegrees(10));
 
                 float t = 0;
-                if (useTicks >= ticksPerLoadingStage && loadingStage <= loadingStages) {
-                    useTicks = useTicks % ticksPerLoadingStage;
-                    if (useTicks < 4) {
-                        t = (4 - useTicks) / 4;
+                // return
+                if (usingTicks >= ticksPerLoadingStage && loadingStage <= loadingStages) {
+                    usingTicks = usingTicks % ticksPerLoadingStage;
+                    if (usingTicks < 4) {
+                        t = (4 - usingTicks) / 4;
                     }
                 }
-                if (useTicks >= ticksPerLoadingStage - 2 && loadingStage < loadingStages) {
-                    t = (useTicks - ticksPerLoadingStage + 2) / 2;
+                // hit down by ramrod
+                if (usingTicks >= ticksPerLoadingStage - 2 && loadingStage < loadingStages) {
+                    t = (usingTicks - ticksPerLoadingStage + 2) / 2;
                     t = Mth.sin((float)Math.PI / 2 * Mth.sqrt(t));
                 }
                 poseStack.translate(0, 0, 0.025 * t);

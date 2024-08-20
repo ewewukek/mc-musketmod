@@ -23,6 +23,7 @@ public class AbstractSkeletonMixin {
         skeleton.goalSelector.addGoal(4, new RangedGunAttackGoal<>(skeleton) {
             private static final double speedModifier = 1.0;
             private static final float attackRadius = 15.0f;
+
             private int seeTime;
             private int attackDelay;
             private boolean strafingClockwise;
@@ -133,5 +134,4 @@ public class AbstractSkeletonMixin {
             skeleton.setItemSlot(EquipmentSlot.MAINHAND, new ItemStack(Items.MUSKET));
         }
     }
-
 }

@@ -254,10 +254,11 @@ public class BulletEntity extends AbstractHurtingProjectile {
                 discard();
             }
         } else if (level.isClientSide && !wasTouchingWater && soundEffectRoll()) {
-            AABB aabbSelection = getBoundingBox().expandTowards(velocity).inflate(8.0);
             double length = velocity.length();
             Vec3 dir = velocity.scale(1.0 / length);
             float volume = calculateEnergyFraction();
+
+            AABB aabbSelection = getBoundingBox().expandTowards(velocity).inflate(8.0);
             Predicate<Entity> predicate = entity -> (entity instanceof Player) && !entity.equals(getOwner());
             for (Entity entity : level().getEntities(this, aabbSelection, predicate)) {
                 Vec3 pos = new Vec3(entity.getX(), entity.getEyeY(), entity.getZ());
@@ -339,6 +340,7 @@ public class BulletEntity extends AbstractHurtingProjectile {
         for (Entity entity : level().getEntities(this, aabbSelection, this::canHitEntity)) {
             AABB aabb = entity.getBoundingBox();
             Optional<Vec3> clipResult = aabb.clip(start, end);
+
             if (!clipResult.isPresent()) {
                 aabb = aabb.move( // previous tick position
                     entity.xOld - entity.getX(),
@@ -363,6 +365,7 @@ public class BulletEntity extends AbstractHurtingProjectile {
     public void createHitParticles(ParticleOptions particle, Vec3 position, Vec3 velocity) {
         float amount = HIT_PARTICLE_COUNT * calculateEnergyFraction() / pelletCount();
         int count = (int)amount + (random.nextFloat() < amount % 1 ? 1 : 0);
+
         for (int i = 0; i < count; i++) {
             level().addParticle(
                 particle,

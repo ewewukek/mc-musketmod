@@ -70,10 +70,19 @@ public class MinecraftMixin {
         ItemStack stack = client.player.getMainHandItem();
         if (stack.getItem() == Items.MUSKET_WITH_SCOPE && ScopedMusketItem.isScoping) {
             client.startUseItem();
-        } else {
-            return client.startAttack();
+            return true;
         }
-        return true;
+        return client.startAttack();
+    }
+
+    @Redirect(method = "handleKeybinds", at = @At(value = "INVOKE",
+    target = "Lnet/minecraft/client/Minecraft;continueAttack(Z)V"))
+    private void continueAttack(Minecraft client, boolean missed) {
+        ItemStack stack = client.player.getMainHandItem();
+        if (stack.getItem() == Items.MUSKET_WITH_SCOPE && ScopedMusketItem.isScoping) {
+            return;
+        }
+        client.continueAttack(missed);
     }
 
     @Inject(method = "handleKeybinds", at = @At("HEAD"))

@@ -21,6 +21,7 @@ import net.minecraft.resources.ResourceKey;
 import net.minecraft.server.level.ServerEntity;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.tags.FluidTags;
+import net.minecraft.tags.TagKey;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.damagesource.DamageType;
 import net.minecraft.world.entity.Entity;
@@ -31,6 +32,7 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.projectile.AbstractHurtingProjectile;
 import net.minecraft.world.level.ClipContext;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.TntBlock;
 import net.minecraft.world.level.block.state.BlockState;
@@ -47,10 +49,12 @@ public class BulletEntity extends AbstractHurtingProjectile {
     public static final EntityDataAccessor<Byte> PELLET_COUNT = SynchedEntityData.defineId(BulletEntity.class, EntityDataSerializers.BYTE);
     public static final EntityDataAccessor<Byte> POWER_LEVEL = SynchedEntityData.defineId(BulletEntity.class, EntityDataSerializers.BYTE);
 
+    public static final TagKey<Block> DESTROYED_BY_BULLETS = TagKey.create(Registries.BLOCK, MusketMod.resource("destroyed_by_bullets"));
+    public static final TagKey<Block> DROPPED_BY_BULLETS = TagKey.create(Registries.BLOCK, MusketMod.resource("dropped_by_bullets"));
+
     public static final ResourceKey<DamageType> BULLET_DAMAGE = ResourceKey.create(Registries.DAMAGE_TYPE, MusketMod.resource("bullet"));
     public static EntityType<BulletEntity> ENTITY_TYPE;
 
-    public static final double DAMAGE_SPEED_THRESHOLD = 1.0;
     public static final double GRAVITY = 0.05;
     public static final double AIR_FRICTION = 0.99;
     public static final double WATER_FRICTION = 0.6;
@@ -92,6 +96,11 @@ public class BulletEntity extends AbstractHurtingProjectile {
     public double calculateGravity() {
         float reduction = entityData.get(POWER_LEVEL) * Config.dropReductionPerPowerLevel;
         return GRAVITY * Math.max(0.0, 1.0 - reduction);
+    }
+
+    public float maxDamage() {
+        double maxEnergy = Math.pow(entityData.get(INITIAL_SPEED), 2);
+        return damageMultiplier * (float)maxEnergy;
     }
 
     public float calculateDamage() {
@@ -227,14 +236,30 @@ public class BulletEntity extends AbstractHurtingProjectile {
         if (hitResult.getType() != HitResult.Type.MISS) {
             if (!level.isClientSide) {
                 onHit(hitResult);
-                if (hitResult.getType() == HitResult.Type.BLOCK && velocity.length() > DAMAGE_SPEED_THRESHOLD) {
-                    BlockPos blockPos = ((BlockHitResult)hitResult).getBlockPos();
-                    BlockState blockState = level().getBlockState(blockPos);
-                    // should not get ignited twice
-                    // since first time would remove the block
-                    if (blockState.getBlock() == Blocks.TNT) {
-                        TntBlock.explode(level(), blockPos);
-                        level.removeBlock(blockPos, false);
+                if (hitResult.getType() == HitResult.Type.BLOCK) {
+                    float destroyProbability = calculateDamage() / maxDamage();
+                    if (pelletCount() > 1) destroyProbability = 1.5f * destroyProbability / pelletCount();
+
+                    if (random.nextFloat() < destroyProbability) {
+                        BlockPos blockPos = ((BlockHitResult)hitResult).getBlockPos();
+                        BlockState blockState = level().getBlockState(blockPos);
+
+                        if (blockState.is(Blocks.TNT)) {
+                            TntBlock.explode(level(), blockPos);
+                            level.removeBlock(blockPos, false);
+
+                        } else if (blockState.is(DESTROYED_BY_BULLETS)) {
+                            System.out.println("DESTROYED_BY_BULLETS " + blockState);
+                            if (level.removeBlock(blockPos, false)) {
+                                blockState.getBlock().destroy(level, blockPos, blockState);
+                            }
+
+                        } else if (blockState.is(DROPPED_BY_BULLETS)) {
+                            System.out.println("DROPPED_BY_BULLETS " + blockState);
+                            if (level.removeBlock(blockPos, false)) {
+                                Block.dropResources(blockState, level, blockPos);
+                            }
+                        }
                     }
                 }
                 discardOnNextTick();
@@ -296,9 +321,7 @@ public class BulletEntity extends AbstractHurtingProjectile {
 
     @Override
     public void onHitEntity(EntityHitResult hitResult) {
-        if (getDeltaMovement().length() < DAMAGE_SPEED_THRESHOLD) {
-            return;
-        }
+        if (getDeltaMovement().lengthSqr() < 1.0) return;
 
         float damageMult = 1.0f;
         Entity target = hitResult.getEntity();

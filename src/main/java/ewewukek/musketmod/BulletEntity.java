@@ -249,13 +249,11 @@ public class BulletEntity extends AbstractHurtingProjectile {
                             level.removeBlock(blockPos, false);
 
                         } else if (blockState.is(DESTROYED_BY_BULLETS)) {
-                            System.out.println("DESTROYED_BY_BULLETS " + blockState);
                             if (level.removeBlock(blockPos, false)) {
                                 blockState.getBlock().destroy(level, blockPos, blockState);
                             }
 
                         } else if (blockState.is(DROPPED_BY_BULLETS)) {
-                            System.out.println("DROPPED_BY_BULLETS " + blockState);
                             if (level.removeBlock(blockPos, false)) {
                                 Block.dropResources(blockState, level, blockPos);
                             }

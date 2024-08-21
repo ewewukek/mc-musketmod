@@ -23,7 +23,7 @@ public class MinecraftMixin {
 
     @SuppressWarnings("resource")
     @Redirect(method = "startUseItem", at = @At(value = "INVOKE",
-    target = "Lnet/minecraft/client/multiplayer/MultiPlayerGameMode;useItem(Lnet/minecraft/world/entity/player/Player;Lnet/minecraft/world/InteractionHand;)Lnet/minecraft/world/InteractionResult;"))
+        target = "Lnet/minecraft/client/multiplayer/MultiPlayerGameMode;useItem(Lnet/minecraft/world/entity/player/Player;Lnet/minecraft/world/InteractionHand;)Lnet/minecraft/world/InteractionResult;"))
     private InteractionResult onUseItem(MultiPlayerGameMode gameMode, Player player, InteractionHand hand) {
         Minecraft client = (Minecraft)(Object)this;
         ItemStack stack = player.getItemInHand(hand);
@@ -65,7 +65,7 @@ public class MinecraftMixin {
     }
 
     @Redirect(method = "handleKeybinds", at = @At(value = "INVOKE",
-    target = "Lnet/minecraft/client/Minecraft;startAttack()Z"))
+        target = "Lnet/minecraft/client/Minecraft;startAttack()Z"))
     private boolean handleKeyAttack(Minecraft client) {
         ItemStack stack = client.player.getMainHandItem();
         if (stack.getItem() == Items.MUSKET_WITH_SCOPE && ScopedMusketItem.isScoping) {
@@ -76,7 +76,7 @@ public class MinecraftMixin {
     }
 
     @Redirect(method = "handleKeybinds", at = @At(value = "INVOKE",
-    target = "Lnet/minecraft/client/Minecraft;continueAttack(Z)V"))
+        target = "Lnet/minecraft/client/Minecraft;continueAttack(Z)V"))
     private void continueAttack(Minecraft client, boolean missed) {
         ItemStack stack = client.player.getMainHandItem();
         if (stack.getItem() == Items.MUSKET_WITH_SCOPE && ScopedMusketItem.isScoping) {

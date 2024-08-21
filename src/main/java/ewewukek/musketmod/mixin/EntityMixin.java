@@ -14,9 +14,7 @@ import net.minecraft.world.item.Items;
 
 @Mixin(Entity.class)
 public class EntityMixin {
-    @Inject(
-        method = "spawnAtLocation(Lnet/minecraft/world/item/ItemStack;)Lnet/minecraft/world/entity/item/ItemEntity;",
-        at = @At("HEAD"), cancellable = true)
+    @Inject(method = "spawnAtLocation(Lnet/minecraft/world/item/ItemStack;)Lnet/minecraft/world/entity/item/ItemEntity;", at = @At("HEAD"), cancellable = true)
     void dropFromLootTable(ItemStack stack, CallbackInfoReturnable<ItemEntity> ci) {
         Object object = this;
         if (stack.getItem() == Items.ARROW

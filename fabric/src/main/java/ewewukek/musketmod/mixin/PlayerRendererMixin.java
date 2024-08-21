@@ -15,11 +15,7 @@ import net.minecraft.world.InteractionHand;
 
 @Mixin(PlayerRenderer.class)
 public class PlayerRendererMixin {
-    @Inject(
-        method = "getArmPose",
-        at = @At("HEAD"),
-        cancellable = true
-    )
+    @Inject(method = "getArmPose", at = @At("HEAD"), cancellable = true)
     private static void getArmPose(AbstractClientPlayer player, InteractionHand hand, CallbackInfoReturnable<HumanoidModel.ArmPose> ci) {
         Optional<HumanoidModel.ArmPose> armPose = ClientUtilities.getArmPose(player, hand);
         if (armPose.isPresent()) {

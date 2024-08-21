@@ -5,18 +5,14 @@ import org.jetbrains.annotations.Nullable;
 
 import com.mojang.serialization.Codec;
 
-import it.unimi.dsi.fastutil.objects.Object2IntMap.Entry;
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.Holder;
 import net.minecraft.core.component.DataComponentType;
 import net.minecraft.core.particles.ParticleTypes;
-import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.tags.FluidTags;
-import net.minecraft.tags.TagKey;
 import net.minecraft.util.Mth;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.InteractionHand;
@@ -27,9 +23,7 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.enchantment.Enchantment;
-import net.minecraft.world.item.enchantment.EnchantmentHelper;
-import net.minecraft.world.item.enchantment.ItemEnchantments;
+import net.minecraft.world.item.enchantment.Enchantments;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.Vec3;
@@ -39,11 +33,6 @@ import net.minecraft.world.scores.Scoreboard;
 import net.minecraft.world.scores.criteria.ObjectiveCriteria;
 
 public abstract class GunItem extends Item {
-    public static final TagKey<Enchantment> FLAME_ENCHANTMENT = TagKey.create(Registries.ENCHANTMENT, MusketMod.resource("flame"));
-    public static final TagKey<Enchantment> INFINITY_ENCHANTMENT = TagKey.create(Registries.ENCHANTMENT, MusketMod.resource("infinity"));
-    public static final TagKey<Enchantment> POWER_ENCHANTMENT = TagKey.create(Registries.ENCHANTMENT, MusketMod.resource("power"));
-    public static final TagKey<Enchantment> QUICK_CHARGE_ENCHANTMENT = TagKey.create(Registries.ENCHANTMENT, MusketMod.resource("quick_charge"));
-
     public static final DataComponentType<Boolean> LOADED = new DataComponentType.Builder<Boolean>()
         .persistent(Codec.BOOL).networkSynchronized(ByteBufCodecs.BOOL).build();
     public static final DataComponentType<Byte> LOADING_STAGE = new DataComponentType.Builder<Byte>()
@@ -122,31 +111,19 @@ public abstract class GunItem extends Item {
     }
 
     public static boolean hasFlame(ItemStack stack) {
-        return EnchantmentHelper.hasTag(stack, FLAME_ENCHANTMENT);
+        return VanillaHelper.getEnchantmentLevel(stack, Enchantments.FLAME) > 0;
     }
 
-    public static boolean infiniteAmmo(ItemStack stack) {
-        return EnchantmentHelper.hasTag(stack, INFINITY_ENCHANTMENT);
+    public static boolean hasInfinity(ItemStack stack) {
+        return VanillaHelper.getEnchantmentLevel(stack, Enchantments.INFINITY) > 0;
     }
 
     public static int getPowerLevel(ItemStack stack) {
-        ItemEnchantments enchantments = EnchantmentHelper.getEnchantmentsForCrafting(stack);
-        for (Entry<Holder<Enchantment>> entry : enchantments.entrySet()) {
-            if (entry.getKey().is(POWER_ENCHANTMENT)) {
-                return entry.getIntValue();
-            }
-        }
-        return 0;
+        return VanillaHelper.getEnchantmentLevel(stack, Enchantments.POWER);
     }
 
     public static int getQuickChargeLevel(ItemStack stack) {
-        ItemEnchantments enchantments = EnchantmentHelper.getEnchantmentsForCrafting(stack);
-        for (Entry<Holder<Enchantment>> entry : enchantments.entrySet()) {
-            if (entry.getKey().is(QUICK_CHARGE_ENCHANTMENT)) {
-                return entry.getIntValue();
-            }
-        }
-        return 0;
+        return VanillaHelper.getEnchantmentLevel(stack, Enchantments.QUICK_CHARGE);
     }
 
     public static Pair<Integer, Integer> getLoadingDuration(ItemStack stack) {
@@ -287,13 +264,13 @@ public abstract class GunItem extends Item {
     }
 
     public static boolean checkAmmo(Player player, ItemStack stack) {
-        if (player.getAbilities().instabuild || infiniteAmmo(stack)) return true;
+        if (player.getAbilities().instabuild || hasInfinity(stack)) return true;
         ItemStack ammoStack = findAmmo(player);
         return !ammoStack.isEmpty();
     }
 
     public static void consumeAmmo(Player player, ItemStack stack) {
-        if (player.getAbilities().instabuild || infiniteAmmo(stack)) return;
+        if (player.getAbilities().instabuild || hasInfinity(stack)) return;
 
         ItemStack ammoStack = findAmmo(player);
         ammoStack.shrink(1);

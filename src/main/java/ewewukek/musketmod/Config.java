@@ -319,7 +319,7 @@ public class Config {
 
             writer.write("# Maximum bullet travel distance (in blocks)\n");
             writer.write("bulletMaxDistance = "+bulletMaxDistance+"\n");
-            writer.write("# Additional random damage\n");
+            writer.write("# Added random damage\n");
             writer.write("randomDamage = "+randomDamage+"\n");
             writer.write("\n");
             writer.write("# Number of loading stages\n");

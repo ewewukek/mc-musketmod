@@ -16,22 +16,22 @@ public class ClothConfigScreen {
         ConfigCategory commonCategory = builder.getOrCreateCategory(Component.translatable("musketmod.options.common"));
 
         commonCategory.addEntry(entryBuilder.startFloatField(
-            Component.translatable("musketmod.options.bullet_max_distance"), Config.bulletMaxDistance)
-            .setTooltip(Component.translatable("musketmod.options.tooltip.blocks"))
+            Component.translatable("musketmod.options.bullet_travel_distance"), Config.bulletMaxDistance)
+            .setTooltip(Component.translatable("musketmod.options.unit.blocks"))
             .setSaveConsumer(value -> Config.bulletMaxDistance = value)
             .setMin(0.0f)
             .setDefaultValue(Config.BULLET_MAX_DISTANCE)
             .build());
 
         commonCategory.addEntry(entryBuilder.startFloatField(
-            Component.translatable("musketmod.options.random_damage"), Config.randomDamage)
+            Component.translatable("musketmod.options.added_random_damage"), Config.randomDamage)
             .setSaveConsumer(value -> Config.randomDamage = value)
             .setMin(0.0f)
             .setDefaultValue(Config.RANDOM_DAMAGE)
             .build());
 
         commonCategory.addEntry(entryBuilder.startIntField(
-            Component.translatable("musketmod.options.loading_stages"), Config.loadingStages)
+            Component.translatable("musketmod.options.loading_stages_number"), Config.loadingStages)
             .setSaveConsumer(value -> Config.loadingStages = value)
             .setMin(2)
             .setDefaultValue(Config.LOADING_STAGES)
@@ -39,7 +39,7 @@ public class ClothConfigScreen {
 
         commonCategory.addEntry(entryBuilder.startFloatField(
             Component.translatable("musketmod.options.loading_stage_duration"), Config.loadingStageDuration)
-            .setTooltip(Component.translatable("musketmod.options.tooltip.seconds"))
+            .setTooltip(Component.translatable("musketmod.options.unit.seconds"))
             .setSaveConsumer(value -> Config.loadingStageDuration = value)
             .setMin(0.25f)
             .setDefaultValue(Config.LOADING_STAGE_DURATION)
@@ -77,7 +77,7 @@ public class ClothConfigScreen {
 
         musketCategory.addEntry(entryBuilder.startFloatField(
             Component.translatable("musketmod.options.bullet_std_dev"), Config.musketBulletStdDev)
-            .setTooltip(Component.translatable("musketmod.options.tooltip.degrees"))
+            .setTooltip(Component.translatable("musketmod.options.unit.degrees"))
             .setSaveConsumer(value -> Config.musketBulletStdDev = value)
             .setMin(0.0f)
             .setDefaultValue(Config.MUSKET_BULLET_STD_DEV)
@@ -85,7 +85,7 @@ public class ClothConfigScreen {
 
         musketCategory.addEntry(entryBuilder.startFloatField(
             Component.translatable("musketmod.options.bullet_speed"), Config.musketBulletSpeed)
-            .setTooltip(Component.translatable("musketmod.options.tooltip.blocks_per_second"))
+            .setTooltip(Component.translatable("musketmod.options.unit.blocks_per_second"))
             .setSaveConsumer(value -> Config.musketBulletSpeed = value)
             .setMin(1.0f)
             .setDefaultValue(Config.MUSKET_BULLET_SPEED)
@@ -107,7 +107,7 @@ public class ClothConfigScreen {
 
         musketCategory.addEntry(entryBuilder.startIntField(
             Component.translatable("musketmod.options.bayonet_damage"), Config.bayonetDamage)
-            .setTooltip(Component.translatable("musketmod.options.tooltip.restart"))
+            .setTooltip(Component.translatable("musketmod.options.requires_restart"))
             .setSaveConsumer(value -> Config.bayonetDamage = value)
             .setMin(1)
             .setDefaultValue(Config.BAYONET_DAMAGE)
@@ -115,7 +115,7 @@ public class ClothConfigScreen {
 
         musketCategory.addEntry(entryBuilder.startFloatField(
             Component.translatable("musketmod.options.bayonet_attack_speed"), Config.bayonetSpeed)
-            .setTooltip(Component.translatable("musketmod.options.tooltip.restart"))
+            .setTooltip(Component.translatable("musketmod.options.requires_restart"))
             .setSaveConsumer(value -> Config.bayonetSpeed = value)
             .setMin(0)
             .setDefaultValue(Config.BAYONET_SPEED)
@@ -123,7 +123,7 @@ public class ClothConfigScreen {
 
         musketCategory.addEntry(entryBuilder.startIntField(
             Component.translatable("musketmod.options.durability"), Config.musketDurability)
-            .setTooltip(Component.translatable("musketmod.options.tooltip.restart"))
+            .setTooltip(Component.translatable("musketmod.options.requires_restart"))
             .setSaveConsumer(value -> Config.musketDurability = value)
             .setMin(1)
             .setDefaultValue(Config.MUSKET_DURABILITY)
@@ -133,14 +133,14 @@ public class ClothConfigScreen {
 
         scopedMusketCategory.addEntry(entryBuilder.startFloatField(
             Component.translatable("musketmod.options.bullet_std_dev"), Config.scopedMusketBulletStdDev)
-            .setTooltip(Component.translatable("musketmod.options.tooltip.degrees"))
+            .setTooltip(Component.translatable("musketmod.options.unit.degrees"))
             .setSaveConsumer(value -> Config.scopedMusketBulletStdDev = value)
             .setMin(0.0f)
             .setDefaultValue(Config.SCOPED_MUSKET_BULLET_STD_DEV)
             .build());
 
         scopedMusketCategory.addEntry(entryBuilder.startFloatField(
-            Component.translatable("musketmod.options.scope_zoom"), Config.scopeZoom)
+            Component.translatable("musketmod.options.scope_zoom_factor"), Config.scopeZoom)
             .setSaveConsumer(value -> Config.scopeZoom = value)
             .setMin(1.0f).setMax(10.0f)
             .setDefaultValue(Config.SCOPE_ZOOM)
@@ -162,7 +162,7 @@ public class ClothConfigScreen {
 
         scopedMusketCategory.addEntry(entryBuilder.startIntField(
             Component.translatable("musketmod.options.durability"), Config.scopedMusketDurability)
-            .setTooltip(Component.translatable("musketmod.options.tooltip.restart"))
+            .setTooltip(Component.translatable("musketmod.options.requires_restart"))
             .setSaveConsumer(value -> Config.scopedMusketDurability = value)
             .setMin(1)
             .setDefaultValue(Config.SCOPED_MUSKET_DURABILITY)
@@ -172,7 +172,7 @@ public class ClothConfigScreen {
 
         blunderbussCategory.addEntry(entryBuilder.startFloatField(
             Component.translatable("musketmod.options.pellet_std_dev"), Config.blunderbussBulletStdDev)
-            .setTooltip(Component.translatable("musketmod.options.tooltip.degrees"))
+            .setTooltip(Component.translatable("musketmod.options.unit.degrees"))
             .setSaveConsumer(value -> Config.blunderbussBulletStdDev = value)
             .setMin(0.0f)
             .setDefaultValue(Config.BLUNDERBUSS_BULLET_STD_DEV)
@@ -180,14 +180,14 @@ public class ClothConfigScreen {
 
         blunderbussCategory.addEntry(entryBuilder.startFloatField(
             Component.translatable("musketmod.options.bullet_speed"), Config.blunderbussBulletSpeed)
-            .setTooltip(Component.translatable("musketmod.options.tooltip.blocks_per_second"))
+            .setTooltip(Component.translatable("musketmod.options.unit.blocks_per_second"))
             .setSaveConsumer(value -> Config.blunderbussBulletSpeed = value)
             .setMin(1.0f)
             .setDefaultValue(Config.BLUNDERBUSS_BULLET_SPEED)
             .build());
 
         blunderbussCategory.addEntry(entryBuilder.startFloatField(
-            Component.translatable("musketmod.options.damage.blunderbuss"), Config.blunderbussDamage)
+            Component.translatable("musketmod.options.total_damage"), Config.blunderbussDamage)
             .setSaveConsumer(value -> Config.blunderbussDamage = value)
             .setMin(0.5f)
             .setDefaultValue(Config.BLUNDERBUSS_DAMAGE)
@@ -210,7 +210,7 @@ public class ClothConfigScreen {
 
         blunderbussCategory.addEntry(entryBuilder.startIntField(
             Component.translatable("musketmod.options.durability"), Config.blunderbussDurability)
-            .setTooltip(Component.translatable("musketmod.options.tooltip.restart"))
+            .setTooltip(Component.translatable("musketmod.options.requires_restart"))
             .setSaveConsumer(value -> Config.blunderbussDurability = value)
             .setMin(1)
             .setDefaultValue(Config.BLUNDERBUSS_DURABILITY)
@@ -220,7 +220,7 @@ public class ClothConfigScreen {
 
         pistolCategory.addEntry(entryBuilder.startFloatField(
             Component.translatable("musketmod.options.bullet_std_dev"), Config.pistolBulletStdDev)
-            .setTooltip(Component.translatable("musketmod.options.tooltip.degrees"))
+            .setTooltip(Component.translatable("musketmod.options.unit.degrees"))
             .setSaveConsumer(value -> Config.pistolBulletStdDev = value)
             .setMin(0.0f)
             .setDefaultValue(Config.PISTOL_BULLET_STD_DEV)
@@ -228,7 +228,7 @@ public class ClothConfigScreen {
 
         pistolCategory.addEntry(entryBuilder.startFloatField(
             Component.translatable("musketmod.options.bullet_speed"), Config.pistolBulletSpeed)
-            .setTooltip(Component.translatable("musketmod.options.tooltip.blocks_per_second"))
+            .setTooltip(Component.translatable("musketmod.options.unit.blocks_per_second"))
             .setSaveConsumer(value -> Config.pistolBulletSpeed = value)
             .setMin(1.0f)
             .setDefaultValue(Config.PISTOL_BULLET_SPEED)
@@ -243,7 +243,7 @@ public class ClothConfigScreen {
 
         pistolCategory.addEntry(entryBuilder.startFloatField(
             Component.translatable("musketmod.options.reduction_per_quick_charge_level"), Config.reductionPerQuickChargeLevel)
-            .setTooltip(Component.translatable("musketmod.options.tooltip.seconds"))
+            .setTooltip(Component.translatable("musketmod.options.unit.seconds"))
             .setSaveConsumer(value -> Config.reductionPerQuickChargeLevel = value)
             .setMin(0.1f)
             .setDefaultValue(Config.REDUCTION_PER_QUICK_CHARGE_LEVEL)
@@ -251,7 +251,7 @@ public class ClothConfigScreen {
 
         pistolCategory.addEntry(entryBuilder.startIntField(
             Component.translatable("musketmod.options.durability"), Config.pistolDurability)
-            .setTooltip(Component.translatable("musketmod.options.tooltip.restart"))
+            .setTooltip(Component.translatable("musketmod.options.requires_restart"))
             .setSaveConsumer(value -> Config.pistolDurability = value)
             .setMin(1)
             .setDefaultValue(Config.PISTOL_DURABILITY)
@@ -261,7 +261,7 @@ public class ClothConfigScreen {
 
         dispenserCategory.addEntry(entryBuilder.startFloatField(
             Component.translatable("musketmod.options.bullet_std_dev"), Config.dispenserBulletStdDev)
-            .setTooltip(Component.translatable("musketmod.options.tooltip.degrees"))
+            .setTooltip(Component.translatable("musketmod.options.unit.degrees"))
             .setSaveConsumer(value -> Config.dispenserBulletStdDev = value)
             .setMin(0.0f)
             .setDefaultValue(Config.DISPENSER_BULLET_STD_DEV)
@@ -269,7 +269,7 @@ public class ClothConfigScreen {
 
         dispenserCategory.addEntry(entryBuilder.startFloatField(
             Component.translatable("musketmod.options.bullet_speed"), Config.dispenserBulletSpeed)
-            .setTooltip(Component.translatable("musketmod.options.tooltip.blocks_per_second"))
+            .setTooltip(Component.translatable("musketmod.options.unit.blocks_per_second"))
             .setSaveConsumer(value -> Config.dispenserBulletSpeed = value)
             .setMin(1.0f)
             .setDefaultValue(Config.DISPENSER_BULLET_SPEED)

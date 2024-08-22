@@ -21,9 +21,9 @@ public class Config {
     public static final float RANDOM_DAMAGE = 0.5f;
 
     public static int loadingStages;
-    public static final int LOADING_STAGES = 4;
+    public static final int LOADING_STAGES = 3;
     public static float loadingStageDuration;
-    public static final float LOADING_STAGE_DURATION = 0.45f;
+    public static final float LOADING_STAGE_DURATION = 0.5f;
 
     public static float pvpDamageMultiplier;
     public static final float PVP_DAMAGE_MULTIPLIER = 1.0f;
@@ -40,13 +40,13 @@ public class Config {
     public static float musketBulletSpeed;
     public static final float MUSKET_BULLET_SPEED = 180.0f;
     public static float musketDamage;
-    public static final float MUSKET_DAMAGE = 20.5f;
+    public static final float MUSKET_DAMAGE = 16.0f;
     public static float headshotDamageMultiplier;
     public static final float HEADSHOT_DAMAGE_MULTIPLIER = 1.3f;
     public static int bayonetDamage;
     public static final int BAYONET_DAMAGE = 5;
     public static float bayonetSpeed;
-    public static final float BAYONET_SPEED = 1.6f;
+    public static final float BAYONET_SPEED = 2.0f;
     public static int musketDurability;
     public static final int MUSKET_DURABILITY = 250;
 
@@ -62,15 +62,15 @@ public class Config {
     public static final int SCOPED_MUSKET_DURABILITY = 150;
 
     public static float blunderbussBulletStdDev;
-    public static final float BLUNDERBUSS_BULLET_STD_DEV = 2.0f;
+    public static final float BLUNDERBUSS_BULLET_STD_DEV = 2.5f;
     public static float blunderbussBulletSpeed;
     public static final float BLUNDERBUSS_BULLET_SPEED = 160.0f;
     public static float blunderbussDamage;
-    public static final float BLUNDERBUSS_DAMAGE = 20.5f;
+    public static final float BLUNDERBUSS_DAMAGE = 21.0f;
     public static int blunderbussPelletCount;
     public static final int BLUNDERBUSS_PELLET_COUNT = 9;
     public static float pelletDamageMultiplier;
-    public static final float PELLET_DAMAGE_MULTIPLIER = 1.5f;
+    public static final float PELLET_DAMAGE_MULTIPLIER = 1.0f;
     public static int blunderbussDurability;
     public static final int BLUNDERBUSS_DURABILITY = 200;
 
@@ -304,8 +304,9 @@ public class Config {
         if (version < VERSION) {
             logger.info("Configuration file belongs to older version, updating");
             if (version < 4) {
-                if (bayonetDamage == 4) bayonetDamage = 5;
-                if (pistolDurability == 150) pistolDurability = 200;
+                if (musketDamage == 20.5) musketDamage = MUSKET_DAMAGE;
+                if (bayonetDamage == 4) bayonetDamage = BAYONET_DAMAGE;
+                if (pistolDurability == 150) pistolDurability = PISTOL_DURABILITY;
             }
             save();
         }

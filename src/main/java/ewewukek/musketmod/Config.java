@@ -49,7 +49,7 @@ public class Config {
     public static float scopedMusketBulletStdDev;
     public static final float SCOPED_MUSKET_BULLET_STD_DEV = 0.2f;
     public static float scopeZoom;
-    public static final float SCOPE_ZOOM = 4.0f;
+    public static final float SCOPE_ZOOM = 3.0f;
     public static float damagePerPowerLevel;
     public static final float DAMAGE_PER_POWER_LEVEL = 0.5f;
     public static float dropReductionPerPowerLevel;

@@ -52,6 +52,8 @@ public class BulletEntity extends AbstractHurtingProjectile {
     public static final TagKey<Block> DESTROYED_BY_BULLETS = TagKey.create(Registries.BLOCK, MusketMod.resource("destroyed_by_bullets"));
     public static final TagKey<Block> DROPPED_BY_BULLETS = TagKey.create(Registries.BLOCK, MusketMod.resource("dropped_by_bullets"));
 
+    public static final TagKey<EntityType<?>> HEADSHOTABLE = TagKey.create(Registries.ENTITY_TYPE, MusketMod.resource("headshotable"));
+
     public static final ResourceKey<DamageType> BULLET_DAMAGE = ResourceKey.create(Registries.DAMAGE_TYPE, MusketMod.resource("bullet"));
     public static EntityType<BulletEntity> ENTITY_TYPE;
 
@@ -62,6 +64,7 @@ public class BulletEntity extends AbstractHurtingProjectile {
     public static final int HIT_PARTICLE_COUNT = 5;
 
     public float damageMultiplier;
+    public boolean headshot;
     public float distanceTravelled;
     public short tickCounter;
 
@@ -341,6 +344,9 @@ public class BulletEntity extends AbstractHurtingProjectile {
         float igniteSeconds = ignite ? 5.0f : 0.0f;
 
         if (pelletCount() == 1) {
+            if (headshot) {
+                damage *= Config.headshotDamageMultiplier;
+            }
             target.invulnerableTime = 0;
             target.hurt(source, damage);
             if (igniteSeconds > 0) target.igniteForSeconds(igniteSeconds);
@@ -348,6 +354,15 @@ public class BulletEntity extends AbstractHurtingProjectile {
             float pelletDamageMultiplier = Config.pelletDamageMultiplier / pelletCount();
             DeferredDamage.hurt(target, source, pelletDamageMultiplier, damage, igniteSeconds);
         }
+    }
+
+    public boolean checkHeadshot(Entity entity, AABB aabb, Vec3 start, Vec3 end) {
+        if (pelletCount() > 1 || !entity.getType().is(HEADSHOTABLE)) {
+            return false;
+        }
+        double width = (aabb.maxX - aabb.minX + aabb.maxZ - aabb.minZ) / 2;
+        aabb = aabb.setMinY(aabb.maxY - width);
+        return aabb.clip(start, end).isPresent();
     }
 
     public EntityHitResult findHitEntity(Vec3 start, Vec3 end) {
@@ -374,6 +389,7 @@ public class BulletEntity extends AbstractHurtingProjectile {
                     resultEntity = entity;
                     resultPos = clipResult.get();
                     resultDist = dist;
+                    headshot = checkHeadshot(entity, aabb, start, end);
                 }
             }
         }

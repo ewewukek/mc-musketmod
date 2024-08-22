@@ -41,6 +41,8 @@ public class Config {
     public static final float MUSKET_BULLET_SPEED = 180.0f;
     public static float musketDamage;
     public static final float MUSKET_DAMAGE = 20.5f;
+    public static float headshotDamageMultiplier;
+    public static final float HEADSHOT_DAMAGE_MULTIPLIER = 1.3f;
     public static int bayonetDamage;
     public static final int BAYONET_DAMAGE = 5;
     public static int musketDurability;
@@ -104,6 +106,7 @@ public class Config {
         musketBulletStdDev = MUSKET_BULLET_STD_DEV;
         musketBulletSpeed = MUSKET_BULLET_SPEED;
         musketDamage = MUSKET_DAMAGE;
+        headshotDamageMultiplier = HEADSHOT_DAMAGE_MULTIPLIER;
         bayonetDamage = BAYONET_DAMAGE;
         musketDurability = MUSKET_DURABILITY;
 
@@ -205,6 +208,9 @@ public class Config {
                         musketDamage = value;
                         break;
                     case "damageMax": // REMOVED
+                        break;
+                    case "headshotDamageMultiplier":
+                        headshotDamageMultiplier = value;
                         break;
                     case "bayonetDamage":
                         bayonetDamage = (int)value;
@@ -334,6 +340,8 @@ public class Config {
             writer.write("musketBulletSpeed = "+musketBulletSpeed+"\n");
             writer.write("# Damage at point-blank range\n");
             writer.write("musketDamage = "+musketDamage+"\n");
+            writer.write("# Headshot damage multiplier\n");
+            writer.write("headshotDamageMultiplier = "+headshotDamageMultiplier+"\n");
             writer.write("# Durability (applied on restart)\n");
             writer.write("musketDurability = "+musketDurability+"\n");
             writer.write("\n");

@@ -98,6 +98,13 @@ public class ClothConfigScreen {
             .setDefaultValue(Config.MUSKET_DAMAGE)
             .build());
 
+        musketCategory.addEntry(entryBuilder.startFloatField(
+            Component.translatable("musketmod.options.headshot_damage_multiplier"), Config.headshotDamageMultiplier)
+            .setSaveConsumer(value -> Config.headshotDamageMultiplier = value)
+            .setMin(1.0f)
+            .setDefaultValue(Config.HEADSHOT_DAMAGE_MULTIPLIER)
+            .build());
+
         musketCategory.addEntry(entryBuilder.startIntField(
             Component.translatable("musketmod.options.bayonet_damage"), Config.bayonetDamage)
             .setTooltip(Component.translatable("musketmod.options.tooltip.restart"))

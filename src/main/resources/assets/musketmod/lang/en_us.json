@@ -26,6 +26,7 @@
   "musketmod.options.mob_damage_multiplier": "Damage multiplier for monsters",
   "musketmod.options.pistol_pillager_chance": "Pillager with a pistol probability",
   "musketmod.options.musket_skeleton_chance": "Skeleton with a musket probability",
+  "musketmod.options.headshot_damage_multiplier": "Headshot damage multiplier",
   "musketmod.options.damage_per_power_level": "Additinal damage per Power level",
   "musketmod.options.drop_reduction_per_power_level": "Bullet drop reduction per Power level",
   "musketmod.options.reduction_per_quick_charge_level": "Reduction per Quick Charge level",

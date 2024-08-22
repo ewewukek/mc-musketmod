@@ -23,13 +23,6 @@ public class ClothConfigScreen {
             .setDefaultValue(Config.BULLET_MAX_DISTANCE)
             .build());
 
-        commonCategory.addEntry(entryBuilder.startFloatField(
-            Component.translatable("musketmod.options.added_random_damage"), Config.randomDamage)
-            .setSaveConsumer(value -> Config.randomDamage = value)
-            .setMin(0.0f)
-            .setDefaultValue(Config.RANDOM_DAMAGE)
-            .build());
-
         commonCategory.addEntry(entryBuilder.startIntField(
             Component.translatable("musketmod.options.loading_stages_number"), Config.loadingStages)
             .setSaveConsumer(value -> Config.loadingStages = value)

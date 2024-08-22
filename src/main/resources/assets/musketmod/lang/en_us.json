@@ -21,7 +21,6 @@
   "musketmod.options.requires_restart": "(requires restart)",
   "musketmod.options.loading_stages_number": "Number of loading stages",
   "musketmod.options.loading_stage_duration": "Loading stage duration",
-  "musketmod.options.added_random_damage": "Added random damage",
   "musketmod.options.pvp_damage_multiplier": "Damage multiplier for PvP",
   "musketmod.options.mob_damage_multiplier": "Damage multiplier for monsters",
   "musketmod.options.pistol_pillager_chance": "Pillager with a pistol probability",

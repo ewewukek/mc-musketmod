@@ -17,8 +17,6 @@ public class Config {
 
     public static float bulletMaxDistance;
     public static final float BULLET_MAX_DISTANCE = 256.0f;
-    public static float randomDamage;
-    public static final float RANDOM_DAMAGE = 0.5f;
 
     public static int loadingStages;
     public static final int LOADING_STAGES = 3;
@@ -92,7 +90,6 @@ public class Config {
 
     public static void load() {
         bulletMaxDistance = BULLET_MAX_DISTANCE;
-        randomDamage = RANDOM_DAMAGE;
 
         loadingStages = LOADING_STAGES;
         loadingStageDuration = LOADING_STAGE_DURATION;
@@ -169,9 +166,6 @@ public class Config {
 
                     case "bulletMaxDistance":
                         bulletMaxDistance = value;
-                        break;
-                    case "randomDamage":
-                        randomDamage = value;
                         break;
 
                     case "loadingStages":
@@ -314,8 +308,6 @@ public class Config {
 
             writer.write("# Maximum bullet travel distance (in blocks)\n");
             writer.write("bulletMaxDistance = "+bulletMaxDistance+"\n");
-            writer.write("# Added random damage\n");
-            writer.write("randomDamage = "+randomDamage+"\n");
             writer.write("\n");
             writer.write("# Number of loading stages\n");
             writer.write("loadingStages = "+loadingStages+"\n");

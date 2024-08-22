@@ -377,7 +377,7 @@ public abstract class GunItem extends Item {
             bullet.setOwner(entity);
             bullet.setPos(origin);
             bullet.setVelocity(bulletSpeed(), addSpread(direction, entity.getRandom(), bulletStdDev()));
-            float damage = damage() + Config.randomDamage * entity.getRandom().nextFloat();
+            float damage = damage();
             bullet.setDamage(bulletSpeed(), damage);
             bullet.setDropReduction(bulletDropReduction());
             bullet.setPelletCount(pelletCount());

@@ -89,13 +89,13 @@ Settings can be accessed from NeoForge's mods menu or via [Mod Menu](https://mod
 
 Bullet spread follows normal distribution like in real life but it is awkward to configure. Here is a simple table that could help with that: [bulletStdDev](STDDEV.md "bulletStdDev")
 
-Loot tables in namespace `musketmod` add items to mathing vanilla loot tables.
+Loot tables in namespace `musketmod` add items to matching vanilla loot tables.
 
-`item/enchantable` tags control what enchantments can be added to the guns.\
-`block` tags control which blocks would be destroyed or dropped by bullets.\
-`headshotable` tag controls which mobs are considered for headshot detection.
+`item/enchantable/*` tags control what enchantments can be added to the guns.\
+`block/*_by_bullets` tags control which blocks would be destroyed or dropped by bullets.\
+`entity_type/headshotable` tag controls which mobs are considered for headshot detection.
 
-[Blockbench models](blockbench) have preconfigured display settings to make exporting easier. You'll only need to copy "overrides" from defaults.
+[Blockbench models](blockbench) have preconfigured display settings making exporting easier. You'll only need to copy "overrides" from defaults.
 
 ### Permissions
 

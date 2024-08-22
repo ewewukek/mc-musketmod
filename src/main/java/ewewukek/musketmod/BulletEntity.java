@@ -46,6 +46,7 @@ import net.minecraft.world.phys.Vec3;
 public class BulletEntity extends AbstractHurtingProjectile {
     // workaround for ClientboundAddEntityPacket.LIMIT
     public static final EntityDataAccessor<Float> INITIAL_SPEED = SynchedEntityData.defineId(BulletEntity.class, EntityDataSerializers.FLOAT);
+    public static final EntityDataAccessor<Float> DROP_REDUCTION = SynchedEntityData.defineId(BulletEntity.class, EntityDataSerializers.FLOAT);
     public static final EntityDataAccessor<Byte> PELLET_COUNT = SynchedEntityData.defineId(BulletEntity.class, EntityDataSerializers.BYTE);
     public static final EntityDataAccessor<Byte> POWER_LEVEL = SynchedEntityData.defineId(BulletEntity.class, EntityDataSerializers.BYTE);
 
@@ -95,11 +96,6 @@ public class BulletEntity extends AbstractHurtingProjectile {
 
     public void discardOnNextTick() {
         tickCounter = LIFETIME;
-    }
-
-    public double calculateGravity() {
-        float reduction = entityData.get(POWER_LEVEL) * Config.dropReductionPerPowerLevel;
-        return GRAVITY * Math.max(0.0, 1.0 - reduction);
     }
 
     public float maxDamage() {
@@ -315,7 +311,8 @@ public class BulletEntity extends AbstractHurtingProjectile {
         }
 
         if (!wasTouchingWater) velocity = velocity.scale(AIR_FRICTION);
-        setDeltaMovement(velocity.subtract(0, calculateGravity(), 0));
+        double gravity = GRAVITY * (1 - entityData.get(DROP_REDUCTION));
+        setDeltaMovement(velocity.subtract(0, gravity, 0));
         setPos(to);
         distanceTravelled += to.subtract(from).length();
         checkInsideBlocks();
@@ -435,6 +432,10 @@ public class BulletEntity extends AbstractHurtingProjectile {
         entityData.set(INITIAL_SPEED, speed);
     }
 
+    public void setDropReduction(float reduction) {
+        entityData.set(DROP_REDUCTION, reduction);
+    }
+
     public void setPelletCount(int count) {
         entityData.set(PELLET_COUNT, (byte)count);
     }
@@ -447,6 +448,7 @@ public class BulletEntity extends AbstractHurtingProjectile {
     protected void defineSynchedData(SynchedEntityData.Builder builder) {
         super.defineSynchedData(builder);
         builder.define(INITIAL_SPEED, 0.0f);
+        builder.define(DROP_REDUCTION, 0.0f);
         builder.define(PELLET_COUNT, (byte)1);
         builder.define(POWER_LEVEL, (byte)0);
     }
@@ -456,6 +458,7 @@ public class BulletEntity extends AbstractHurtingProjectile {
         super.readAdditionalSaveData(compound);
         damageMultiplier = compound.getFloat("damageMultiplier");
         distanceTravelled = compound.getFloat("distanceTravelled");
+        entityData.set(DROP_REDUCTION, compound.getFloat("dropReduction"));
         entityData.set(PELLET_COUNT, compound.getByte("pelletCount"));
         entityData.set(POWER_LEVEL, compound.getByte("powerLevel"));
     }
@@ -465,6 +468,7 @@ public class BulletEntity extends AbstractHurtingProjectile {
         super.addAdditionalSaveData(compound);
         compound.putFloat("damageMultiplier", damageMultiplier);
         compound.putFloat("distanceTravelled", distanceTravelled);
+        compound.putFloat("dropReduction", entityData.get(DROP_REDUCTION));
         compound.putByte("pelletCount", entityData.get(PELLET_COUNT));
         compound.putByte("powerLevel", entityData.get(POWER_LEVEL));
     }

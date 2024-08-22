@@ -18,6 +18,11 @@ public class ScopedMusketItem extends MusketItem {
     }
 
     @Override
+    public float bulletDropReduction() {
+        return 1.0f - Config.bulletGravityMultiplier;
+    }
+
+    @Override
     public int hitDurabilityDamage() {
         return 2;
     }

@@ -54,10 +54,10 @@ public class Config {
     public static final float SCOPED_MUSKET_BULLET_STD_DEV = 0.2f;
     public static float scopeZoom;
     public static final float SCOPE_ZOOM = 3.0f;
+    public static float bulletGravityMultiplier;
+    public static final float BULLET_GRAVITY_MULTIPLIER = 0.5f;
     public static float damagePerPowerLevel;
     public static final float DAMAGE_PER_POWER_LEVEL = 0.5f;
-    public static float dropReductionPerPowerLevel;
-    public static final float DROP_REDUCTION_PER_POWER_LEVEL = 0.1f;
     public static int scopedMusketDurability;
     public static final int SCOPED_MUSKET_DURABILITY = 150;
 
@@ -113,8 +113,8 @@ public class Config {
 
         scopedMusketBulletStdDev = SCOPED_MUSKET_BULLET_STD_DEV;
         scopeZoom = SCOPE_ZOOM;
+        bulletGravityMultiplier = BULLET_GRAVITY_MULTIPLIER;
         damagePerPowerLevel = DAMAGE_PER_POWER_LEVEL;
-        dropReductionPerPowerLevel = DROP_REDUCTION_PER_POWER_LEVEL;
         scopedMusketDurability = SCOPED_MUSKET_DURABILITY;
 
         blunderbussBulletStdDev = BLUNDERBUSS_BULLET_STD_DEV;
@@ -229,11 +229,11 @@ public class Config {
                     case "scopeZoom":
                         scopeZoom = value;
                         break;
+                    case "bulletGravityMultiplier":
+                        bulletGravityMultiplier = value;
+                        break;
                     case "damagePerPowerLevel":
                         damagePerPowerLevel = value;
-                        break;
-                    case "dropReductionPerPowerLevel":
-                        dropReductionPerPowerLevel = value;
                         break;
                     case "scopedMusketDurability":
                         scopedMusketDurability = (int)value;
@@ -362,10 +362,10 @@ public class Config {
             writer.write("scopedMusketBulletStdDev = "+scopedMusketBulletStdDev+"\n");
             writer.write("# Scope zoom factor\n");
             writer.write("scopeZoom = "+scopeZoom+"\n");
+            writer.write("# Bullet gravity multiplier\n");
+            writer.write("bulletGravityMultiplier = "+bulletGravityMultiplier+"\n");
             writer.write("# Extra damage per Power enchantment level\n");
             writer.write("damagePerPowerLevel = "+damagePerPowerLevel+"\n");
-            writer.write("# Bullet drop reduction per Power enchantment level\n");
-            writer.write("dropReductionPerPowerLevel = "+dropReductionPerPowerLevel+"\n");
             writer.write("# Durability (applied on restart)\n");
             writer.write("scopedMusketDurability = "+scopedMusketDurability+"\n");
             writer.write("\n");

@@ -147,17 +147,17 @@ public class ClothConfigScreen {
             .build());
 
         scopedMusketCategory.addEntry(entryBuilder.startFloatField(
+            Component.translatable("musketmod.options.bullet_gravity_multiplier"), Config.bulletGravityMultiplier)
+            .setSaveConsumer(value -> Config.bulletGravityMultiplier = value)
+            .setMin(0.0f).setMax(1.0f)
+            .setDefaultValue(Config.BULLET_GRAVITY_MULTIPLIER)
+            .build());
+
+        scopedMusketCategory.addEntry(entryBuilder.startFloatField(
             Component.translatable("musketmod.options.damage_per_power_level"), Config.damagePerPowerLevel)
             .setSaveConsumer(value -> Config.damagePerPowerLevel = value)
             .setMin(0.5f)
             .setDefaultValue(Config.DAMAGE_PER_POWER_LEVEL)
-            .build());
-
-        scopedMusketCategory.addEntry(entryBuilder.startFloatField(
-            Component.translatable("musketmod.options.drop_reduction_per_power_level"), Config.dropReductionPerPowerLevel)
-            .setSaveConsumer(value -> Config.dropReductionPerPowerLevel = value)
-            .setMin(0.0f).setMax(0.2f)
-            .setDefaultValue(Config.DROP_REDUCTION_PER_POWER_LEVEL)
             .build());
 
         scopedMusketCategory.addEntry(entryBuilder.startIntField(

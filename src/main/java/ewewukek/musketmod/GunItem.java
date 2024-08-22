@@ -59,6 +59,11 @@ public abstract class GunItem extends Item {
         return true;
     }
 
+    public float bulletDropReduction() {
+        return 0.0f;
+    }
+
+
     public int hitDurabilityDamage() {
         return 1;
     }
@@ -374,6 +379,7 @@ public abstract class GunItem extends Item {
             bullet.setVelocity(bulletSpeed(), addSpread(direction, entity.getRandom(), bulletStdDev()));
             float damage = damage() + Config.randomDamage * entity.getRandom().nextFloat();
             bullet.setDamage(bulletSpeed(), damage);
+            bullet.setDropReduction(bulletDropReduction());
             bullet.setPelletCount(pelletCount());
             if (flame) {
                 bullet.igniteForSeconds(100.0f);

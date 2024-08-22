@@ -26,7 +26,6 @@
   "musketmod.options.pistol_pillager_chance": "Pillager with a pistol probability",
   "musketmod.options.musket_skeleton_chance": "Skeleton with a musket probability",
   "musketmod.options.headshot_damage_multiplier": "Headshot damage multiplier",
-  "musketmod.options.damage_per_power_level": "Additinal damage per Power level",
   "musketmod.options.bullet_gravity_multiplier": "Bullet gravity multiplier",
   "musketmod.options.reduction_per_quick_charge_level": "Reduction per Quick Charge level",
   "musketmod.options.bullet_travel_distance": "Bullet travel distance",

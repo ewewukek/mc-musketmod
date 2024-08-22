@@ -33,6 +33,9 @@ public class Config {
     public static float musketSkeletonChance;
     public static final float MUSKET_SKELETON_CHANCE = 0.05f;
 
+    public static float damagePerPowerLevel;
+    public static final float DAMAGE_PER_POWER_LEVEL = 0.5f;
+
     public static float musketBulletStdDev;
     public static final float MUSKET_BULLET_STD_DEV = 1.0f;
     public static float musketBulletSpeed;
@@ -54,8 +57,6 @@ public class Config {
     public static final float SCOPE_ZOOM = 3.0f;
     public static float bulletGravityMultiplier;
     public static final float BULLET_GRAVITY_MULTIPLIER = 0.5f;
-    public static float damagePerPowerLevel;
-    public static final float DAMAGE_PER_POWER_LEVEL = 0.5f;
     public static int scopedMusketDurability;
     public static final int SCOPED_MUSKET_DURABILITY = 150;
 
@@ -100,6 +101,8 @@ public class Config {
         pistolPillagerChance = PISTOL_PILLAGER_CHANCE;
         musketSkeletonChance = MUSKET_SKELETON_CHANCE;
 
+        damagePerPowerLevel = DAMAGE_PER_POWER_LEVEL;
+
         musketBulletStdDev = MUSKET_BULLET_STD_DEV;
         musketBulletSpeed = MUSKET_BULLET_SPEED;
         musketDamage = MUSKET_DAMAGE;
@@ -111,7 +114,6 @@ public class Config {
         scopedMusketBulletStdDev = SCOPED_MUSKET_BULLET_STD_DEV;
         scopeZoom = SCOPE_ZOOM;
         bulletGravityMultiplier = BULLET_GRAVITY_MULTIPLIER;
-        damagePerPowerLevel = DAMAGE_PER_POWER_LEVEL;
         scopedMusketDurability = SCOPED_MUSKET_DURABILITY;
 
         blunderbussBulletStdDev = BLUNDERBUSS_BULLET_STD_DEV;
@@ -189,6 +191,10 @@ public class Config {
                         musketSkeletonChance = value;
                         break;
 
+                    case "damagePerPowerLevel":
+                        damagePerPowerLevel = value;
+                        break;
+
                     case "bulletStdDev": // COMPAT
                     case "musketBulletStdDev":
                         musketBulletStdDev = value;
@@ -225,9 +231,6 @@ public class Config {
                         break;
                     case "bulletGravityMultiplier":
                         bulletGravityMultiplier = value;
-                        break;
-                    case "damagePerPowerLevel":
-                        damagePerPowerLevel = value;
                         break;
                     case "scopedMusketDurability":
                         scopedMusketDurability = (int)value;
@@ -324,6 +327,8 @@ public class Config {
             writer.write("# Probability of Skeleton having a musket\n");
             writer.write("musketSkeletonChance = "+musketSkeletonChance+"\n");
             writer.write("\n");
+            writer.write("# Extra damage per Power enchantment level\n");
+            writer.write("damagePerPowerLevel = "+damagePerPowerLevel+"\n");
 
             writer.write("# Musket\n");
             writer.write("\n");
@@ -356,8 +361,6 @@ public class Config {
             writer.write("scopeZoom = "+scopeZoom+"\n");
             writer.write("# Bullet gravity multiplier\n");
             writer.write("bulletGravityMultiplier = "+bulletGravityMultiplier+"\n");
-            writer.write("# Extra damage per Power enchantment level\n");
-            writer.write("damagePerPowerLevel = "+damagePerPowerLevel+"\n");
             writer.write("# Durability (applied on restart)\n");
             writer.write("scopedMusketDurability = "+scopedMusketDurability+"\n");
             writer.write("\n");

@@ -48,7 +48,6 @@ public class BulletEntity extends AbstractHurtingProjectile {
     public static final EntityDataAccessor<Float> INITIAL_SPEED = SynchedEntityData.defineId(BulletEntity.class, EntityDataSerializers.FLOAT);
     public static final EntityDataAccessor<Float> DROP_REDUCTION = SynchedEntityData.defineId(BulletEntity.class, EntityDataSerializers.FLOAT);
     public static final EntityDataAccessor<Byte> PELLET_COUNT = SynchedEntityData.defineId(BulletEntity.class, EntityDataSerializers.BYTE);
-    public static final EntityDataAccessor<Byte> POWER_LEVEL = SynchedEntityData.defineId(BulletEntity.class, EntityDataSerializers.BYTE);
 
     public static final TagKey<Block> DESTROYED_BY_BULLETS = TagKey.create(Registries.BLOCK, MusketMod.resource("destroyed_by_bullets"));
     public static final TagKey<Block> DROPPED_BY_BULLETS = TagKey.create(Registries.BLOCK, MusketMod.resource("dropped_by_bullets"));
@@ -107,8 +106,7 @@ public class BulletEntity extends AbstractHurtingProjectile {
         double maxEnergy = Math.pow(entityData.get(INITIAL_SPEED), 2);
         float maxDamage = damageMultiplier * (float)maxEnergy;
         double energy = getDeltaMovement().lengthSqr();
-        float damage = damageMultiplier * (float)energy
-            + entityData.get(POWER_LEVEL) * Config.damagePerPowerLevel;
+        float damage = damageMultiplier * (float)energy;
         return Math.min(damage, maxDamage);
     }
 
@@ -440,17 +438,12 @@ public class BulletEntity extends AbstractHurtingProjectile {
         entityData.set(PELLET_COUNT, (byte)count);
     }
 
-    public void setPowerLevel(int power) {
-        entityData.set(POWER_LEVEL, (byte)power);
-    }
-
     @Override
     protected void defineSynchedData(SynchedEntityData.Builder builder) {
         super.defineSynchedData(builder);
         builder.define(INITIAL_SPEED, 0.0f);
         builder.define(DROP_REDUCTION, 0.0f);
         builder.define(PELLET_COUNT, (byte)1);
-        builder.define(POWER_LEVEL, (byte)0);
     }
 
     @Override
@@ -460,7 +453,6 @@ public class BulletEntity extends AbstractHurtingProjectile {
         distanceTravelled = compound.getFloat("distanceTravelled");
         entityData.set(DROP_REDUCTION, compound.getFloat("dropReduction"));
         entityData.set(PELLET_COUNT, compound.getByte("pelletCount"));
-        entityData.set(POWER_LEVEL, compound.getByte("powerLevel"));
     }
 
     @Override
@@ -470,7 +462,6 @@ public class BulletEntity extends AbstractHurtingProjectile {
         compound.putFloat("distanceTravelled", distanceTravelled);
         compound.putFloat("dropReduction", entityData.get(DROP_REDUCTION));
         compound.putByte("pelletCount", entityData.get(PELLET_COUNT));
-        compound.putByte("powerLevel", entityData.get(POWER_LEVEL));
     }
 
     // workaround for ClientboundAddEntityPacket.LIMIT

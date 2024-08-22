@@ -370,14 +370,13 @@ public abstract class GunItem extends Item {
         Level level = entity.level();
         Vec3 origin = new Vec3(entity.getX(), entity.getEyeY(), entity.getZ());
         boolean flame = hasFlame(stack);
-        int power = getPowerLevel(stack);
+        float damage = damage() + Config.damagePerPowerLevel * getPowerLevel(stack);
 
         for (int i = 0; i < pelletCount(); i++) {
             BulletEntity bullet = new BulletEntity(level);
             bullet.setOwner(entity);
             bullet.setPos(origin);
             bullet.setVelocity(bulletSpeed(), addSpread(direction, entity.getRandom(), bulletStdDev()));
-            float damage = damage();
             bullet.setDamage(bulletSpeed(), damage);
             bullet.setDropReduction(bulletDropReduction());
             bullet.setPelletCount(pelletCount());
@@ -385,7 +384,6 @@ public abstract class GunItem extends Item {
                 bullet.igniteForSeconds(100.0f);
                 bullet.setSharedFlagOnFire(true);
             }
-            bullet.setPowerLevel(power);
 
             level.addFreshEntity(bullet);
         }

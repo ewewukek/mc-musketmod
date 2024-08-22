@@ -146,13 +146,6 @@ public class ClothConfigScreen {
             .setDefaultValue(Config.BULLET_GRAVITY_MULTIPLIER)
             .build());
 
-        scopedMusketCategory.addEntry(entryBuilder.startFloatField(
-            Component.translatable("musketmod.options.damage_per_power_level"), Config.damagePerPowerLevel)
-            .setSaveConsumer(value -> Config.damagePerPowerLevel = value)
-            .setMin(0.5f)
-            .setDefaultValue(Config.DAMAGE_PER_POWER_LEVEL)
-            .build());
-
         scopedMusketCategory.addEntry(entryBuilder.startIntField(
             Component.translatable("musketmod.options.durability"), Config.scopedMusketDurability)
             .setTooltip(Component.translatable("musketmod.options.requires_restart"))

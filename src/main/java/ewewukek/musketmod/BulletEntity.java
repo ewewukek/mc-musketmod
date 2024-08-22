@@ -64,7 +64,8 @@ public class BulletEntity extends AbstractHurtingProjectile {
     public static final int HIT_PARTICLE_COUNT = 5;
     public static final float IGNITE_SECONDS = 5.0f;
 
-    public float damageMultiplier;
+    public float damage;
+    public boolean touchedWater;
     public boolean headshot;
     public float distanceTravelled;
     public short tickCounter;
@@ -97,19 +98,6 @@ public class BulletEntity extends AbstractHurtingProjectile {
         tickCounter = LIFETIME;
     }
 
-    public float maxDamage() {
-        double maxEnergy = Math.pow(entityData.get(INITIAL_SPEED), 2);
-        return damageMultiplier * (float)maxEnergy;
-    }
-
-    public float calculateDamage() {
-        double maxEnergy = Math.pow(entityData.get(INITIAL_SPEED), 2);
-        float maxDamage = damageMultiplier * (float)maxEnergy;
-        double energy = getDeltaMovement().lengthSqr();
-        float damage = damageMultiplier * (float)energy;
-        return Math.min(damage, maxDamage);
-    }
-
     public float calculateEnergyFraction() {
         double maxEnergy = Math.pow(entityData.get(INITIAL_SPEED), 2);
         double energy = getDeltaMovement().lengthSqr();
@@ -136,12 +124,6 @@ public class BulletEntity extends AbstractHurtingProjectile {
         float tickSpeed = bulletSpeed / 20; // to blocks per tick
         setInitialSpeed(tickSpeed);
         setDeltaMovement(direction.scale(tickSpeed));
-    }
-
-    public void setDamage(float bulletSpeed, float damage) {
-        float tickSpeed = bulletSpeed / 20; // to blocks per tick
-        float maxEnergy = tickSpeed * tickSpeed;
-        damageMultiplier = damage / maxEnergy;
     }
 
     @Override
@@ -228,14 +210,20 @@ public class BulletEntity extends AbstractHurtingProjectile {
             }
         }
 
-        if (wasTouchingWater) extinguishFire();
+        if (wasTouchingWater) {
+            touchedWater = true;
+            extinguishFire();
+        }
         if (!level.isClientSide) setSharedFlagOnFire(getRemainingFireTicks() > 0);
 
         if (hitResult.getType() != HitResult.Type.MISS) {
+            if (touchedWater) {
+                damage *= calculateEnergyFraction();
+            }
             if (!level.isClientSide) {
                 onHit(hitResult);
                 if (hitResult.getType() == HitResult.Type.BLOCK) {
-                    float destroyProbability = calculateDamage() / maxDamage();
+                    float destroyProbability = calculateEnergyFraction();
                     if (pelletCount() > 1) destroyProbability = 1.5f * destroyProbability / pelletCount();
 
                     if (random.nextFloat() < destroyProbability) {
@@ -318,7 +306,7 @@ public class BulletEntity extends AbstractHurtingProjectile {
 
     @Override
     public void onHitEntity(EntityHitResult hitResult) {
-        if (getDeltaMovement().lengthSqr() < 1.0) return;
+        if (calculateEnergyFraction() < 0.05) return;
 
         float damageMult = 1.0f;
         Entity target = hitResult.getEntity();
@@ -335,18 +323,19 @@ public class BulletEntity extends AbstractHurtingProjectile {
         }
 
         DamageSource source = getDamageSource();
-        float damage = calculateDamage() * damageMult;
         boolean ignite = isOnFire() && target.getType() != EntityType.ENDERMAN;
 
         if (pelletCount() == 1) {
             if (headshot) {
-                damage *= Config.headshotDamageMultiplier;
+                damageMult *= Config.headshotDamageMultiplier;
             }
             target.invulnerableTime = 0;
-            target.hurt(source, damage);
+            target.hurt(source, damage * damageMult);
             if (ignite) target.igniteForSeconds(IGNITE_SECONDS);
+
         } else {
-            DeferredDamage.hurt(target, source, damage / pelletCount(), ignite ? 1.0f : 0.0f);
+            damageMult /= pelletCount();
+            DeferredDamage.hurt(target, source, damage * damageMult, ignite ? 1.0f : 0.0f);
         }
     }
 
@@ -449,7 +438,7 @@ public class BulletEntity extends AbstractHurtingProjectile {
     @Override
     public void readAdditionalSaveData(CompoundTag compound) {
         super.readAdditionalSaveData(compound);
-        damageMultiplier = compound.getFloat("damageMultiplier");
+        damage = compound.getFloat("damage");
         distanceTravelled = compound.getFloat("distanceTravelled");
         entityData.set(DROP_REDUCTION, compound.getFloat("dropReduction"));
         entityData.set(PELLET_COUNT, compound.getByte("pelletCount"));
@@ -458,7 +447,7 @@ public class BulletEntity extends AbstractHurtingProjectile {
     @Override
     public void addAdditionalSaveData(CompoundTag compound) {
         super.addAdditionalSaveData(compound);
-        compound.putFloat("damageMultiplier", damageMultiplier);
+        compound.putFloat("damage", damage);
         compound.putFloat("distanceTravelled", distanceTravelled);
         compound.putFloat("dropReduction", entityData.get(DROP_REDUCTION));
         compound.putByte("pelletCount", entityData.get(PELLET_COUNT));

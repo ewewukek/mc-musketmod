@@ -16,7 +16,7 @@ public class Config {
     public static final int VERSION = 4;
 
     public static float bulletMaxDistance;
-    public static final float BULLET_MAX_DISTANCE = 64.0f;
+    public static final float BULLET_MAX_DISTANCE = 256.0f;
     public static float randomDamage;
     public static final float RANDOM_DAMAGE = 0.5f;
 
@@ -292,7 +292,6 @@ public class Config {
         if (version < VERSION) {
             logger.info("Configuration file belongs to older version, updating");
             if (version < 4) {
-                if (bulletMaxDistance == 256.0f) bulletMaxDistance = 64.0f;
                 if (bayonetDamage == 4) bayonetDamage = 5;
                 if (pistolDurability == 150) pistolDurability = 200;
             }

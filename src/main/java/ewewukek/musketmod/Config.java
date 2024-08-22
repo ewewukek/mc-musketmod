@@ -45,6 +45,8 @@ public class Config {
     public static final float HEADSHOT_DAMAGE_MULTIPLIER = 1.3f;
     public static int bayonetDamage;
     public static final int BAYONET_DAMAGE = 5;
+    public static float bayonetSpeed;
+    public static final float BAYONET_SPEED = 1.6f;
     public static int musketDurability;
     public static final int MUSKET_DURABILITY = 250;
 
@@ -108,6 +110,7 @@ public class Config {
         musketDamage = MUSKET_DAMAGE;
         headshotDamageMultiplier = HEADSHOT_DAMAGE_MULTIPLIER;
         bayonetDamage = BAYONET_DAMAGE;
+        bayonetSpeed = BAYONET_SPEED;
         musketDurability = MUSKET_DURABILITY;
 
         scopedMusketBulletStdDev = SCOPED_MUSKET_BULLET_STD_DEV;
@@ -214,6 +217,9 @@ public class Config {
                         break;
                     case "bayonetDamage":
                         bayonetDamage = (int)value;
+                        break;
+                    case "bayonetSpeed":
+                        bayonetSpeed = value;
                         break;
                     case "durability": // COMPAT
                     case "musketDurability":
@@ -350,6 +356,9 @@ public class Config {
             writer.write("\n");
             writer.write("# Bayonet damage (applied on restart)\n");
             writer.write("bayonetDamage = "+bayonetDamage+"\n");
+            writer.write("\n");
+            writer.write("# Bayonet attack speed (applied on restart)\n");
+            writer.write("bayonetSpeed = "+bayonetSpeed+"\n");
             writer.write("\n");
 
             writer.write("# Musket with scope\n");

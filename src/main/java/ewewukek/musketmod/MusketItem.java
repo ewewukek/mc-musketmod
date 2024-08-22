@@ -9,8 +9,6 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.component.ItemAttributeModifiers;
 
 public class MusketItem extends GunItem {
-    public static final float BAYONET_SPEED = -2.4f;
-
     public MusketItem(Item.Properties properties) {
         super(properties);
     }
@@ -21,7 +19,7 @@ public class MusketItem extends GunItem {
                 BASE_ATTACK_DAMAGE_ID, Config.bayonetDamage - 1, AttributeModifier.Operation.ADD_VALUE),
                 EquipmentSlotGroup.MAINHAND)
             .add(Attributes.ATTACK_SPEED, new AttributeModifier(
-                BASE_ATTACK_SPEED_ID, BAYONET_SPEED, AttributeModifier.Operation.ADD_VALUE),
+                BASE_ATTACK_SPEED_ID, Config.bayonetSpeed - 4, AttributeModifier.Operation.ADD_VALUE),
                 EquipmentSlotGroup.MAINHAND)
             .build();
     }

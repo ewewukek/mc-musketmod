@@ -41,5 +41,6 @@
   "musketmod.options.damage.blunderbuss": "Total damage",
   "musketmod.options.durability": "Durability",
   "musketmod.options.bayonet_damage": "Bayonet damage",
+  "musketmod.options.bayonet_attack_speed": "Bayonet attack speed",
   "musketmod.options.scope_zoom": "Zoom factor"
 }

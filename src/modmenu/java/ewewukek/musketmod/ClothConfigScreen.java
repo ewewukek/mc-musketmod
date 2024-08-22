@@ -113,6 +113,14 @@ public class ClothConfigScreen {
             .setDefaultValue(Config.BAYONET_DAMAGE)
             .build());
 
+        musketCategory.addEntry(entryBuilder.startFloatField(
+            Component.translatable("musketmod.options.bayonet_attack_speed"), Config.bayonetSpeed)
+            .setTooltip(Component.translatable("musketmod.options.tooltip.restart"))
+            .setSaveConsumer(value -> Config.bayonetSpeed = value)
+            .setMin(0)
+            .setDefaultValue(Config.BAYONET_SPEED)
+            .build());
+
         musketCategory.addEntry(entryBuilder.startIntField(
             Component.translatable("musketmod.options.durability"), Config.musketDurability)
             .setTooltip(Component.translatable("musketmod.options.tooltip.restart"))

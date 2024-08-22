@@ -112,7 +112,7 @@ public class ClientUtilities {
             if (reloadDuration > 0 && usingTicks < reloadDuration + 5) {
                 poseStack.translate(0, -0.3, 0.05);
                 poseStack.mulPose(Axis.XP.rotationDegrees(60));
-                poseStack.mulPose(Axis.ZP.rotationDegrees(10));
+                poseStack.mulPose(Axis.ZP.rotationDegrees(sign * 10));
 
                 float t = 0;
                 // return

@@ -69,8 +69,6 @@ public class Config {
     public static final float BLUNDERBUSS_DAMAGE = 21.0f;
     public static int blunderbussPelletCount;
     public static final int BLUNDERBUSS_PELLET_COUNT = 9;
-    public static float pelletDamageMultiplier;
-    public static final float PELLET_DAMAGE_MULTIPLIER = 1.0f;
     public static int blunderbussDurability;
     public static final int BLUNDERBUSS_DURABILITY = 200;
 
@@ -123,7 +121,6 @@ public class Config {
         blunderbussBulletSpeed = BLUNDERBUSS_BULLET_SPEED;
         blunderbussDamage = BLUNDERBUSS_DAMAGE;
         blunderbussPelletCount = BLUNDERBUSS_PELLET_COUNT;
-        pelletDamageMultiplier = PELLET_DAMAGE_MULTIPLIER;
         blunderbussDurability = BLUNDERBUSS_DURABILITY;
 
         pistolBulletStdDev = PISTOL_BULLET_STD_DEV;
@@ -254,9 +251,6 @@ public class Config {
                     case "blunderbussPelletCount":
                         blunderbussPelletCount = (int)value;
                         break;
-                    case "pelletDamageMultiplier":
-                        pelletDamageMultiplier = value;
-                        break;
                     case "blunderbussDurability":
                         blunderbussDurability = (int)value;
                         break;
@@ -386,8 +380,6 @@ public class Config {
             writer.write("blunderbussDamage = "+blunderbussDamage+"\n");
             writer.write("# Pellet count\n");
             writer.write("blunderbussPelletCount = "+blunderbussPelletCount+"\n");
-            writer.write("# Individual pellet damage multiplier\n");
-            writer.write("pelletDamageMultiplier = "+pelletDamageMultiplier+"\n");
             writer.write("# Durability (applied on restart)\n");
             writer.write("blunderbussDurability = "+blunderbussDurability+"\n");
             writer.write("\n");

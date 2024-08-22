@@ -62,6 +62,7 @@ public class BulletEntity extends AbstractHurtingProjectile {
     public static final double WATER_FRICTION = 0.6;
     public static final short LIFETIME = 100;
     public static final int HIT_PARTICLE_COUNT = 5;
+    public static final float IGNITE_SECONDS = 5.0f;
 
     public float damageMultiplier;
     public boolean headshot;
@@ -341,7 +342,6 @@ public class BulletEntity extends AbstractHurtingProjectile {
         DamageSource source = getDamageSource();
         float damage = calculateDamage() * damageMult;
         boolean ignite = isOnFire() && target.getType() != EntityType.ENDERMAN;
-        float igniteSeconds = ignite ? 5.0f : 0.0f;
 
         if (pelletCount() == 1) {
             if (headshot) {
@@ -349,10 +349,9 @@ public class BulletEntity extends AbstractHurtingProjectile {
             }
             target.invulnerableTime = 0;
             target.hurt(source, damage);
-            if (igniteSeconds > 0) target.igniteForSeconds(igniteSeconds);
+            if (ignite) target.igniteForSeconds(IGNITE_SECONDS);
         } else {
-            float pelletDamageMultiplier = Config.pelletDamageMultiplier / pelletCount();
-            DeferredDamage.hurt(target, source, pelletDamageMultiplier, damage, igniteSeconds);
+            DeferredDamage.hurt(target, source, damage / pelletCount(), ignite ? 1.0f : 0.0f);
         }
     }
 

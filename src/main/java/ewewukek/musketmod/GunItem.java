@@ -184,7 +184,6 @@ public abstract class GunItem extends Item {
         }
 
         player.startUsingItem(hand);
-        if (level.isClientSide) setActiveStack(hand, stack);
 
         return InteractionResultHolder.consume(stack);
     }

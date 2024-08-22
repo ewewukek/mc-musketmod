@@ -77,8 +77,12 @@ public class ClientUtilities {
             return;
         }
 
-        if (stack == GunItem.getActiveStack(hand)) {
+        ItemStack activeStack = GunItem.getActiveStack(hand);
+        if (stack == activeStack) {
             setEquipAnimationDisabled(hand, true);
+
+        } else if (activeStack != null && activeStack.getItem() != gun) {
+            setEquipAnimationDisabled(hand, false);
         }
 
         poseStack.pushPose();
@@ -135,6 +139,7 @@ public class ClientUtilities {
             if (isEquipAnimationDisabled(hand)) {
                 if (equipProgress == 0) {
                     setEquipAnimationDisabled(hand, false);
+                    GunItem.setActiveStack(hand, null);
                 }
             } else {
                 poseStack.translate(0, -0.6 * equipProgress, 0);

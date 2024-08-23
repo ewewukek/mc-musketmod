@@ -22,8 +22,7 @@ public class SkeletonModelMixin {
 
     @ModifyVariable(method = "prepareMobModel", at = @At("HEAD"))
     Mob storeMob(Mob mob) {
-        this.mob = mob;
-        return mob;
+        return (this.mob = mob);
     }
 
     @Inject(method = "prepareMobModel", at = @At("TAIL"))
@@ -36,7 +35,9 @@ public class SkeletonModelMixin {
                     ? HumanoidModel.ArmPose.CROSSBOW_HOLD
                     : HumanoidModel.ArmPose.EMPTY;
                 SkeletonModel<?> model = (SkeletonModel<?>)(Object)this;
-                if (mob.getMainArm() == HumanoidArm.RIGHT) {
+                HumanoidArm arm = hand == InteractionHand.MAIN_HAND
+                    ? mob.getMainArm() : mob.getMainArm().getOpposite();
+                if (arm == HumanoidArm.RIGHT) {
                     model.rightArmPose = pose;
                 } else {
                     model.leftArmPose = pose;

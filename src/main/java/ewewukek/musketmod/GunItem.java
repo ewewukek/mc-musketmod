@@ -274,7 +274,7 @@ public abstract class GunItem extends Item {
         int ticksPerLoadingStage = loadingDuration.getRight();
 
         int loadingStagesRemaining = 1 + loadingStages - getLoadingStage(stack);
-        return loadingStagesRemaining * ticksPerLoadingStage;
+        return Math.max(0, loadingStagesRemaining) * ticksPerLoadingStage;
     }
 
     public static boolean checkAmmo(Player player, ItemStack stack) {

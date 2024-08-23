@@ -8,7 +8,6 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.ModifyVariable;
 import org.spongepowered.asm.mixin.injection.Redirect;
 
-import ewewukek.musketmod.GunItem;
 import ewewukek.musketmod.VanillaHelper;
 import net.minecraft.core.Holder;
 import net.minecraft.world.item.ItemStack;
@@ -29,7 +28,7 @@ public class EnchantmentHelperMixin {
     @Redirect(method = "getAvailableEnchantmentResults", at = @At(value = "INVOKE",
         target = "Ljava/util/stream/Stream;filter(Ljava/util/function/Predicate;)Ljava/util/stream/Stream;"))
     private static Stream<Holder<Enchantment>> filterEnchantments(Stream<Holder<Enchantment>> stream, Predicate<Holder<Enchantment>> condition) {
-        if (enchantedStack != null && enchantedStack.getItem() instanceof GunItem) {
+        if (enchantedStack != null) {
             condition = condition.or(enchantment -> VanillaHelper.canEnchant(enchantment, enchantedStack));
         }
         return stream.filter(condition);

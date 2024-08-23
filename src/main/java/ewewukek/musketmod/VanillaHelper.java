@@ -29,7 +29,7 @@ public class VanillaHelper {
     }
 
     public static boolean canEnchant(Holder<Enchantment> enchantment, ItemStack stack) {
-        if (enchantment.kind() == Holder.Kind.REFERENCE) {
+        if (stack.getItem() instanceof GunItem && enchantment.kind() == Holder.Kind.REFERENCE) {
             ResourceKey<Enchantment> key = enchantment.unwrapKey().get();
             if (key.location().getNamespace().equals(ResourceLocation.DEFAULT_NAMESPACE)) {
                 String tagPath = "enchantable/" + key.location().getPath();

@@ -19,47 +19,48 @@ import net.minecraft.world.item.ItemStack;
 
 @Mixin(Minecraft.class)
 public class MinecraftMixin {
-    private static boolean useKeyReleased = true;
+    private static boolean lockUseKey;
 
-    @SuppressWarnings("resource")
+    private boolean canUseScope(Minecraft client, Player player, ItemStack stack) {
+        return stack.getItem() == Items.MUSKET_WITH_SCOPE
+            && GunItem.canUse(player)
+            && client.options.getCameraType().isFirstPerson();
+    }
+
+    private boolean gunIsReady(Player player, InteractionHand hand, ItemStack stack) {
+        return stack.getItem() instanceof GunItem gun
+            && GunItem.isReady(stack) && gun.canUseFrom(player, hand);
+    }
+
     @Redirect(method = "startUseItem", at = @At(value = "INVOKE",
         target = "Lnet/minecraft/client/multiplayer/MultiPlayerGameMode;useItem(Lnet/minecraft/world/entity/player/Player;Lnet/minecraft/world/InteractionHand;)Lnet/minecraft/world/InteractionResult;"))
     private InteractionResult onUseItem(MultiPlayerGameMode gameMode, Player player, InteractionHand hand) {
         Minecraft client = (Minecraft)(Object)this;
         ItemStack stack = player.getItemInHand(hand);
+        boolean bothGunsLoaded = false;
 
-        if (stack.getItem() instanceof GunItem gun
-        && GunItem.isReady(stack) && gun.canUseFrom(player, hand)) {
-
-            if (stack.getItem() == Items.MUSKET_WITH_SCOPE && GunItem.canUse(player)
-            && client.options.getCameraType().isFirstPerson()) {
-
-                useKeyReleased = false;
+        if (gunIsReady(player, hand, stack)) {
+            if (canUseScope(client, player, stack)) {
+                lockUseKey = true;
                 setScoping(client, true);
                 if (client.options.keyAttack.isDown()) {
                     ScopedMusketItem.recoilTicks = ScopedMusketItem.RECOIL_TICKS;
                     return gameMode.useItem(player, hand);
                 }
             }
-            if (!useKeyReleased) return InteractionResult.FAIL;
-        }
-        if (ScopedMusketItem.isScoping) return InteractionResult.FAIL;
-
-        boolean bothGunsLoaded = false;
-
-        if (stack.getItem() instanceof GunItem gun
-        && GunItem.isReady(stack) && gun.canUseFrom(player, hand)) {
+            if (lockUseKey) return InteractionResult.FAIL;
 
             InteractionHand hand2 = hand == InteractionHand.MAIN_HAND
                 ? InteractionHand.OFF_HAND : InteractionHand.MAIN_HAND;
             ItemStack stack2 = player.getItemInHand(hand2);
-            bothGunsLoaded = stack2.getItem() instanceof GunItem gun2
-                && GunItem.isReady(stack2) && gun2.canUseFrom(player, hand2);
+
+            bothGunsLoaded = gunIsReady(player, hand2, stack2);
         }
+        if (ScopedMusketItem.isScoping) return InteractionResult.FAIL;
 
         InteractionResult result = gameMode.useItem(player, hand);
         if (result.consumesAction() && !bothGunsLoaded) {
-            useKeyReleased = false;
+            lockUseKey = true;
         }
         return result;
     }
@@ -67,54 +68,43 @@ public class MinecraftMixin {
     @Redirect(method = "handleKeybinds", at = @At(value = "INVOKE",
         target = "Lnet/minecraft/client/Minecraft;startAttack()Z"))
     private boolean handleKeyAttack(Minecraft client) {
-        ItemStack stack = client.player.getMainHandItem();
-        if (stack.getItem() == Items.MUSKET_WITH_SCOPE && ScopedMusketItem.isScoping) {
-            client.startUseItem();
-            return true;
-        }
+        if (ScopedMusketItem.isScoping) return true;
         return client.startAttack();
     }
 
     @Redirect(method = "handleKeybinds", at = @At(value = "INVOKE",
         target = "Lnet/minecraft/client/Minecraft;continueAttack(Z)V"))
     private void continueAttack(Minecraft client, boolean missed) {
-        ItemStack stack = client.player.getMainHandItem();
-        if (stack.getItem() == Items.MUSKET_WITH_SCOPE && ScopedMusketItem.isScoping) {
-            return;
-        }
+        if (ScopedMusketItem.isScoping) return;
         client.continueAttack(missed);
     }
 
     @Inject(method = "handleKeybinds", at = @At("HEAD"))
-    private void finishReloading(CallbackInfo ci) {
-        @SuppressWarnings("resource")
-        Minecraft client = (Minecraft)(Object)this;
-        if (client.player.isUsingItem()) {
-            ItemStack stack = client.player.getUseItem();
-            int delay = stack.getItem() == Items.MUSKET_WITH_SCOPE
-                && client.options.getCameraType().isFirstPerson()
-                ? 10 : 5;
-            if (stack.getItem() instanceof GunItem && GunItem.isLoaded(stack)
-            && client.player.getTicksUsingItem() >= GunItem.reloadDuration(stack) + delay) {
-
-                client.gameMode.releaseUsingItem(client.player);
-            }
-        }
-    }
-
-    @Inject(method = "handleKeybinds", at = @At("TAIL"))
-    private void handleKeyUseUp(CallbackInfo ci) {
+    private void handleKeybinds(CallbackInfo ci) {
         Minecraft client = (Minecraft)(Object)this;
         Player player = client.player;
-        ItemStack stack = player.getMainHandItem();
 
-        if (stack.getItem() != Items.MUSKET_WITH_SCOPE
-        || !GunItem.canUse(player)
-        || !client.options.keyUse.isDown()
-        || !GunItem.isReady(stack) && !client.options.keyAttack.isDown()) {
+        if (player.isUsingItem()) {
+            ItemStack stack = player.getUseItem();
+            int delay = canUseScope(client, player, stack) ? 10 : 5;
+            if (stack.getItem() instanceof GunItem && GunItem.isLoaded(stack)
+            && player.getTicksUsingItem() >= GunItem.reloadDuration(stack) + delay) {
+
+                client.gameMode.releaseUsingItem(player);
+            }
+        }
+
+        ItemStack stack = player.getMainHandItem();
+        boolean canContinueScoping = client.options.keyUse.isDown()
+            && (GunItem.isReady(stack) || client.options.keyAttack.isDown());
+
+        if (!canUseScope(client, player, stack) || !canContinueScoping) {
             setScoping(client, false);
         }
-        if (!client.options.keyUse.isDown()) useKeyReleased = true;
+
+        if (!client.options.keyUse.isDown()) {
+            lockUseKey = false;
+        }
     }
 
     private static void setScoping(Minecraft client, boolean scoping) {

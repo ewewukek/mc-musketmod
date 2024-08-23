@@ -17,8 +17,7 @@ public class ReloadableServerRegistriesHolderMixin {
 
     @ModifyVariable(method = "getLootTable", at = @At("HEAD"))
     private ResourceKey<LootTable> storeTableId(ResourceKey<LootTable> key) {
-        this.key = key;
-        return key;
+        return (this.key = key);
     }
 
     @Inject(method = "getLootTable", at = @At("RETURN"))

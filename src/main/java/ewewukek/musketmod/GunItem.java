@@ -68,6 +68,12 @@ public abstract class GunItem extends Item {
         return 1;
     }
 
+    // use fireSound(ItemStack)
+    @Deprecated
+    public SoundEvent fireSound() {
+        return fireSound(ItemStack.EMPTY);
+    }
+
     public static boolean canUse(LivingEntity entity) {
         boolean creative = entity instanceof Player player && player.getAbilities().instabuild;
         return creative || (!entity.isEyeInFluid(FluidTags.WATER) && !entity.isEyeInFluid(FluidTags.LAVA));
@@ -106,6 +112,12 @@ public abstract class GunItem extends Item {
         if (isInHand(entity, InteractionHand.MAIN_HAND)) return InteractionHand.MAIN_HAND;
         if (isInHand(entity, InteractionHand.OFF_HAND)) return InteractionHand.OFF_HAND;
         return null;
+    }
+
+    public Vec3 smokeOffsetFor(LivingEntity entity, InteractionHand hand) {
+        HumanoidArm arm = hand == InteractionHand.MAIN_HAND
+            ? entity.getMainArm() : entity.getMainArm().getOpposite();
+        return smokeOffsetFor(entity, arm);
     }
 
     public Vec3 smokeOffsetFor(LivingEntity entity, HumanoidArm arm) {
@@ -152,9 +164,7 @@ public abstract class GunItem extends Item {
         if (isLoaded(stack)) {
             if (!level.isClientSide) {
                 Vec3 direction = Vec3.directionFromRotation(player.getXRot(), player.getYRot());
-                HumanoidArm arm = hand == InteractionHand.MAIN_HAND
-                    ? player.getMainArm() : player.getMainArm().getOpposite();
-                fire(player, stack, direction, smokeOffsetFor(player, arm));
+                fire(player, stack, direction, smokeOffsetFor(player, hand));
             }
             player.playSound(fireSound(stack), 3.5f, 1);
 
@@ -366,6 +376,18 @@ public abstract class GunItem extends Item {
         return 14;
     }
 
+    // use mobUse()
+    @Deprecated
+    public void fire(LivingEntity entity, Vec3 direction) {
+        ItemStack stack = entity.getMainHandItem();
+        InteractionHand hand = InteractionHand.MAIN_HAND;
+        if (!(stack.getItem() instanceof GunItem)) {
+            stack = entity.getOffhandItem();
+            hand = InteractionHand.OFF_HAND;
+        }
+        fire(entity, stack, direction, smokeOffsetFor(entity, hand));
+    }
+
     public void fire(LivingEntity entity, ItemStack stack, Vec3 direction, Vec3 smokeOffset) {
         Level level = entity.level();
         Vec3 origin = new Vec3(entity.getX(), entity.getEyeY(), entity.getZ());
@@ -403,7 +425,7 @@ public abstract class GunItem extends Item {
         }
     }
 
-    // for Wastelands of Baedoor
+    // COMPAT: Wastelands of Baedoor
     public static void increaseGunExperience(Player player) {
         final String NAME = "gun_experience";
         Scoreboard board = player.getScoreboard();

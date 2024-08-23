@@ -17,6 +17,13 @@ Small mod that adds craftable muskets and pistols.
 '''
 
 [[dependencies.musketmod]]
+modId="neoforge"
+type="required"
+versionRange="[21.0.0,21.1)"
+ordering="NONE"
+side="BOTH"
+
+[[dependencies.musketmod]]
 modId="cloth_config"
 type="required"
 versionRange="[15.0,)"

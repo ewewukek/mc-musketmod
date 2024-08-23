@@ -68,7 +68,10 @@ public class MinecraftMixin {
     @Redirect(method = "handleKeybinds", at = @At(value = "INVOKE",
         target = "Lnet/minecraft/client/Minecraft;startAttack()Z"))
     private boolean handleKeyAttack(Minecraft client) {
-        if (ScopedMusketItem.isScoping) return true;
+        if (ScopedMusketItem.isScoping) {
+            client.startUseItem();
+            return true;
+        }
         return client.startAttack();
     }
 

@@ -20,7 +20,6 @@ eclipse {
 }
 
 sourceSets.main.java { srcDir '../src/main/java' }
-sourceSets.main.java { srcDir '../src/modmenu/java' }
 sourceSets.main.resources { srcDir '../src/main/resources' }
 
 loom {

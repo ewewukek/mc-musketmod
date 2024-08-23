@@ -5,11 +5,7 @@ Adds craftable flintlock weapons.
 [Download from CurseForge](https://www.curseforge.com/minecraft/mc-mods/ewewukeks-musket-mod/files/all)\
 [Download from modrinth](https://modrinth.com/mod/ewewukeks-musket-mod/versions)
 
-### Forge
-
-No additional dependencies required.
-
-### Neoforge
+### Forge / Neoforge
 
 Requires [Cloth Config API](https://modrinth.com/mod/cloth-config).
 

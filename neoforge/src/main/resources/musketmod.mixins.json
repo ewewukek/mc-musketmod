@@ -11,9 +11,8 @@
   ],
   "mixins": [
     "AbstractSkeletonMixin",
-    "AnvilMenuMixin",
-    "EnchantmentHelperMixin",
     "EntityMixin",
+    "GunItemMixin",
     "PillagerMixin"
   ],
   "injectors": {

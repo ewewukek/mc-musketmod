@@ -14,8 +14,6 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.enchantment.Enchantment;
 import net.minecraft.world.item.enchantment.EnchantmentHelper;
 
-//for Forge/NeoForge
-
 @Mixin(EnchantmentHelper.class)
 public class EnchantmentHelperMixin {
     private static ItemStack enchantedStack;

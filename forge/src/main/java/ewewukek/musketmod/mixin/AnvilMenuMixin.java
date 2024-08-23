@@ -11,8 +11,6 @@ import net.minecraft.world.inventory.AnvilMenu;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.enchantment.Enchantment;
 
-// for Forge/NeoForge
-
 @Mixin(AnvilMenu.class)
 public class AnvilMenuMixin {
     private Holder<Enchantment> testedEnchantment;

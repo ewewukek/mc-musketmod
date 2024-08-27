@@ -5,6 +5,7 @@
   "refmap": "mixins.musketmod.refmap.json",
   "client": [
     "AbstractClientPlayerMixin",
+    "HumanoidModelMixin",
     "LocalPlayerMixin",
     "MinecraftMixin",
     "PlayerMixin",

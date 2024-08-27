@@ -4,11 +4,11 @@
   "compatibilityLevel": "JAVA_21",
   "client": [
     "AbstractClientPlayerMixin",
+    "HumanoidModelMixin",
     "ItemInHandRendererMixin",
     "LocalPlayerMixin",
     "MinecraftMixin",
     "PlayerMixin",
-    "PlayerRendererMixin",
     "SkeletonModelMixin"
   ],
   "mixins": [

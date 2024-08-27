@@ -4,6 +4,7 @@ import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.Redirect;
+import org.spongepowered.asm.mixin.injection.Slice;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import ewewukek.musketmod.GunItem;
@@ -30,6 +31,18 @@ public class MinecraftMixin {
     private boolean gunIsReady(Player player, InteractionHand hand, ItemStack stack) {
         return stack.getItem() instanceof GunItem gun
             && GunItem.isReady(stack) && gun.canUseFrom(player, hand);
+    }
+
+    @Redirect(method = "startUseItem", at = @At(value = "INVOKE",
+        target = "Lnet/minecraft/world/InteractionResult;consumesAction()Z"),
+        slice = @Slice(from = @At("HEAD"), to = @At(value = "INVOKE",
+            target = "Lnet/minecraft/client/multiplayer/MultiPlayerGameMode;useItem(Lnet/minecraft/world/entity/player/Player;Lnet/minecraft/world/InteractionHand;)Lnet/minecraft/world/InteractionResult;")))
+    private boolean consumesAction(InteractionResult result) {
+        if (result.consumesAction()) {
+            lockUseKey = true;
+            return true;
+        }
+        return false;
     }
 
     @Redirect(method = "startUseItem", at = @At(value = "INVOKE",

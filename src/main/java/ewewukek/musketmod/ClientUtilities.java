@@ -1,13 +1,11 @@
 package ewewukek.musketmod;
 
-import java.util.Optional;
-
 import org.apache.commons.lang3.tuple.Pair;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.math.Axis;
 
-import net.minecraft.client.model.HumanoidModel;
+import net.minecraft.client.model.geom.ModelPart;
 import net.minecraft.client.player.AbstractClientPlayer;
 import net.minecraft.client.renderer.ItemInHandRenderer;
 import net.minecraft.client.renderer.MultiBufferSource;
@@ -17,7 +15,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.HumanoidArm;
-import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.item.ItemStack;
 
@@ -34,14 +32,38 @@ public class ClientUtilities {
         ItemProperties.register(Items.PISTOL, location, predicate);
     }
 
-    public static Optional<HumanoidModel.ArmPose> getArmPose(Player player, InteractionHand hand) {
-        ItemStack stack = player.getItemInHand(hand);
-        if (!player.swinging && !stack.isEmpty() && stack.getItem() instanceof GunItem gun) {
-            if (gun.canUseFrom(player, hand) && GunItem.isLoaded(stack)) {
-                return Optional.of(HumanoidModel.ArmPose.CROSSBOW_HOLD);
+    public static void poseArm(LivingEntity entity, ModelPart rightArm, ModelPart leftArm, ModelPart head, boolean isRight) {
+        if (entity.isUsingItem()) {
+            return;
+        }
+
+        InteractionHand hand = entity.getMainArm() == (isRight ? HumanoidArm.RIGHT : HumanoidArm.LEFT)
+            ? InteractionHand.MAIN_HAND : InteractionHand.OFF_HAND;
+        ItemStack stack = entity.getItemInHand(hand);
+        if (stack.getItem() instanceof GunItem gun && gun.canUseFrom(entity, hand)) {
+            if (isRight) {
+                rightArm.xRot = head.xRot + 0.1f - Mth.HALF_PI;
+                rightArm.yRot = head.yRot -0.3f;
+            } else {
+                leftArm.xRot = head.xRot + 0.1f - Mth.HALF_PI;
+                leftArm.yRot = head.yRot + 0.3f;
             }
         }
-        return Optional.empty();
+
+        InteractionHand hand2 = hand == InteractionHand.MAIN_HAND
+            ? InteractionHand.OFF_HAND : InteractionHand.MAIN_HAND;
+        ItemStack stack2 = entity.getItemInHand(hand2);
+        if (stack2.getItem() instanceof GunItem gun2 && gun2.canUseFrom(entity, hand2)
+        && (gun2.twoHanded() || stack == ItemStack.EMPTY)) {
+            if (isRight) {
+                rightArm.xRot = head.xRot - 1.5f;
+                rightArm.yRot = head.yRot - 0.6f;
+
+            } else {
+                leftArm.xRot = head.xRot - 1.5f;
+                leftArm.yRot = head.yRot + 0.6f;
+            }
+        }
     }
 
     public static boolean disableMainHandEquipAnimation;

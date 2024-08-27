@@ -10,7 +10,6 @@ import ewewukek.musketmod.Config;
 import ewewukek.musketmod.GunItem;
 import ewewukek.musketmod.Items;
 import ewewukek.musketmod.RangedGunAttackGoal;
-import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ai.goal.RangedCrossbowAttackGoal;
@@ -99,13 +98,13 @@ public class PillagerMixin {
     @Inject(method = "getArmPose", at = @At("HEAD"), cancellable = true)
     private void getArmPose(CallbackInfoReturnable<AbstractIllager.IllagerArmPose> ci) {
         Pillager pillager = (Pillager)(Object)this;
-        InteractionHand hand = GunItem.getHoldingHand(pillager);
-        if (hand != null) {
-            ItemStack stack = pillager.getItemInHand(hand);
-            if (GunItem.isLoaded(stack)) {
+        if (GunItem.isHoldingGun(pillager)) {
+            if (pillager.isUsingItem()) {
+                ci.setReturnValue(AbstractIllager.IllagerArmPose.CROSSBOW_CHARGE);
+            } else {
                 ci.setReturnValue(AbstractIllager.IllagerArmPose.CROSSBOW_HOLD);
-                ci.cancel();
             }
+            ci.cancel();
         }
     }
 }

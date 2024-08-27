@@ -10,7 +10,6 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import ewewukek.musketmod.GunItem;
 import net.minecraft.client.model.HumanoidModel;
 import net.minecraft.client.model.SkeletonModel;
-import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.HumanoidArm;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.item.Item;
@@ -27,21 +26,12 @@ public class SkeletonModelMixin {
 
     @Inject(method = "prepareMobModel", at = @At("TAIL"))
     void prepareMobModel(CallbackInfo ci) {
-        if (mob != null) {
-            InteractionHand hand = GunItem.getHoldingHand(mob);
-            if (hand != null) {
-                ItemStack stack = mob.getItemInHand(hand);
-                HumanoidModel.ArmPose pose = GunItem.isLoaded(stack)
-                    ? HumanoidModel.ArmPose.CROSSBOW_HOLD
-                    : HumanoidModel.ArmPose.EMPTY;
-                SkeletonModel<?> model = (SkeletonModel<?>)(Object)this;
-                HumanoidArm arm = hand == InteractionHand.MAIN_HAND
-                    ? mob.getMainArm() : mob.getMainArm().getOpposite();
-                if (arm == HumanoidArm.RIGHT) {
-                    model.rightArmPose = pose;
-                } else {
-                    model.leftArmPose = pose;
-                }
+        if (GunItem.isHoldingGun(mob) && mob.isUsingItem()) {
+            SkeletonModel<?> model = (SkeletonModel<?>)(Object)this;
+            if (mob.getMainArm() == HumanoidArm.RIGHT) {
+                model.rightArmPose = HumanoidModel.ArmPose.CROSSBOW_CHARGE;
+            } else {
+                model.leftArmPose = HumanoidModel.ArmPose.CROSSBOW_CHARGE;
             }
         }
     }

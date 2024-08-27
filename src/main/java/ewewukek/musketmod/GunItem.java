@@ -227,7 +227,7 @@ public abstract class GunItem extends Item {
             n2 = direction.cross(n1);
         }
 
-        float angle = (float)Math.PI * 2 * random.nextFloat();
+        float angle = Mth.TWO_PI * random.nextFloat();
         // signs are not important for random angle
         return direction.scale(Mth.cos(coneAngle))
             .add(n1.scale(Mth.sin(coneAngle) * Mth.sin(angle)))

@@ -112,8 +112,8 @@ public class ClientUtilities {
         poseStack.translate(sign * 0.15, -0.25, -0.35);
 
         if (swingProgress > 0) {
-            float swingSharp = Mth.sin(Mth.sqrt(swingProgress) * (float)Math.PI);
-            float swingNormal = Mth.sin(swingProgress * (float)Math.PI);
+            float swingSharp = Mth.sin(Mth.sqrt(swingProgress) * Mth.PI);
+            float swingNormal = Mth.sin(swingProgress * Mth.PI);
 
             if (gun == Items.MUSKET_WITH_BAYONET) {
                 poseStack.translate(sign * -0.05 * swingNormal, 0, 0.05 - 0.3 * swingSharp);
@@ -148,7 +148,7 @@ public class ClientUtilities {
                 // hit down by ramrod
                 if (usingTicks >= ticksPerLoadingStage - 2 && loadingStage < loadingStages) {
                     t = (usingTicks - ticksPerLoadingStage + 2) / 2;
-                    t = Mth.sin((float)Math.PI / 2 * Mth.sqrt(t));
+                    t = Mth.sin(Mth.HALF_PI * Mth.sqrt(t));
                 }
                 poseStack.translate(0, 0, 0.025 * t);
 

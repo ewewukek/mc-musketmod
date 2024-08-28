@@ -44,22 +44,18 @@ public class ClientUtilities {
         GunItem.fireParticles(level, origin, direction);
     }
 
-    public static void poseArm(LivingEntity entity, ModelPart rightArm, ModelPart leftArm, ModelPart head, boolean isRight) {
+    public static boolean poseArm(LivingEntity entity, ModelPart arm, ModelPart head, boolean isRight) {
         if (entity.isUsingItem() || (entity instanceof Mob mob && !mob.isAggressive())) {
-            return;
+            return false;
         }
 
         InteractionHand hand = entity.getMainArm() == (isRight ? HumanoidArm.RIGHT : HumanoidArm.LEFT)
             ? InteractionHand.MAIN_HAND : InteractionHand.OFF_HAND;
         ItemStack stack = entity.getItemInHand(hand);
         if (stack.getItem() instanceof GunItem gun && gun.canUseFrom(entity, hand)) {
-            if (isRight) {
-                rightArm.xRot = head.xRot + 0.1f - Mth.HALF_PI;
-                rightArm.yRot = head.yRot -0.3f;
-            } else {
-                leftArm.xRot = head.xRot + 0.1f - Mth.HALF_PI;
-                leftArm.yRot = head.yRot + 0.3f;
-            }
+            arm.xRot = head.xRot + 0.1f - Mth.HALF_PI;
+            arm.yRot = head.yRot + (isRight ? -0.3f : 0.3f);
+            return true;
         }
 
         InteractionHand hand2 = hand == InteractionHand.MAIN_HAND
@@ -67,15 +63,12 @@ public class ClientUtilities {
         ItemStack stack2 = entity.getItemInHand(hand2);
         if (stack2.getItem() instanceof GunItem gun2 && gun2.canUseFrom(entity, hand2)
         && (gun2.twoHanded() || stack == ItemStack.EMPTY)) {
-            if (isRight) {
-                rightArm.xRot = head.xRot - 1.5f;
-                rightArm.yRot = head.yRot - 0.6f;
-
-            } else {
-                leftArm.xRot = head.xRot - 1.5f;
-                leftArm.yRot = head.yRot + 0.6f;
-            }
+            arm.xRot = head.xRot - 1.5f;
+            arm.yRot = head.yRot + (isRight ? -0.6f : 0.6f);
+            return true;
         }
+
+        return false;
     }
 
     public static boolean disableMainHandEquipAnimation;

@@ -25,7 +25,7 @@ public class CartridgeItem extends Item {
             Direction blockDirection = blockSource.state().getValue(DispenserBlock.FACING);
             Vec3 direction = new Vec3(blockDirection.getStepX(),
                 blockDirection.getStepY(),
-                blockDirection.getStepY());
+                blockDirection.getStepZ());
 
             Vec3 origin = blockSource.center();
             direction = GunItem.addSpread(direction, level.getRandom(), Config.dispenserBulletStdDev);

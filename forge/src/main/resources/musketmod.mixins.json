@@ -8,14 +8,16 @@
     "HumanoidModelMixin",
     "LocalPlayerMixin",
     "MinecraftMixin",
+    "MultiPlayerGameModeMixin",
     "PlayerMixin",
     "SkeletonModelMixin"
   ],
   "mixins": [
     "AbstractSkeletonMixin",
-    "AnvilMenuMixin",
-    "EnchantmentHelperMixin",
+    "EnchantmentMenuMixin",
+    "EnchantmentMixin",
     "EntityMixin",
+    "GunItemMixin",
     "PillagerMixin"
   ],
   "injectors": {

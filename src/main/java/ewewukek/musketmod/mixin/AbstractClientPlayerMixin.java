@@ -10,7 +10,7 @@ import ewewukek.musketmod.ScopedMusketItem;
 import net.minecraft.client.player.AbstractClientPlayer;
 
 @Mixin(AbstractClientPlayer.class)
-public class AbstractClientPlayerMixin {
+abstract class AbstractClientPlayerMixin {
     @Inject(method = "getFieldOfViewModifier", at = @At("HEAD"), cancellable = true)
     private void getFieldOfViewModifier(CallbackInfoReturnable<Float> ci) {
         if (ScopedMusketItem.isScoping) {

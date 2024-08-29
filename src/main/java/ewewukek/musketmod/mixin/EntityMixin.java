@@ -13,9 +13,9 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 
 @Mixin(Entity.class)
-public class EntityMixin {
+abstract class EntityMixin {
     @Inject(method = "spawnAtLocation(Lnet/minecraft/world/item/ItemStack;)Lnet/minecraft/world/entity/item/ItemEntity;", at = @At("HEAD"), cancellable = true)
-    void dropFromLootTable(ItemStack stack, CallbackInfoReturnable<ItemEntity> ci) {
+    private void spawnAtLocation(ItemStack stack, CallbackInfoReturnable<ItemEntity> ci) {
         Object object = this;
         if (stack.getItem() == Items.ARROW
         && (object instanceof AbstractSkeleton entity) && GunItem.isHoldingGun(entity)) {

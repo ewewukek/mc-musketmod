@@ -9,7 +9,7 @@ import ewewukek.musketmod.ScopedMusketItem;
 import net.minecraft.world.entity.player.Player;
 
 @Mixin(Player.class)
-public class PlayerMixin {
+abstract class PlayerMixin {
     @Inject(method = "isScoping", at = @At("HEAD"), cancellable = true)
     private void isScoping(CallbackInfoReturnable<Boolean> ci) {
         if (ScopedMusketItem.isScoping) {

@@ -1,9 +1,7 @@
 package ewewukek.musketmod;
 
-import net.minecraft.resources.ResourceKey;
-import net.minecraft.world.level.storage.loot.LootTable;
+import net.minecraft.resources.ResourceLocation;
 
 public interface ILootTableId {
-    ResourceKey<LootTable> getKey();
-    void setKey(ResourceKey<LootTable> key);
+    void setLocation(ResourceLocation location);
 }

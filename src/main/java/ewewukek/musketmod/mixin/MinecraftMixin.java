@@ -37,7 +37,6 @@ abstract class MinecraftMixin {
 
             setScoping(client, true);
             if (client.options.keyAttack.isDown()) {
-                ScopedMusketItem.recoilTicks = ScopedMusketItem.RECOIL_TICKS;
                 ClientUtilities.preventFiring = false;
                 return;
             }

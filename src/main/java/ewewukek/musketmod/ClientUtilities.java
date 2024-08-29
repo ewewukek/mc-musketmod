@@ -14,18 +14,18 @@ import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.item.ClampedItemPropertyFunction;
 import net.minecraft.client.renderer.item.ItemProperties;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.sounds.SoundEvents;
 import net.minecraft.util.Mth;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.HumanoidArm;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Mob;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.phys.Vec3;
 
 public class ClientUtilities {
-    public static boolean preventFiring;
-
     public static void registerItemProperties() {
         ClampedItemPropertyFunction predicate = (stack, level, player, seed) -> {
             return GunItem.isLoaded(stack) ? 1 : 0;
@@ -44,6 +44,21 @@ public class ClientUtilities {
         Vec3 origin = new Vec3(packet.origin());
         Vec3 direction = new Vec3(packet.direction());
         GunItem.fireParticles(level, origin, direction);
+    }
+
+    // for mixins
+    public static boolean canUseScope;
+    public static boolean attackKeyDown;
+    public static boolean preventFiring;
+
+    public static void setScoping(Player player, boolean scoping) {
+        if (scoping != ScopedMusketItem.isScoping) {
+            player.playSound(
+                scoping ? SoundEvents.SPYGLASS_USE : SoundEvents.SPYGLASS_STOP_USING,
+                1.0f, 1.0f);
+            ScopedMusketItem.isScoping = scoping;
+        }
+        if (!scoping) ScopedMusketItem.recoilTicks = 0;
     }
 
     public static boolean poseArm(LivingEntity entity, ModelPart arm, ModelPart head, boolean isRight) {
@@ -72,9 +87,6 @@ public class ClientUtilities {
 
         return false;
     }
-
-    public static boolean disableMainHandEquipAnimation;
-    public static boolean disableOffhandEquipAnimation;
 
     public static void renderGunInHand(ItemInHandRenderer renderer, AbstractClientPlayer player, InteractionHand hand, float dt, float pitch, float swingProgress, float equipProgress, ItemStack stack, PoseStack poseStack, MultiBufferSource bufferSource, int light) {
         if (player.isScoping()) {
@@ -167,6 +179,9 @@ public class ClientUtilities {
         renderer.renderItem(player, stack, isRightHand ? ItemDisplayContext.FIRST_PERSON_RIGHT_HAND : ItemDisplayContext.FIRST_PERSON_LEFT_HAND, !isRightHand, poseStack, bufferSource, light);
         poseStack.popPose();
     }
+
+    public static boolean disableMainHandEquipAnimation;
+    public static boolean disableOffhandEquipAnimation;
 
     public static boolean isEquipAnimationDisabled(InteractionHand hand) {
         if (hand == InteractionHand.MAIN_HAND) {

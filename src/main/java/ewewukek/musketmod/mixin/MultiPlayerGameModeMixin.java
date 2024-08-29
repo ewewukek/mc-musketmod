@@ -7,6 +7,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 import ewewukek.musketmod.ClientUtilities;
 import ewewukek.musketmod.GunItem;
+import ewewukek.musketmod.ScopedMusketItem;
 import net.minecraft.client.multiplayer.MultiPlayerGameMode;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
@@ -40,8 +41,19 @@ abstract class MultiPlayerGameModeMixin {
 
     @Inject(method = "useItem", at = @At("HEAD"), cancellable = true)
     private void useItemHead(Player player, InteractionHand hand, CallbackInfoReturnable<InteractionResult> ci) {
-        gunReady = false;
         ItemStack stack = player.getItemInHand(hand);
+        if (ClientUtilities.canUseScope && hand == InteractionHand.MAIN_HAND && GunItem.isReady(stack)) {
+            ClientUtilities.setScoping(player, true);
+            ClientUtilities.preventFiring = true;
+            if (ClientUtilities.attackKeyDown) {
+                return;
+            }
+        }
+        if (ScopedMusketItem.isScoping) {
+            ci.setReturnValue(InteractionResult.FAIL);
+            ci.cancel();
+        }
+        gunReady = false;
         if (stack.getItem() instanceof GunItem gun && GunItem.isReady(stack)
         && gun.canUseFrom(player, hand)) {
             gunReady = true;

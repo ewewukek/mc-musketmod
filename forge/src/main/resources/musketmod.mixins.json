@@ -8,6 +8,7 @@
     "HumanoidModelMixin",
     "LocalPlayerMixin",
     "MinecraftMixin",
+    "MultiPlayerGameModeMixin",
     "PlayerMixin",
     "SkeletonModelMixin"
   ],

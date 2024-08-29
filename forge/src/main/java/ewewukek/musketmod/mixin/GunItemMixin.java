@@ -9,12 +9,7 @@ import net.minecraft.world.item.enchantment.Enchantment;
 import net.minecraftforge.common.extensions.IForgeItem;
 
 @Mixin(GunItem.class)
-public class GunItemMixin implements IForgeItem {
-    @Override
-    public boolean isRepairable(ItemStack stack) {
-        return true;
-    }
-
+abstract class GunItemMixin implements IForgeItem {
     @Override
     public boolean canApplyAtEnchantingTable(ItemStack stack, Enchantment enchantment) {
         return VanillaHelper.canEnchant(enchantment, stack);

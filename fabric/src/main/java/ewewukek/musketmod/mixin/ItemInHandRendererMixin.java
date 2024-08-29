@@ -16,7 +16,7 @@ import net.minecraft.world.InteractionHand;
 import net.minecraft.world.item.ItemStack;
 
 @Mixin(ItemInHandRenderer.class)
-public class ItemInHandRendererMixin {
+abstract class ItemInHandRendererMixin {
     @Inject(method = "renderArmWithItem", at = @At(value = "HEAD"), cancellable = true)
     private void renderArmWithItem(AbstractClientPlayer player, float tickDelta, float pitch, InteractionHand hand, float swingProgress, ItemStack stack, float equipProgress, PoseStack matrices, MultiBufferSource vertexConsumers, int light, CallbackInfo ci) {
         if (stack.getItem() instanceof GunItem) {

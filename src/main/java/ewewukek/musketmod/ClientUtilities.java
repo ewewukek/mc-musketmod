@@ -21,6 +21,8 @@ import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.item.ItemStack;
 
 public class ClientUtilities {
+    public static boolean preventFiring;
+
     public static void registerItemProperties() {
         ClampedItemPropertyFunction predicate = (stack, level, player, seed) -> {
             return GunItem.isLoaded(stack) ? 1 : 0;

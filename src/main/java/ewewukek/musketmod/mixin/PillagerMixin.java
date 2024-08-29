@@ -18,7 +18,7 @@ import net.minecraft.world.entity.monster.Pillager;
 import net.minecraft.world.item.ItemStack;
 
 @Mixin(Pillager.class)
-public class PillagerMixin {
+abstract class PillagerMixin {
     @Inject(method = "registerGoals", at = @At("TAIL"))
     private void registerGoals(CallbackInfo ci) {
         Pillager pillager = (Pillager)(Object)this;
@@ -99,11 +99,9 @@ public class PillagerMixin {
     private void getArmPose(CallbackInfoReturnable<AbstractIllager.IllagerArmPose> ci) {
         Pillager pillager = (Pillager)(Object)this;
         if (GunItem.isHoldingGun(pillager)) {
-            if (pillager.isUsingItem()) {
-                ci.setReturnValue(AbstractIllager.IllagerArmPose.CROSSBOW_CHARGE);
-            } else {
-                ci.setReturnValue(AbstractIllager.IllagerArmPose.CROSSBOW_HOLD);
-            }
+            ci.setReturnValue(pillager.isUsingItem()
+                ? AbstractIllager.IllagerArmPose.CROSSBOW_CHARGE
+                : AbstractIllager.IllagerArmPose.CROSSBOW_HOLD);
             ci.cancel();
         }
     }

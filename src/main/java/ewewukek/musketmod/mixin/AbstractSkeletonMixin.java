@@ -16,7 +16,7 @@ import net.minecraft.world.entity.monster.AbstractSkeleton;
 import net.minecraft.world.item.ItemStack;
 
 @Mixin(AbstractSkeleton.class)
-public class AbstractSkeletonMixin {
+abstract class AbstractSkeletonMixin {
     @Inject(method = "registerGoals", at = @At("TAIL"))
     private void registerGoals(CallbackInfo ci) {
         AbstractSkeleton skeleton = (AbstractSkeleton)(Object)this;

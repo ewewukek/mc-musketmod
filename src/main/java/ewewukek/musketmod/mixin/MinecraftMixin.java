@@ -1,98 +1,65 @@
 package ewewukek.musketmod.mixin;
 
 import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
-import org.spongepowered.asm.mixin.injection.Redirect;
-import org.spongepowered.asm.mixin.injection.Slice;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
+import ewewukek.musketmod.ClientUtilities;
 import ewewukek.musketmod.GunItem;
 import ewewukek.musketmod.Items;
 import ewewukek.musketmod.ScopedMusketItem;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.multiplayer.MultiPlayerGameMode;
 import net.minecraft.sounds.SoundEvents;
-import net.minecraft.world.InteractionHand;
-import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 
 @Mixin(Minecraft.class)
-public class MinecraftMixin {
-    private static boolean lockUseKey;
+abstract class MinecraftMixin {
+    @Shadow
+    protected abstract void startUseItem();
 
-    private boolean canUseScope(Minecraft client, Player player, ItemStack stack) {
+    private static boolean canUseScope(Minecraft client, Player player, ItemStack stack) {
         return stack.getItem() == Items.MUSKET_WITH_SCOPE
             && GunItem.canUse(player)
             && client.options.getCameraType().isFirstPerson();
     }
 
-    private boolean gunIsReady(Player player, InteractionHand hand, ItemStack stack) {
-        return stack.getItem() instanceof GunItem gun
-            && GunItem.isReady(stack) && gun.canUseFrom(player, hand);
-    }
-
-    @Redirect(method = "startUseItem", at = @At(value = "INVOKE",
-        target = "Lnet/minecraft/world/InteractionResult;consumesAction()Z"),
-        slice = @Slice(from = @At("HEAD"), to = @At(value = "INVOKE",
-            target = "Lnet/minecraft/client/multiplayer/MultiPlayerGameMode;useItem(Lnet/minecraft/world/entity/player/Player;Lnet/minecraft/world/InteractionHand;)Lnet/minecraft/world/InteractionResult;")))
-    private boolean consumesAction(InteractionResult result) {
-        if (result.consumesAction()) {
-            lockUseKey = true;
-            return true;
-        }
-        return false;
-    }
-
-    @Redirect(method = "startUseItem", at = @At(value = "INVOKE",
-        target = "Lnet/minecraft/client/multiplayer/MultiPlayerGameMode;useItem(Lnet/minecraft/world/entity/player/Player;Lnet/minecraft/world/InteractionHand;)Lnet/minecraft/world/InteractionResult;"))
-    private InteractionResult onUseItem(MultiPlayerGameMode gameMode, Player player, InteractionHand hand) {
+    @Inject(method = "startUseItem", at = @At("HEAD"), cancellable = true)
+    private void startUseItemInject(CallbackInfo ci) {
         Minecraft client = (Minecraft)(Object)this;
-        ItemStack stack = player.getItemInHand(hand);
-        boolean bothGunsLoaded = false;
+        ItemStack stack = client.player.getMainHandItem();
 
-        if (gunIsReady(player, hand, stack)) {
-            if (canUseScope(client, player, stack)) {
-                lockUseKey = true;
-                setScoping(client, true);
-                if (client.options.keyAttack.isDown()) {
-                    ScopedMusketItem.recoilTicks = ScopedMusketItem.RECOIL_TICKS;
-                    return gameMode.useItem(player, hand);
-                }
+        if (stack.getItem() instanceof GunItem && GunItem.isReady(stack)
+        && canUseScope(client, client.player, stack)) {
+
+            setScoping(client, true);
+            if (client.options.keyAttack.isDown()) {
+                ScopedMusketItem.recoilTicks = ScopedMusketItem.RECOIL_TICKS;
+                ClientUtilities.preventFiring = false;
+                return;
             }
-            if (lockUseKey) return InteractionResult.FAIL;
-
-            InteractionHand hand2 = hand == InteractionHand.MAIN_HAND
-                ? InteractionHand.OFF_HAND : InteractionHand.MAIN_HAND;
-            ItemStack stack2 = player.getItemInHand(hand2);
-
-            bothGunsLoaded = gunIsReady(player, hand2, stack2);
         }
-        if (ScopedMusketItem.isScoping) return InteractionResult.FAIL;
-
-        InteractionResult result = gameMode.useItem(player, hand);
-        if (result.consumesAction() && !bothGunsLoaded) {
-            lockUseKey = true;
-        }
-        return result;
-    }
-
-    @Redirect(method = "handleKeybinds", at = @At(value = "INVOKE",
-        target = "Lnet/minecraft/client/Minecraft;startAttack()Z"))
-    private boolean handleKeyAttack(Minecraft client) {
         if (ScopedMusketItem.isScoping) {
-            client.startUseItem();
-            return true;
+            ci.cancel();
         }
-        return client.startAttack();
     }
 
-    @Redirect(method = "handleKeybinds", at = @At(value = "INVOKE",
-        target = "Lnet/minecraft/client/Minecraft;continueAttack(Z)V"))
-    private void continueAttack(Minecraft client, boolean missed) {
-        if (ScopedMusketItem.isScoping) return;
-        client.continueAttack(missed);
+    @Inject(method = "startAttack", at = @At("HEAD"), cancellable = true)
+    private void startAttack(CallbackInfoReturnable<Boolean> ci) {
+        if (ScopedMusketItem.isScoping) {
+            startUseItem();
+            ci.cancel();
+        }
+    }
+
+    @Inject(method = "continueAttack", at = @At("HEAD"), cancellable = true)
+    private void continueAttack(CallbackInfo ci) {
+        if (ScopedMusketItem.isScoping) {
+            ci.cancel();
+        }
     }
 
     @Inject(method = "handleKeybinds", at = @At("HEAD"))
@@ -119,7 +86,7 @@ public class MinecraftMixin {
         }
 
         if (!client.options.keyUse.isDown()) {
-            lockUseKey = false;
+            ClientUtilities.preventFiring = false;
         }
     }
 

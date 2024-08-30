@@ -1,6 +1,7 @@
 package ewewukek.musketmod;
 
 import net.minecraft.core.Direction;
+import net.minecraft.core.Position;
 import net.minecraft.core.dispenser.BlockSource;
 import net.minecraft.core.dispenser.DefaultDispenseItemBehavior;
 import net.minecraft.core.dispenser.DispenseItemBehavior;
@@ -27,11 +28,12 @@ public class CartridgeItem extends Item {
                 blockDirection.getStepY(),
                 blockDirection.getStepZ());
 
-            Vec3 origin = blockSource.center();
+            Position position = DispenserBlock.getDispensePosition(blockSource);
+            Vec3 origin = new Vec3(position.x(), position.y(), position.z());
             direction = GunItem.addSpread(direction, level.getRandom(), Config.dispenserBulletStdDev);
 
             BulletEntity bullet = new BulletEntity(level);
-            bullet.setPos(origin.add(direction.scale(0.5)));
+            bullet.setPos(origin);
             bullet.setVelocity(Config.dispenserBulletSpeed, direction);
             bullet.damage = Config.dispenserDamage;
 

@@ -52,6 +52,7 @@ abstract class MinecraftMixin {
             if (usedStack.getItem() instanceof GunItem && GunItem.isLoaded(usedStack)
             && player.getTicksUsingItem() >= GunItem.reloadDuration(usedStack) + delay) {
 
+                ClientUtilities.preventFiring = true;
                 client.gameMode.releaseUsingItem(player);
             }
         }

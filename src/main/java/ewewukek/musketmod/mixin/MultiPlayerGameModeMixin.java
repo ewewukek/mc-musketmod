@@ -9,13 +9,41 @@ import ewewukek.musketmod.ClientUtilities;
 import ewewukek.musketmod.GunItem;
 import ewewukek.musketmod.ScopedMusketItem;
 import net.minecraft.client.multiplayer.MultiPlayerGameMode;
+import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
+import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.phys.BlockHitResult;
+import net.minecraft.world.phys.EntityHitResult;
 
 @Mixin(MultiPlayerGameMode.class)
 abstract class MultiPlayerGameModeMixin {
+    @Inject(method = "interactAt", at = @At("HEAD"), cancellable = true)
+    private void interactAtHead(Player player, Entity entity, EntityHitResult hitResult, InteractionHand hand, CallbackInfoReturnable<InteractionResult> ci) {
+        if (ScopedMusketItem.isScoping) {
+            ci.setReturnValue(InteractionResult.FAIL);
+            ci.cancel();
+        }
+    }
+
+    @Inject(method = "interact", at = @At("HEAD"), cancellable = true)
+    private void interactHead(Player player, Entity entity, InteractionHand hand, CallbackInfoReturnable<InteractionResult> ci) {
+        if (ScopedMusketItem.isScoping) {
+            ci.setReturnValue(InteractionResult.FAIL);
+            ci.cancel();
+        }
+    }
+
+    @Inject(method = "useItemOn", at = @At("HEAD"), cancellable = true)
+    private void useItemOnHead(LocalPlayer player, InteractionHand hand, BlockHitResult hitResult, CallbackInfoReturnable<InteractionResult> ci) {
+        if (ScopedMusketItem.isScoping) {
+            ci.setReturnValue(InteractionResult.FAIL);
+            ci.cancel();
+        }
+    }
+
     @Inject(method = "interactAt", at = @At("RETURN"))
     private void interactAt(CallbackInfoReturnable<InteractionResult> ci) {
         if (ci.getReturnValue().consumesAction()) {

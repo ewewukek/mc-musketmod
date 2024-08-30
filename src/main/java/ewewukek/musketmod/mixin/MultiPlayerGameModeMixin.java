@@ -44,35 +44,11 @@ abstract class MultiPlayerGameModeMixin {
         }
     }
 
-    @Inject(method = "interactAt", at = @At("RETURN"))
-    private void interactAt(CallbackInfoReturnable<InteractionResult> ci) {
-        if (ci.getReturnValue().consumesAction()) {
-            ClientUtilities.preventFiring = true;
-        }
-    }
-
-    @Inject(method = "interact", at = @At("RETURN"))
-    private void interact(CallbackInfoReturnable<InteractionResult> ci) {
-        if (ci.getReturnValue().consumesAction()) {
-            ClientUtilities.preventFiring = true;
-        }
-    }
-
-    @Inject(method = "useItemOn", at = @At("RETURN"))
-    private void useItemOn(CallbackInfoReturnable<InteractionResult> ci) {
-        if (ci.getReturnValue().consumesAction()) {
-            ClientUtilities.preventFiring = true;
-        }
-    }
-
-    private boolean gunReady;
-
     @Inject(method = "useItem", at = @At("HEAD"), cancellable = true)
     private void useItemHead(Player player, InteractionHand hand, CallbackInfoReturnable<InteractionResult> ci) {
         ItemStack stack = player.getItemInHand(hand);
         if (ClientUtilities.canUseScope && hand == InteractionHand.MAIN_HAND && GunItem.isReady(stack)) {
             ClientUtilities.setScoping(player, true);
-            ClientUtilities.preventFiring = true;
             if (ClientUtilities.attackKeyDown) {
                 return;
             }
@@ -81,21 +57,10 @@ abstract class MultiPlayerGameModeMixin {
             ci.setReturnValue(InteractionResult.FAIL);
             ci.cancel();
         }
-        gunReady = false;
         if (stack.getItem() instanceof GunItem gun && GunItem.isReady(stack)
-        && gun.canUseFrom(player, hand)) {
-            gunReady = true;
-            if (ClientUtilities.preventFiring) {
-                ci.setReturnValue(InteractionResult.FAIL);
-                ci.cancel();
-            }
-        }
-    }
-
-    @Inject(method = "useItem", at = @At("RETURN"))
-    private void useItemTail(CallbackInfoReturnable<InteractionResult> ci) {
-        if (!gunReady && ci.getReturnValue().consumesAction()) {
-            ClientUtilities.preventFiring = true;
+        && gun.canUseFrom(player, hand) && ClientUtilities.preventFiring) {
+            ci.setReturnValue(InteractionResult.FAIL);
+            ci.cancel();
         }
     }
 }

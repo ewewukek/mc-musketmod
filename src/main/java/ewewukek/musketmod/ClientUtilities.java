@@ -62,7 +62,7 @@ public class ClientUtilities {
     }
 
     public static boolean poseArm(LivingEntity entity, ModelPart arm, ModelPart head, boolean isRight) {
-        if (entity.isUsingItem() || (entity instanceof Mob mob && !mob.isAggressive())) {
+        if (entity == null || entity.isUsingItem() || (entity instanceof Mob mob && !mob.isAggressive())) {
             return false;
         }
 

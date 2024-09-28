@@ -298,6 +298,10 @@ public class BulletEntity extends AbstractHurtingProjectile {
         float damageMult = 1.0f;
         Entity target = hitResult.getEntity();
         Entity shooter = getOwner();
+        if (shooter.getTeam() != null && shooter.getTeam().isAlliedTo(target.getTeam())
+        && !shooter.getTeam().isAllowFriendlyFire()) {
+            return;
+        }
         if (shooter instanceof Player playerShooter) {
             if (target instanceof Player playerTarget) {
                 damageMult = Config.pvpDamageMultiplier;

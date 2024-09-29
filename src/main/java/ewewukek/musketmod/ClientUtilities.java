@@ -6,6 +6,7 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.math.Axis;
 
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.model.HumanoidModel;
 import net.minecraft.client.model.geom.ModelPart;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.player.AbstractClientPlayer;
@@ -61,17 +62,19 @@ public class ClientUtilities {
         if (!scoping) ScopedMusketItem.recoilTicks = 0;
     }
 
-    public static boolean poseArm(LivingEntity entity, ModelPart arm, ModelPart head, boolean isRight) {
+    public static boolean poseArm(LivingEntity entity, HumanoidModel<? extends LivingEntity> model, ModelPart arm) {
         if (entity == null || entity.isUsingItem() || (entity instanceof Mob mob && !mob.isAggressive())) {
             return false;
         }
 
+        boolean isRight = arm == model.rightArm;
         InteractionHand hand = entity.getMainArm() == (isRight ? HumanoidArm.RIGHT : HumanoidArm.LEFT)
             ? InteractionHand.MAIN_HAND : InteractionHand.OFF_HAND;
         ItemStack stack = entity.getItemInHand(hand);
         if (stack.getItem() instanceof GunItem gun && gun.canUseFrom(entity, hand)) {
-            arm.xRot = head.xRot + 0.1f - Mth.HALF_PI;
-            arm.yRot = head.yRot + (isRight ? -0.3f : 0.3f);
+            arm.xRot = model.head.xRot + 0.1f - Mth.HALF_PI;
+            if (model.crouching) arm.xRot -= 0.4f;
+            arm.yRot = model.head.yRot + (isRight ? -0.3f : 0.3f);
             return true;
         }
 
@@ -80,8 +83,9 @@ public class ClientUtilities {
         ItemStack stack2 = entity.getItemInHand(hand2);
         if (stack2.getItem() instanceof GunItem gun2 && gun2.canUseFrom(entity, hand2)
         && (gun2.twoHanded() || stack == ItemStack.EMPTY)) {
-            arm.xRot = head.xRot - 1.5f;
-            arm.yRot = head.yRot + (isRight ? -0.6f : 0.6f);
+            arm.xRot = model.head.xRot - 1.5f;
+            if (model.crouching) arm.xRot -= 0.4f;
+            arm.yRot = model.head.yRot + (isRight ? -0.6f : 0.6f);
             return true;
         }
 

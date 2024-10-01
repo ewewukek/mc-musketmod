@@ -35,7 +35,7 @@ abstract class SkeletonModelMixin {
     @Inject(method = "setupAnim", cancellable = true, at = @At(value = "INVOKE", shift = At.Shift.BEFORE,
         target = "Lnet/minecraft/world/entity/Mob;getMainHandItem()Lnet/minecraft/world/item/ItemStack;"))
     private void setupAnim(CallbackInfo ci) {
-        if (GunItem.isHoldingGun(mob)) {
+        if (mob != null && GunItem.isHoldingGun(mob)) {
             ci.cancel();
         }
     }

@@ -27,7 +27,7 @@ abstract class HumanoidModelMixin {
     @Inject(method = "poseRightArm", at = @At("TAIL"))
     private void poseRightArm(CallbackInfo ci) {
         HumanoidModel<?> model = (HumanoidModel<?>)(Object)this;
-        if (ClientUtilities.poseArm(entity, model, model.rightArm)) {
+        if (entity != null && ClientUtilities.poseArm(entity, model, model.rightArm)) {
             model.rightArmPose = ArmPose.SPYGLASS; // to disable AnimationUtils.bobModelPart call
         }
     }
@@ -35,7 +35,7 @@ abstract class HumanoidModelMixin {
     @Inject(method = "poseLeftArm", at = @At("TAIL"))
     private void poseLeftArm(CallbackInfo ci) {
         HumanoidModel<?> model = (HumanoidModel<?>)(Object)this;
-        if (ClientUtilities.poseArm(entity, model, model.leftArm)) {
+        if (entity != null && ClientUtilities.poseArm(entity, model, model.leftArm)) {
             model.leftArmPose = ArmPose.SPYGLASS; // to disable AnimationUtils.bobModelPart call
         }
     }

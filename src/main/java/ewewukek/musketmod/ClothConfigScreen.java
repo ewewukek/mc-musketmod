@@ -66,6 +66,12 @@ public class ClothConfigScreen {
             .setDefaultValue(Config.MUSKET_SKELETON_CHANCE)
             .build());
 
+        commonCategory.addEntry(entryBuilder.startBooleanToggle(
+            Component.translatable("musketmod.options.always_aim"), Config.alwaysAim)
+            .setSaveConsumer(value -> Config.alwaysAim = value)
+            .setDefaultValue(Config.ALWAYS_AIM)
+            .build());
+
         ConfigCategory musketCategory = builder.getOrCreateCategory(Component.translatable("item.musketmod.musket"));
 
         musketCategory.addEntry(entryBuilder.startFloatField(

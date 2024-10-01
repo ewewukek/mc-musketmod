@@ -166,12 +166,12 @@
   "gui_light": "front",
   "display": {
     "thirdperson_righthand": {
-      "rotation": [0, -105, 40],
+      "rotation": [0, -90, 40],
       "translation": [0, 1, 0],
       "scale": [0.9, 0.9, 0.9]
     },
     "thirdperson_lefthand": {
-      "rotation": [0, 75, -40],
+      "rotation": [0, 90, -40],
       "translation": [0, 1, 0],
       "scale": [0.9, 0.9, 0.9]
     },
@@ -198,6 +198,19 @@
         "musketmod:loaded": 1
       },
       "model": "musketmod:item/pistol_loaded"
+    },
+    {
+      "predicate": {
+        "musketmod:aiming": 1
+      },
+      "model": "musketmod:item/pistol_aiming"
+    },
+    {
+      "predicate": {
+        "musketmod:aiming": 1,
+        "musketmod:loaded": 1
+      },
+      "model": "musketmod:item/pistol_aiming_loaded"
     }
   ]
 }

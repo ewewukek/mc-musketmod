@@ -33,6 +33,9 @@ public class Config {
     public static float musketSkeletonChance;
     public static final float MUSKET_SKELETON_CHANCE = 0.05f;
 
+    public static boolean alwaysAim;
+    public static final boolean ALWAYS_AIM = false;
+
     public static float damagePerPowerLevel;
     public static final float DAMAGE_PER_POWER_LEVEL = 0.5f;
 

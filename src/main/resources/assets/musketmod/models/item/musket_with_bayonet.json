@@ -287,6 +287,32 @@
         "musketmod:loaded": 1
       },
       "model": "musketmod:item/musket_with_bayonet_loaded"
+    },
+    {
+      "predicate": {
+        "musketmod:loading": 1
+      },
+      "model": "musketmod:item/musket_with_bayonet_loading"
+    },
+    {
+      "predicate": {
+        "musketmod:loading": 1,
+        "musketmod:loaded": 1
+      },
+      "model": "musketmod:item/musket_with_bayonet_loading_loaded"
+    },
+    {
+      "predicate": {
+        "musketmod:aiming": 1
+      },
+      "model": "musketmod:item/musket_with_bayonet_aiming"
+    },
+    {
+      "predicate": {
+        "musketmod:aiming": 1,
+        "musketmod:loaded": 1
+      },
+      "model": "musketmod:item/musket_with_bayonet_aiming_loaded"
     }
   ]
 }

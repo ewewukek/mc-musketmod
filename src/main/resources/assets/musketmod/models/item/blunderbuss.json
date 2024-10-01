@@ -218,6 +218,32 @@
         "musketmod:loaded": 1
       },
       "model": "musketmod:item/blunderbuss_loaded"
+    },
+    {
+      "predicate": {
+        "musketmod:loading": 1
+      },
+      "model": "musketmod:item/blunderbuss_loading"
+    },
+    {
+      "predicate": {
+        "musketmod:loading": 1,
+        "musketmod:loaded": 1
+      },
+      "model": "musketmod:item/blunderbuss_loading_loaded"
+    },
+    {
+      "predicate": {
+        "musketmod:aiming": 1
+      },
+      "model": "musketmod:item/blunderbuss_aiming"
+    },
+    {
+      "predicate": {
+        "musketmod:aiming": 1,
+        "musketmod:loaded": 1
+      },
+      "model": "musketmod:item/blunderbuss_aiming_loaded"
     }
   ]
 }

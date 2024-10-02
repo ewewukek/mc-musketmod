@@ -19,6 +19,7 @@ import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.HumanoidArm;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Mob;
+import net.minecraft.world.entity.monster.Pillager;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.item.ItemStack;
@@ -93,7 +94,7 @@ public class ClientUtilities {
 
     public static boolean shouldAim(LivingEntity entity, ItemStack stack, InteractionHand hand) {
         if (entity.isUsingItem()) return false;
-        if (entity instanceof Mob mob) return mob.isAggressive();
+        if (entity instanceof Mob mob) return mob.isAggressive() || (mob instanceof Pillager);
 
         return ((GunItem)stack.getItem()).canUseFrom(entity, hand)
             && (GunItem.isLoaded(stack) || Config.alwaysAim);

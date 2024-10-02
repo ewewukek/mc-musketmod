@@ -257,6 +257,17 @@ public abstract class GunItem extends Item {
         ).normalize();
     }
 
+    public static void mobReload(LivingEntity entity, InteractionHand hand) {
+        if (entity.isUsingItem()) return;
+        Level level = entity.level();
+        if (level.isClientSide) return;
+        ItemStack stack = entity.getItemInHand(hand);
+        if (isLoaded(stack)) return;
+
+        GunItem.setLoadingStage(stack, 1);
+        entity.startUsingItem(hand);
+    }
+
     public void mobUse(LivingEntity entity, InteractionHand hand, Vec3 direction) {
         ItemStack stack = entity.getItemInHand(hand);
         HumanoidArm arm = entity.getMainArm();

@@ -45,7 +45,7 @@ abstract class LocalPlayerMixin {
 
     @Inject(method = "getViewXRot", at = @At(value = "HEAD"), cancellable = true)
     private void getViewXRot(float dt, CallbackInfoReturnable<Float> ci) {
-        if (ScopedMusketItem.recoilTicks > 0) {
+        if (ScopedMusketItem.isScoping && ScopedMusketItem.recoilTicks > 0) {
             LocalPlayer player = (LocalPlayer)(Object)this;
             float xRot = player.getXRot() - (ScopedMusketItem.recoilTicks - dt) * ScopedMusketItem.RECOIL_AMOUNT;
             ci.setReturnValue(xRot);

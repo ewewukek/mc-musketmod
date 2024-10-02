@@ -239,6 +239,9 @@ public abstract class GunItem extends Item {
         double ticks = 20 * dist / bulletSpeed();
         // predicted bullet drop
         double bulletDrop = 0.5 * ticks * ticks * BulletEntity.GRAVITY;
+        if (this == Items.MUSKET_WITH_SCOPE) {
+            bulletDrop *= Config.bulletGravityMultiplier;
+        }
         Vec3 pos = new Vec3(
             target.getX(),
             0.5 * (target.getEyeY() + target.getY(0.5)),

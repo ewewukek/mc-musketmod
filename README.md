@@ -85,13 +85,23 @@ Settings can be accessed from NeoForge's mods menu or via [Mod Menu](https://mod
 
 Bullet spread follows normal distribution like in real life but it is awkward to configure. Here is a simple table that could help with that: [bulletStdDev](STDDEV.md "bulletStdDev")
 
-Loot tables in namespace `musketmod` add items to matching vanilla loot tables.
+Loot tables in namespace `musketmod` add items to matching vanilla loot tables. `pillager_weapon` and `skeleton_weapon` control what gun corresponding monster will get.
 
 `item/enchantable/*` tags control what enchantments can be added to the guns.\
 `block/*_by_bullets` tags control which blocks would be destroyed or dropped by bullets.\
 `entity_type/headshotable` tag controls which mobs are considered for headshot detection.
 
-[Blockbench models](blockbench) have preconfigured display settings making exporting easier. You'll only need to copy "overrides" from defaults.
+#### 3D Modeling
+
+Mod provides following model predicates:
+
+- "loaded" - hammer is cocked
+- "loading" - matches loading animation in 3rd person
+- "aiming" - matches crossbow hold pose in 3rd person
+
+Example: [musket.json](src/main/resources/assets/musketmod/models/item/musket.json#L255)
+
+Mod's blockbench models can be found [here](blockbench).
 
 ### Permissions
 

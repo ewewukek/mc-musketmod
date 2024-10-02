@@ -32,7 +32,8 @@ public class ClientUtilities {
             return GunItem.isLoaded(stack) ? 1 : 0;
         });
         registerItemPredicate(MusketMod.resource("loading"), (stack, level, entity, seed) -> {
-            return (entity != null && entity.isUsingItem() && entity.getUseItem() == stack)
+            return (entity != null && entity.isUsingItem()
+            && entity.getItemInHand(entity.getUsedItemHand()) == stack)
                 ? 1 : 0;
         });
         registerItemPredicate(MusketMod.resource("aiming"), (stack, level, entity, seed) -> {

@@ -10,7 +10,6 @@ import net.minecraft.world.phys.Vec3;
 
 public class RangedGunAttackGoal<T extends Monster> extends Goal {
     public final T mob;
-    private boolean isLoading;
 
     public RangedGunAttackGoal(T mob) {
         this(mob, EnumSet.of(Flag.MOVE, Flag.LOOK));
@@ -43,7 +42,7 @@ public class RangedGunAttackGoal<T extends Monster> extends Goal {
     }
 
     public boolean isLoading() {
-        return isLoading;
+        return mob.isUsingItem();
     }
 
     public void onReady() {
@@ -54,10 +53,9 @@ public class RangedGunAttackGoal<T extends Monster> extends Goal {
         if (hand == null) return;
 
         ItemStack stack = mob.getItemInHand(hand);
-        if (!isLoading && !GunItem.isLoaded(stack)) {
+        if (!isLoading() && !GunItem.isLoaded(stack)) {
             GunItem.setLoadingStage(stack, 1);
             mob.startUsingItem(hand);
-            isLoading = true;
         }
     }
 
@@ -81,15 +79,10 @@ public class RangedGunAttackGoal<T extends Monster> extends Goal {
 
     @Override
     public void tick() {
-        if (isLoading) {
-            if (mob.isUsingItem()) {
-                if (GunItem.isLoaded(mob.getUseItem())) {
-                    mob.releaseUsingItem();
-                    isLoading = false;
-                    onReady();
-                }
-            } else {
-                isLoading = false;
+        if (isLoading()) {
+            if (GunItem.isLoaded(mob.getUseItem())) {
+                mob.releaseUsingItem();
+                onReady();
             }
         }
     }
@@ -99,7 +92,6 @@ public class RangedGunAttackGoal<T extends Monster> extends Goal {
         super.stop();
         mob.setAggressive(false);
         mob.setTarget(null);
-        isLoading = false;
         if (mob.isUsingItem()) {
             mob.stopUsingItem();
         }

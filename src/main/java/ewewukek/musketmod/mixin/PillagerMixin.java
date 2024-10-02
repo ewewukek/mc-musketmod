@@ -8,8 +8,10 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 import ewewukek.musketmod.Config;
 import ewewukek.musketmod.GunItem;
-import ewewukek.musketmod.Items;
+import ewewukek.musketmod.MusketMod;
 import ewewukek.musketmod.RangedGunAttackGoal;
+import ewewukek.musketmod.VanillaHelper;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ai.goal.RangedCrossbowAttackGoal;
@@ -19,6 +21,8 @@ import net.minecraft.world.item.ItemStack;
 
 @Mixin(Pillager.class)
 abstract class PillagerMixin {
+    private static final ResourceLocation LOOT_TABLE = MusketMod.resource("pillager_weapon");
+
     @Inject(method = "registerGoals", at = @At("TAIL"))
     private void registerGoals(CallbackInfo ci) {
         Pillager pillager = (Pillager)(Object)this;
@@ -91,7 +95,10 @@ abstract class PillagerMixin {
     private void populateDefaultEquipmentSlots(CallbackInfo ci) {
         Pillager pillager = (Pillager)(Object)this;
         if (pillager.getRandom().nextFloat() < Config.pistolPillagerChance) {
-            pillager.setItemSlot(EquipmentSlot.MAINHAND, new ItemStack(Items.PISTOL));
+            ItemStack weapon = VanillaHelper.getRandomWeapon(pillager, LOOT_TABLE);
+            if (!weapon.isEmpty()) {
+                pillager.setItemSlot(EquipmentSlot.MAINHAND, weapon);
+            }
         }
     }
 

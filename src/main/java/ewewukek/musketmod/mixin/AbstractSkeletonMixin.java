@@ -6,8 +6,10 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import ewewukek.musketmod.Config;
-import ewewukek.musketmod.Items;
+import ewewukek.musketmod.MusketMod;
 import ewewukek.musketmod.RangedGunAttackGoal;
+import ewewukek.musketmod.VanillaHelper;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.Difficulty;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.LivingEntity;
@@ -17,6 +19,8 @@ import net.minecraft.world.item.ItemStack;
 
 @Mixin(AbstractSkeleton.class)
 abstract class AbstractSkeletonMixin {
+    private static final ResourceLocation LOOT_TABLE = MusketMod.resource("skeleton_weapon");
+
     @Inject(method = "registerGoals", at = @At("TAIL"))
     private void registerGoals(CallbackInfo ci) {
         AbstractSkeleton skeleton = (AbstractSkeleton)(Object)this;
@@ -131,7 +135,10 @@ abstract class AbstractSkeletonMixin {
         AbstractSkeleton skeleton = (AbstractSkeleton)(Object)this;
         if (skeleton.level().getDifficulty() != Difficulty.EASY
         && skeleton.getRandom().nextFloat() < Config.musketSkeletonChance) {
-            skeleton.setItemSlot(EquipmentSlot.MAINHAND, new ItemStack(Items.MUSKET));
+            ItemStack weapon = VanillaHelper.getRandomWeapon(skeleton, LOOT_TABLE);
+            if (!weapon.isEmpty()) {
+                skeleton.setItemSlot(EquipmentSlot.MAINHAND, weapon);
+            }
         }
     }
 }

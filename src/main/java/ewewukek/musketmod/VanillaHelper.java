@@ -1,16 +1,22 @@
 package ewewukek.musketmod;
 
+import java.util.List;
 import java.util.function.Consumer;
 
 import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.tags.TagKey;
+import net.minecraft.world.entity.Entity;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.enchantment.Enchantment;
 import net.minecraft.world.item.enchantment.Enchantments;
 import net.minecraft.world.level.storage.loot.LootContext;
+import net.minecraft.world.level.storage.loot.LootParams;
 import net.minecraft.world.level.storage.loot.LootTable;
+import net.minecraft.world.level.storage.loot.parameters.LootContextParamSets;
+import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
 
 public class VanillaHelper {
     public static void modifyLootTableItems(ResourceLocation location, LootContext context, Consumer<ItemStack> adder) {
@@ -67,5 +73,20 @@ public class VanillaHelper {
 
         TagKey<Item> tag = TagKey.create(Registries.ITEM, MusketMod.resource("enchantable/" + name));
         return stack.is(tag);
+    }
+
+    public static ItemStack getRandomWeapon(Entity entity, ResourceLocation location) {
+        ServerLevel serverLevel = (ServerLevel)entity.level();
+        LootTable table = serverLevel.getServer().getLootData().getLootTable(location);
+        LootParams params = new LootParams.Builder((ServerLevel)entity.level())
+            .withParameter(LootContextParams.THIS_ENTITY, entity)
+            .withParameter(LootContextParams.ORIGIN, entity.position())
+            .create(LootContextParamSets.SELECTOR);
+        List<ItemStack> items = table.getRandomItems(params);
+        if (items.size() > 0) {
+            return items.get(0);
+        } else {
+            return ItemStack.EMPTY;
+        }
     }
 }

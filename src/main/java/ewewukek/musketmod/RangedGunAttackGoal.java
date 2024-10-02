@@ -54,8 +54,7 @@ public class RangedGunAttackGoal<T extends Monster> extends Goal {
 
         ItemStack stack = mob.getItemInHand(hand);
         if (!isLoading() && !GunItem.isLoaded(stack)) {
-            GunItem.setLoadingStage(stack, 1);
-            mob.startUsingItem(hand);
+            GunItem.mobReload(mob, hand);
         }
     }
 
